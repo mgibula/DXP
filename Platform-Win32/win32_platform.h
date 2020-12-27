@@ -5,8 +5,6 @@ namespace DXP {
 
 struct Win32Platform final : public Platform
 {
-    Win32Platform(HWND window) : window(window) { };
-
     virtual void* AllocateRawMemory(uint64_t size) override;
     virtual void FreeRawMemory(void* ptr) override;
 
@@ -17,9 +15,6 @@ struct Win32Platform final : public Platform
     virtual void PreRenderLoop() override;
     virtual void PostRenderLoop() override;
     virtual void OnFrameStart() override;
-
-private:
-    HWND window;
 };
 
 };

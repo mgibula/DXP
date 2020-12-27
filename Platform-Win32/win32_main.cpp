@@ -3,83 +3,86 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/msvc_sink.h"
 #include "../Engine/utils.h"
+#include "../Engine/engine.h"
 #include "win32_platform.h"
+
+static DXP::Engine* engine_ptr;
 
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    LRESULT result = 0;
-#if 0
+    DXP::Engine* engine = engine_ptr;
+    if (!engine)
+        return DefWindowProc(window, message, wParam, lParam);
 
-    if (ImGui_ImplWin32_WndProcHandler(window, message, wParam, lParam))
-        return true;
+    LRESULT result = 0;
+
+    //if (ImGui_ImplWin32_WndProcHandler(window, message, wParam, lParam))
+    //    return true;
 
     switch (message) {
         case WM_KEYDOWN: {
             if (!((lParam >> 30) & 1)) {
                 uint8_t keycode = (uint8_t)wParam;
-                if (keycode == ' ') {
-                    GE::Engine::GetInstance().SetPaused(!GE::Engine::GetInstance().Paused());
-                }
-                // input.keyboard.pressed[keycode] = true;
-                // input.add_event(keycode, true);
+                if (keycode == ' ')
+                    engine->TogglePaused();
             }
             break;
         }
         case WM_KEYUP: {
             uint8_t keycode = (uint8_t)wParam;
-            input.keyboard.pressed[keycode] = false;
-            input.add_event(keycode, false);
+            //input.keyboard.pressed[keycode] = false;
+            //input.add_event(keycode, false);
             break;
         }
         case WM_MOUSEWHEEL: {
-            input.mouse_delta.wheel = GET_WHEEL_DELTA_WPARAM(wParam);
-            input.mouse.wheel += GET_WHEEL_DELTA_WPARAM(wParam);
+            //input.mouse_delta.wheel = GET_WHEEL_DELTA_WPARAM(wParam);
+            //input.mouse.wheel += GET_WHEEL_DELTA_WPARAM(wParam);
             break;
         }
         case WM_LBUTTONUP: {
-            input.mouse_delta.left_button = true;
-            input.mouse.left_button = false;
+            //input.mouse_delta.left_button = true;
+            //input.mouse.left_button = false;
             break;
         }
         case WM_MBUTTONUP: {
-            input.mouse_delta.middle_button = true;
-            input.mouse.middle_button = false;
+            //input.mouse_delta.middle_button = true;
+            //input.mouse.middle_button = false;
             break;
         }
         case WM_RBUTTONUP: {
-            input.mouse_delta.right_button = true;
-            input.mouse.right_button = false;
+            //input.mouse_delta.right_button = true;
+            //input.mouse.right_button = false;
             break;
         }
         case WM_LBUTTONDOWN: {
-            input.mouse_delta.left_button = true;
-            input.mouse.left_button = true;
+            //input.mouse_delta.left_button = true;
+            //input.mouse.left_button = true;
             break;
         }
         case WM_MBUTTONDOWN: {
-            input.mouse_delta.middle_button = true;
-            input.mouse.middle_button = true;
+            //input.mouse_delta.middle_button = true;
+            //input.mouse.middle_button = true;
             break;
         }
         case WM_RBUTTONDOWN: {
-            input.mouse_delta.right_button = true;
-            input.mouse.right_button = true;
+            //input.mouse_delta.right_button = true;
+            //input.mouse.right_button = true;
             break;
         }
         case WM_MOUSEMOVE: {
-            input.mouse_delta.x = GET_X_LPARAM(lParam) - input.mouse.x;
-            input.mouse_delta.y = GET_Y_LPARAM(lParam) - input.mouse.y;
-            input.mouse.x = GET_X_LPARAM(lParam);
-            input.mouse.y = GET_Y_LPARAM(lParam);
+            //input.mouse_delta.x = GET_X_LPARAM(lParam) - input.mouse.x;
+            //input.mouse_delta.y = GET_Y_LPARAM(lParam) - input.mouse.y;
+            //input.mouse.x = GET_X_LPARAM(lParam);
+            //input.mouse.y = GET_Y_LPARAM(lParam);
             break;
         }
         case WM_CLOSE: {
-            GE::Engine::GetInstance().Terminate();
+            engine->Terminate();
             PostQuitMessage(0);
             break;
         }
         case WM_DESTROY: {
-            GE::Engine::GetInstance().Terminate();
+            engine->Terminate();
             break;
         }
         default: {
@@ -87,7 +90,6 @@ static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wP
             break;
         }
     }
-#endif 
 
     return DefWindowProc(window, message, wParam, lParam);
 }
@@ -141,10 +143,14 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
 
     spdlog::info("Window created");
 
-    DXP::Win32Platform platform{ window };
+    DXP::Win32Platform platform;
+    DXP::Engine engine{ &platform };
+    engine_ptr = &engine;
 
     ShowWindow(window, showCode);
     UpdateWindow(window);
+
+    engine.Run();
 
     //SG3D::SG3D_Game sg3d_game;
 
