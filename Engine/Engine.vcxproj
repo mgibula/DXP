@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="engine.h" />
     <ClInclude Include="platform.h" />
+    <ClInclude Include="render_backend.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

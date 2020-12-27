@@ -6,6 +6,8 @@
 #include "../Engine/engine.h"
 #include "win32_platform.h"
 
+using Win32 = DXP::Win32Platform;
+
 static DXP::Engine* engine_ptr;
 
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
@@ -103,7 +105,6 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
 
     spdlog::register_logger(main_logger);
     spdlog::set_default_logger(main_logger);
-    spdlog::info("Entering WinMain");
 
     // Register window class
     WNDCLASSEX wc = {};
@@ -118,9 +119,7 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
     wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 
     if (!RegisterClassEx(&wc))
-        DXP::Fatal(FMT_STRING("RegisterClassEx failed: {}"), DXP::GetLastSystemError());
-
-    spdlog::info("Registered window class");
+        DXP::Fatal(FMT_STRING("RegisterClassEx failed: {}"), Win32::GetLastSystemError());
 
     // Create and show window
     HWND window = CreateWindowEx(
@@ -139,16 +138,17 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
     );
 
     if (!window)
-        DXP::Fatal(FMT_STRING("CreateWindowEx failed: {}"), DXP::GetLastSystemError());
+        DXP::Fatal(FMT_STRING("CreateWindowEx failed: {}"), Win32::GetLastSystemError());
 
-    spdlog::info("Window created");
-
-    DXP::Win32Platform platform;
+    DXP::Win32Platform platform{ window };
     DXP::Engine engine{ &platform };
+
+    // Needed for message handler function
     engine_ptr = &engine;
 
     ShowWindow(window, showCode);
-    UpdateWindow(window);
+    if (!UpdateWindow(window))
+        DXP::Fatal(FMT_STRING("UpdateWindow failed: {}"), Win32::GetLastSystemError());
 
     engine.Run();
 

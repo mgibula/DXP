@@ -18,6 +18,4 @@ template <typename S, typename... Args>
     }
 }
 
-std::string GetLastSystemError();
-
 };

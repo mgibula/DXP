@@ -1,11 +1,27 @@
 #include "win32_platform.h"
 #include "../Engine/utils.h"
+#include "../Engine/render_backend.h"
+#include "../Renderer-DirectX11/directx11_backend.h"
 #include <fmt/format.h>
 #include <Windows.h>
 #include <timeapi.h>
 
+#pragma comment(lib, "winmm.lib")
+
 namespace DXP
 {
+
+void Fatal(std::string_view message)
+{
+    MessageBox(nullptr, message.data(), "Fatal error", MB_ICONERROR | MB_OK);
+    ExitProcess(1);
+}
+
+Win32Platform::Win32Platform(HWND window) :
+    window(window)
+{
+    renderers.push_back({ "DirectX11", "DirectX 11 Renderer" });
+}
 
 void* Win32Platform::AllocateRawMemory(uint64_t size)
 {
@@ -67,6 +83,48 @@ void Win32Platform::OnFrameStart()
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+}
+
+std::vector<RenderBackendDescription> Win32Platform::GetAvailableRenderers() const
+{
+    return renderers;
+}
+
+std::unique_ptr<RenderBackend> Win32Platform::CreateRenderBackend(std::string_view name)
+{
+    std::unique_ptr<RenderBackend> result;
+    if (name == "DirectX11")
+        result = std::make_unique<DirectX11Backend>(window);
+
+    if (!result || !result->Initialize())
+        return nullptr;
+
+    return result;
+}
+
+std::string Win32Platform::GetLastSystemError()
+{
+    DWORD error = GetLastError();
+    char* message;
+
+    uint32_t bytes = FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr,
+        error,
+        0,
+        (LPTSTR)&message,
+        0, NULL
+    );
+
+    if (!bytes)
+        return fmt::format("[Unknown system error message for {}]", error);
+
+    std::string result{ message, bytes };
+    LocalFree(message);
+
+    return result;
 }
 
 }
