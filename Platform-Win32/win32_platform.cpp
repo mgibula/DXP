@@ -85,6 +85,10 @@ void Win32Platform::OnFrameStart()
     }
 }
 
+void Win32Platform::OnFrameEnd()
+{
+}
+
 std::vector<RenderBackendDescription> Win32Platform::GetAvailableRenderers() const
 {
     return renderers;

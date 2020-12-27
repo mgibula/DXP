@@ -58,22 +58,38 @@ void Engine::Run()
 
 void Engine::PreRenderLoop()
 {
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGui::StyleColorsDark();
 
+    //renderBackend->PreRenderLoop();
+    //platform->PreRenderLoop();
 }
 
 void Engine::PostRenderLoop()
 {
+    //renderBackend->PostRenderLoop();
+    //platform->PostRenderLoop();
 
+    //ImGui::DestroyContext();
 }
 
 void Engine::OnFrameStart()
 {
+    //renderBackend->ClearScreen();
+
+    //renderBackend->OnFrameStart();
     platform->OnFrameStart();
+
+    //ImGui::NewFrame();
 }
 
 void Engine::OnFrameEnd()
 {
+    //renderBackend->OnFrameEnd();
+    platform->OnFrameEnd();
 
+    //renderBackend->Display();
 }
 
 void Engine::Frame()

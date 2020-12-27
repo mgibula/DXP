@@ -82,4 +82,15 @@ bool DirectX11Backend::Initialize()
     return true;
 }
 
+void DirectX11Backend::ClearScreen()
+{
+    float black[4] = {};
+    context->ClearRenderTargetView(backbuffer.Get(), black);
+}
+
+void DirectX11Backend::Display()
+{
+    swapchain->Present(0, 0);
+}
+
 };

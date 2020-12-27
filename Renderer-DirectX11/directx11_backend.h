@@ -13,6 +13,10 @@ struct DirectX11Backend final : public RenderBackend
 
     virtual bool Initialize() override;
 
+    virtual void ClearScreen() override;
+
+    virtual void Display() override;
+
 private:
     HWND window;
     int width = 0;

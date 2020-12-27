@@ -20,6 +20,7 @@ struct Win32Platform final : public Platform
     virtual void PreRenderLoop() override;
     virtual void PostRenderLoop() override;
     virtual void OnFrameStart() override;
+    virtual void OnFrameEnd() override;
 
     virtual std::vector<RenderBackendDescription> GetAvailableRenderers() const override;
     virtual std::unique_ptr<RenderBackend> CreateRenderBackend(std::string_view name) override;
