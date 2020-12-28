@@ -86,21 +86,29 @@ bool DirectX11Backend::Initialize()
 
 void DirectX11Backend::PreRenderLoop()
 {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
     ImGui_ImplDX11_Init(device.Get(), context.Get());
+    ImGui_ImplDX11_NewFrame();
 }
 
 void DirectX11Backend::PostRenderLoop()
 {
     ImGui_ImplDX11_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void DirectX11Backend::OnFrameStart()
 {
     ImGui_ImplDX11_NewFrame();
+    ImGui::NewFrame();
 }
 
 void DirectX11Backend::OnFrameEnd()
 {
+    ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 

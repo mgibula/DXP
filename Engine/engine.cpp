@@ -48,11 +48,6 @@ void Engine::Run()
 void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
     gpu->PreRenderLoop();
     platform->PreRenderLoop();
 }
@@ -61,25 +56,20 @@ void Engine::PostRenderLoop()
 {
     platform->PostRenderLoop();
     gpu->PostRenderLoop();
-
-    ImGui::DestroyContext();
 }
 
 void Engine::OnFrameStart()
 {
-    gpu->ClearScreen();
-
     gpu->OnFrameStart();
     platform->OnFrameStart();
 
-    ImGui::NewFrame();
+    gpu->ClearScreen();
 }
 
 void Engine::OnFrameEnd()
 {
     ImGui::ShowDemoWindow();
-    ImGui::Render();
-
+    
     platform->OnFrameEnd();
     gpu->OnFrameEnd();
 

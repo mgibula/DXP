@@ -43,6 +43,7 @@ void Win32Platform::PreRenderLoop()
         Fatal(FMT_STRING("timeBeginPeriod failed"));
 
     ImGui_ImplWin32_Init(window);
+    ImGui_ImplWin32_NewFrame();
 }
 
 void Win32Platform::PostRenderLoop()
