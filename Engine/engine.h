@@ -7,6 +7,7 @@ using float64_t = double;
 namespace DXP
 {
 
+struct RenderBackend;
 struct Platform;
 
 struct Engine

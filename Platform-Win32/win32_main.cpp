@@ -93,7 +93,7 @@ static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wP
         }
     }
 
-    return DefWindowProc(window, message, wParam, lParam);
+    return result;
 }
 
 int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR cmdLine, _In_ int showCode)
@@ -129,8 +129,8 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        800,
-        600,
+        640,
+        480,
         NULL,
         NULL,
         instance,
