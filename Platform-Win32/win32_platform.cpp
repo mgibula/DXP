@@ -1,11 +1,9 @@
+#include "pch.h"
 #include "win32_platform.h"
 #include "../Imgui/backends/imgui_impl_win32.h"
 #include "../Engine/utils.h"
 #include "../Engine/render_backend.h"
 #include "../Renderer-DirectX11/directx11_backend.h"
-#include <fmt/format.h>
-#include <Windows.h>
-#include <timeapi.h>
 
 #pragma comment(lib, "winmm.lib")
 

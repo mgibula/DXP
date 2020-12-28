@@ -1,6 +1,4 @@
 #pragma once
-#include <cstdint>
-#include <memory>
 
 using float32_t = float;
 using float64_t = double;

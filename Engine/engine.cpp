@@ -1,9 +1,8 @@
+#include "pch.h"
 #include "engine.h"
 #include "platform.h"
 #include "render_backend.h"
 #include "../Imgui/imgui.h"
-#include <chrono>
-#include <thread>
 
 namespace DXP
 {

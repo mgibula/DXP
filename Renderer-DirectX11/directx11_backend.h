@@ -1,8 +1,5 @@
 #pragma once
 #include "../Engine/render_backend.h"
-#include <windows.h>
-#include <d3d11.h>
-#include <wrl/client.h>
 
 namespace DXP
 {
