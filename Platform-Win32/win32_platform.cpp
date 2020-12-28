@@ -1,4 +1,5 @@
 #include "win32_platform.h"
+#include "imgui_impl_win32.h"
 #include "../Engine/utils.h"
 #include "../Engine/render_backend.h"
 #include "../Renderer-DirectX11/directx11_backend.h"
@@ -66,17 +67,17 @@ void Win32Platform::PreRenderLoop()
     if (timeBeginPeriod(1) != TIMERR_NOERROR)
         Fatal(FMT_STRING("timeBeginPeriod failed"));
 
-    //ImGui_ImplWin32_Init(window);
+    ImGui_ImplWin32_Init(window);
 }
 
 void Win32Platform::PostRenderLoop()
 {
-    //ImGui_ImplWin32_Shutdown();
+    ImGui_ImplWin32_Shutdown();
 }
 
 void Win32Platform::OnFrameStart()
 {
-    //ImGui_ImplWin32_NewFrame();
+    ImGui_ImplWin32_NewFrame();
 
     MSG msg = {};
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {

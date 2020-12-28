@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <memory>
 
 using float32_t = float;
 using float64_t = double;
@@ -34,6 +35,7 @@ private:
     void Frame();
 
     Platform* platform;
+    std::unique_ptr<RenderBackend> gpu;
     int32_t desiredFPS = 60;
     bool terminated = false;
     bool paused = false;

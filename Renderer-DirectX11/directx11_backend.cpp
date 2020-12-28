@@ -1,5 +1,6 @@
 #include "directx11_backend.h"
 #include "../Engine/utils.h"
+#include "imgui_impl_dx11.h"
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -80,6 +81,26 @@ bool DirectX11Backend::Initialize()
     context->RSSetViewports(1, &viewport);
 
     return true;
+}
+
+void DirectX11Backend::PreRenderLoop()
+{
+    ImGui_ImplDX11_Init(device.Get(), context.Get());
+}
+
+void DirectX11Backend::PostRenderLoop()
+{
+    ImGui_ImplDX11_Shutdown();
+}
+
+void DirectX11Backend::OnFrameStart()
+{
+    ImGui_ImplDX11_NewFrame();
+}
+
+void DirectX11Backend::OnFrameEnd()
+{
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 void DirectX11Backend::ClearScreen()

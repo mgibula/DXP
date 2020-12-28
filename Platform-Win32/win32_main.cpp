@@ -5,21 +5,25 @@
 #include "../Engine/utils.h"
 #include "../Engine/engine.h"
 #include "win32_platform.h"
+#include "imgui_impl_win32.h"
 
 using Win32 = DXP::Win32Platform;
 
 static DXP::Engine* engine_ptr;
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
     DXP::Engine* engine = engine_ptr;
+
+    if (ImGui_ImplWin32_WndProcHandler(window, message, wParam, lParam))
+        return true;
+
     if (!engine)
         return DefWindowProc(window, message, wParam, lParam);
 
     LRESULT result = 0;
-
-    //if (ImGui_ImplWin32_WndProcHandler(window, message, wParam, lParam))
-    //    return true;
 
     switch (message) {
         case WM_KEYDOWN: {
@@ -129,8 +133,8 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        640,
-        480,
+        800,
+        600,
         NULL,
         NULL,
         instance,

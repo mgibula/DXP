@@ -1,5 +1,7 @@
 #include "engine.h"
 #include "platform.h"
+#include "render_backend.h"
+#include "../Imgui/imgui.h"
 
 namespace DXP
 {
@@ -58,38 +60,44 @@ void Engine::Run()
 
 void Engine::PreRenderLoop()
 {
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGui::StyleColorsDark();
+    gpu = platform->CreateRenderBackend("DirectX11");
 
-    //renderBackend->PreRenderLoop();
-    //platform->PreRenderLoop();
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    gpu->PreRenderLoop();
+    platform->PreRenderLoop();
 }
 
 void Engine::PostRenderLoop()
 {
-    //renderBackend->PostRenderLoop();
-    //platform->PostRenderLoop();
+    gpu->PostRenderLoop();
+    platform->PostRenderLoop();
 
-    //ImGui::DestroyContext();
+    ImGui::DestroyContext();
 }
 
 void Engine::OnFrameStart()
 {
-    //renderBackend->ClearScreen();
+    gpu->ClearScreen();
+    gpu->OnFrameStart();
 
-    //renderBackend->OnFrameStart();
     platform->OnFrameStart();
 
-    //ImGui::NewFrame();
+    ImGui::NewFrame();
 }
 
 void Engine::OnFrameEnd()
 {
-    //renderBackend->OnFrameEnd();
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+
+    gpu->OnFrameEnd();
     platform->OnFrameEnd();
 
-    //renderBackend->Display();
+    gpu->Display();
 }
 
 void Engine::Frame()
