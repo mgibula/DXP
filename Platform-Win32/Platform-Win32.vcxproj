@@ -143,12 +143,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Imgui\backends\imgui_impl_win32.cpp" />
     <ClCompile Include="win32_main.cpp" />
     <ClCompile Include="win32_platform.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imgui_impl_win32.h" />
+    <ClInclude Include="..\Imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="win32_platform.h" />
   </ItemGroup>
   <ItemGroup>

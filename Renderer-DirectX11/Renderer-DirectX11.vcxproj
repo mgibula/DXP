@@ -147,12 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="directx11_backend.h" />
-    <ClInclude Include="imgui_impl_dx11.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="directx11_backend.cpp" />
-    <ClCompile Include="imgui_impl_dx11.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
