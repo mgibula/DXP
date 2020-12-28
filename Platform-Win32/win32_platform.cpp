@@ -38,29 +38,6 @@ void Win32Platform::FreeRawMemory(void* ptr)
     VirtualFree(ptr, 0, MEM_RELEASE);
 }
 
-int64_t Win32Platform::GetTickFrequency() const
-{
-    LARGE_INTEGER ticksFrequency;
-    if (!QueryPerformanceFrequency(&ticksFrequency))
-        Fatal(FMT_STRING("QueryPerformanceFrequency failed: {}"), GetLastSystemError());
-
-    return ticksFrequency.QuadPart;
-}
-
-int64_t Win32Platform::GetTickCounter() const
-{
-    LARGE_INTEGER result;
-    if (!QueryPerformanceCounter(&result))
-        Fatal(FMT_STRING("QueryPerformanceCounter failed: {}"), GetLastSystemError());
-
-    return result.QuadPart;
-}
-
-void Win32Platform::SleepMilliseconds(int32_t milliseconds)
-{
-    Sleep(DWORD(milliseconds));
-}
-
 void Win32Platform::PreRenderLoop()
 {
     // For high resolution sleep
