@@ -59,8 +59,8 @@ void Engine::PreRenderLoop()
 
 void Engine::PostRenderLoop()
 {
-    gpu->PostRenderLoop();
     platform->PostRenderLoop();
+    gpu->PostRenderLoop();
 
     ImGui::DestroyContext();
 }
@@ -68,8 +68,8 @@ void Engine::PostRenderLoop()
 void Engine::OnFrameStart()
 {
     gpu->ClearScreen();
-    gpu->OnFrameStart();
 
+    gpu->OnFrameStart();
     platform->OnFrameStart();
 
     ImGui::NewFrame();
@@ -78,11 +78,10 @@ void Engine::OnFrameStart()
 void Engine::OnFrameEnd()
 {
     ImGui::ShowDemoWindow();
-
     ImGui::Render();
 
-    gpu->OnFrameEnd();
     platform->OnFrameEnd();
+    gpu->OnFrameEnd();
 
     gpu->Display();
 }
