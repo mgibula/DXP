@@ -1,4 +1,5 @@
 #pragma once
+#include "utils.h"
 
 namespace DXP
 {
@@ -39,6 +40,11 @@ struct Event
     int category;
     Type type;
 
+    int MouseButton() const;
+    std::pair<int, int> MousePosition() const;
+    std::pair<int, int> MouseWheelDelta() const;
+    int KeyCode() const;
+
     union {
         struct {
             union {
@@ -61,7 +67,31 @@ struct Event
         struct {
             int code;
         } key;
-    };
+    } params;
 };
+
+inline int Event::MouseButton() const
+{
+    DXP_ASSERT(type == Event::Type::MouseButtonPressed || type == Event::Type::MouseButtonReleased, "Event is not mouse button event");
+    return params.mouse.button.button;
+}
+
+inline std::pair<int, int> Event::MousePosition() const
+{
+    DXP_ASSERT(type == Event::Type::MouseMoved, "Event is not mouse move event");
+    return { params.mouse.move.x, params.mouse.move.y };
+}
+
+inline std::pair<int, int> Event::MouseWheelDelta() const
+{
+    DXP_ASSERT(type == Event::Type::MouseScrolled, "Event is not mouse scroll event");
+    return { params.mouse.scroll.x, params.mouse.scroll.y };
+}
+
+inline int Event::KeyCode() const
+{
+    DXP_ASSERT(type == Event::Type::KeyPressed || type == Event::Type::KeyReleased, "Event is not keyboard event");
+    return params.key.code;
+}
 
 };

@@ -8,7 +8,7 @@ namespace DXP
 Event Event::MouseButtonPressed(int button)
 {
     Event result{ Event::Type::MouseButtonPressed, Event::Category::Input | Event::Category::Mouse };
-    result.mouse.button.button = button;
+    result.params.mouse.button.button = button;
 
     return result;
 }
@@ -16,7 +16,7 @@ Event Event::MouseButtonPressed(int button)
 Event Event::MouseButtonReleased(int button)
 {
     Event result{ Event::Type::MouseButtonReleased, Event::Category::Input | Event::Category::Mouse };
-    result.mouse.button.button = button;
+    result.params.mouse.button.button = button;
 
     return result;
 }
@@ -24,8 +24,8 @@ Event Event::MouseButtonReleased(int button)
 Event Event::MouseMoved(int x, int y)
 {
     Event result{ Event::Type::MouseMoved, Event::Category::Input | Event::Category::Mouse };
-    result.mouse.move.x = x;
-    result.mouse.move.y = y;
+    result.params.mouse.move.x = x;
+    result.params.mouse.move.y = y;
 
     return result;
 }
@@ -33,8 +33,8 @@ Event Event::MouseMoved(int x, int y)
 Event Event::MouseScrolled(int x, int y)
 {
     Event result{ Event::Type::MouseScrolled, Event::Category::Input | Event::Category::Mouse };
-    result.mouse.scroll.x = x;
-    result.mouse.scroll.y = y;
+    result.params.mouse.scroll.x = x;
+    result.params.mouse.scroll.y = y;
 
     return result;
 }
@@ -42,7 +42,7 @@ Event Event::MouseScrolled(int x, int y)
 Event Event::KeyPressed(int keycode)
 {
     Event result{ Event::Type::KeyPressed, Event::Category::Input | Event::Category::Keyboard };
-    result.key.code = keycode;
+    result.params.key.code = keycode;
 
     return result;
 }
@@ -50,7 +50,7 @@ Event Event::KeyPressed(int keycode)
 Event Event::KeyReleased(int keycode)
 {
     Event result{ Event::Type::KeyReleased, Event::Category::Input | Event::Category::Keyboard };
-    result.key.code = keycode;
+    result.params.key.code = keycode;
 
     return result;
 }
