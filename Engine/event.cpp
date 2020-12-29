@@ -13,6 +13,14 @@ Event Event::MouseButtonPressed(int button)
     return result;
 }
 
+Event Event::MouseButtonReleased(int button)
+{
+    Event result{ Event::Type::MouseButtonReleased, Event::Category::Input | Event::Category::Mouse };
+    result.mouse.button.button = button;
+
+    return result;
+}
+
 Event Event::MouseMoved(int x, int y)
 {
     Event result{ Event::Type::MouseMoved, Event::Category::Input | Event::Category::Mouse };
@@ -22,10 +30,11 @@ Event Event::MouseMoved(int x, int y)
     return result;
 }
 
-Event Event::MouseScrolled(int delta)
+Event Event::MouseScrolled(int x, int y)
 {
     Event result{ Event::Type::MouseScrolled, Event::Category::Input | Event::Category::Mouse };
-    result.mouse.scroll.delta = delta;
+    result.mouse.scroll.x = x;
+    result.mouse.scroll.y = y;
 
     return result;
 }

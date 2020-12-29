@@ -3,8 +3,10 @@
 #include "../Imgui/backends/imgui_impl_win32.h"
 #include "../Engine/utils.h"
 #include "../Engine/engine.h"
+#include "../Engine/event.h"
 #include "../Engine/render_backend.h"
 #include "../Renderer-DirectX11/directx11_backend.h"
+#include <windowsx.h>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -65,10 +67,43 @@ void Win32Platform::OnFrameStart(Engine* engine)
         ImGui_ImplWin32_WndProcHandler(window, msg.message, msg.wParam, msg.lParam);
 
         switch (msg.message) {
-        case WM_QUIT: {
+        case WM_QUIT:
             engine->Terminate();
             break;
-        }
+        case WM_LBUTTONDOWN:
+            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Left));
+            break;
+        case WM_MBUTTONDOWN:
+            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Middle));
+            break;
+        case WM_RBUTTONDOWN:
+            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Right));
+            break;
+        case WM_LBUTTONUP:
+            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Left));
+            break;
+        case WM_MBUTTONUP:
+            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Middle));
+            break;
+        case WM_RBUTTONUP:
+            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Right));
+            break;
+        case WM_MOUSEMOVE:
+            engine->SubmitEvent(Event::MouseMoved(GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam)));
+            break;
+        case WM_MOUSEWHEEL:
+            engine->SubmitEvent(Event::MouseScrolled(0, GET_WHEEL_DELTA_WPARAM(msg.wParam)));
+            break;
+        case WM_MOUSEHWHEEL:
+            engine->SubmitEvent(Event::MouseScrolled(GET_WHEEL_DELTA_WPARAM(msg.wParam), 0));
+            break;
+        case WM_KEYDOWN:
+            if (!((msg.lParam >> 30) & 1))
+                engine->SubmitEvent(Event::KeyPressed(static_cast<int>(msg.wParam)));
+            break;
+        case WM_KEYUP:
+            engine->SubmitEvent(Event::KeyReleased(static_cast<int>(msg.wParam)));
+            break;
         }
 
         DispatchMessage(&msg);

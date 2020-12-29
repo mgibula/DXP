@@ -13,6 +13,7 @@ struct Event
 
     enum class Type {
         MouseButtonPressed,
+        MouseButtonReleased,
         MouseMoved,
         MouseScrolled,
         KeyPressed,
@@ -29,8 +30,9 @@ struct Event
     Event(Type type, int category) : type(type), category(category) { };
 
     static Event MouseButtonPressed(int button);
+    static Event MouseButtonReleased(int button);
     static Event MouseMoved(int x, int y);
-    static Event MouseScrolled(int delta);
+    static Event MouseScrolled(int x, int y);
     static Event KeyPressed(int keycode);
     static Event KeyReleased(int keycode);
 
@@ -50,7 +52,8 @@ struct Event
                 } move;
 
                 struct {
-                    int delta;
+                    int x;
+                    int y;
                 } scroll;
             };
         } mouse;

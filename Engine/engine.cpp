@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "engine.h"
+#include "event.h"
 #include "platform.h"
 #include "render_backend.h"
 #include "../Imgui/imgui.h"
@@ -60,6 +61,8 @@ void Engine::PostRenderLoop()
 
 void Engine::OnFrameStart()
 {
+    events.clear();
+
     gpu->OnFrameStart();
     platform->OnFrameStart(this);
 
@@ -79,6 +82,11 @@ void Engine::OnFrameEnd()
 void Engine::Frame()
 {
 
+}
+
+void Engine::SubmitEvent(const Event& event)
+{
+    events.push_back(event);
 }
 
 };

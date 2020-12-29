@@ -9,66 +9,7 @@ using Win32 = DXP::Win32Platform;
 
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    LRESULT result = 0;
-
     switch (message) {
-        case WM_KEYDOWN: {
-            if (!((lParam >> 30) & 1)) {
-                uint8_t keycode = (uint8_t)wParam;
-                //if (keycode == ' ')
-                //    engine->TogglePaused();
-            }
-            break;
-        }
-        case WM_KEYUP: {
-            uint8_t keycode = (uint8_t)wParam;
-            //input.keyboard.pressed[keycode] = false;
-            //input.add_event(keycode, false);
-            break;
-        }
-        case WM_MOUSEWHEEL: {
-            //engine->SubmitEvent(DXP::Event::Type::MouseScrolled, GET_WHEEL_DELTA_WPARAM(wParam));
-            //input.mouse_delta.wheel = GET_WHEEL_DELTA_WPARAM(wParam);
-            //input.mouse.wheel += GET_WHEEL_DELTA_WPARAM(wParam);
-            break;
-        }
-        case WM_LBUTTONUP: {
-            //input.mouse_delta.left_button = true;
-            //input.mouse.left_button = false;
-            break;
-        }
-        case WM_MBUTTONUP: {
-            //input.mouse_delta.middle_button = true;
-            //input.mouse.middle_button = false;
-            break;
-        }
-        case WM_RBUTTONUP: {
-            //input.mouse_delta.right_button = true;
-            //input.mouse.right_button = false;
-            break;
-        }
-        case WM_LBUTTONDOWN: {
-            //input.mouse_delta.left_button = true;
-            //input.mouse.left_button = true;
-            break;
-        }
-        case WM_MBUTTONDOWN: {
-            //input.mouse_delta.middle_button = true;
-            //input.mouse.middle_button = true;
-            break;
-        }
-        case WM_RBUTTONDOWN: {
-            //input.mouse_delta.right_button = true;
-            //input.mouse.right_button = true;
-            break;
-        }
-        case WM_MOUSEMOVE: {
-            //input.mouse_delta.x = GET_X_LPARAM(lParam) - input.mouse.x;
-            //input.mouse_delta.y = GET_Y_LPARAM(lParam) - input.mouse.y;
-            //input.mouse.x = GET_X_LPARAM(lParam);
-            //input.mouse.y = GET_Y_LPARAM(lParam);
-            break;
-        }
         case WM_DESTROY:
         case WM_CLOSE:
             PostQuitMessage(0);

@@ -8,6 +8,7 @@ namespace DXP
 
 struct RenderBackend;
 struct Platform;
+struct Event;
 
 struct Engine
 {
@@ -25,6 +26,8 @@ struct Engine
     void Terminate() noexcept;
     void TogglePaused() noexcept;
 
+    void SubmitEvent(const Event& event);
+
 private:
     void PreRenderLoop();
     void PostRenderLoop();
@@ -37,6 +40,7 @@ private:
     int32_t desiredFPS = 60;
     bool terminated = false;
     bool paused = false;
+    std::vector<Event> events;
 };
 
 inline void Engine::SetDesiredFPS(int32_t fps) noexcept
