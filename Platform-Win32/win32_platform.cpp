@@ -2,10 +2,13 @@
 #include "win32_platform.h"
 #include "../Imgui/backends/imgui_impl_win32.h"
 #include "../Engine/utils.h"
+#include "../Engine/engine.h"
 #include "../Engine/render_backend.h"
 #include "../Renderer-DirectX11/directx11_backend.h"
 
 #pragma comment(lib, "winmm.lib")
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace DXP
 {
@@ -36,7 +39,7 @@ void Win32Platform::FreeRawMemory(void* ptr)
     VirtualFree(ptr, 0, MEM_RELEASE);
 }
 
-void Win32Platform::PreRenderLoop()
+void Win32Platform::PreRenderLoop(Engine* engine)
 {
     // For high resolution sleep
     if (timeBeginPeriod(1) != TIMERR_NOERROR)
@@ -46,23 +49,33 @@ void Win32Platform::PreRenderLoop()
     ImGui_ImplWin32_NewFrame();
 }
 
-void Win32Platform::PostRenderLoop()
+void Win32Platform::PostRenderLoop(Engine* engine)
 {
     ImGui_ImplWin32_Shutdown();
 }
 
-void Win32Platform::OnFrameStart()
+void Win32Platform::OnFrameStart(Engine* engine)
 {
     ImGui_ImplWin32_NewFrame();
 
     MSG msg = {};
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
+
+        ImGui_ImplWin32_WndProcHandler(window, msg.message, msg.wParam, msg.lParam);
+
+        switch (msg.message) {
+        case WM_QUIT: {
+            engine->Terminate();
+            break;
+        }
+        }
+
         DispatchMessage(&msg);
     }
 }
 
-void Win32Platform::OnFrameEnd()
+void Win32Platform::OnFrameEnd(Engine* engine)
 {
 }
 

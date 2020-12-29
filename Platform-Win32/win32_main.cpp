@@ -4,32 +4,19 @@
 #include "../Engine/utils.h"
 #include "../Engine/engine.h"
 #include "win32_platform.h"
-#include "../Imgui/backends/imgui_impl_win32.h"
 
 using Win32 = DXP::Win32Platform;
 
-static DXP::Engine* engine_ptr;
-
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    DXP::Engine* engine = engine_ptr;
-
-    if (ImGui_ImplWin32_WndProcHandler(window, message, wParam, lParam))
-        return true;
-
-    if (!engine)
-        return DefWindowProc(window, message, wParam, lParam);
-
     LRESULT result = 0;
 
     switch (message) {
         case WM_KEYDOWN: {
             if (!((lParam >> 30) & 1)) {
                 uint8_t keycode = (uint8_t)wParam;
-                if (keycode == ' ')
-                    engine->TogglePaused();
+                //if (keycode == ' ')
+                //    engine->TogglePaused();
             }
             break;
         }
@@ -40,6 +27,7 @@ static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wP
             break;
         }
         case WM_MOUSEWHEEL: {
+            //engine->SubmitEvent(DXP::Event::Type::MouseScrolled, GET_WHEEL_DELTA_WPARAM(wParam));
             //input.mouse_delta.wheel = GET_WHEEL_DELTA_WPARAM(wParam);
             //input.mouse.wheel += GET_WHEEL_DELTA_WPARAM(wParam);
             break;
@@ -81,22 +69,13 @@ static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wP
             //input.mouse.y = GET_Y_LPARAM(lParam);
             break;
         }
-        case WM_CLOSE: {
-            engine->Terminate();
+        case WM_DESTROY:
+        case WM_CLOSE:
             PostQuitMessage(0);
             break;
-        }
-        case WM_DESTROY: {
-            engine->Terminate();
-            break;
-        }
-        default: {
-            result = DefWindowProc(window, message, wParam, lParam);
-            break;
-        }
     }
 
-    return result;
+    return DefWindowProc(window, message, wParam, lParam);
 }
 
 int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR cmdLine, _In_ int showCode)
@@ -145,9 +124,6 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
 
     DXP::Win32Platform platform{ window };
     DXP::Engine engine{ &platform };
-
-    // Needed for message handler function
-    engine_ptr = &engine;
 
     ShowWindow(window, showCode);
     if (!UpdateWindow(window))

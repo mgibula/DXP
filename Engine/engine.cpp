@@ -49,19 +49,19 @@ void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
     gpu->PreRenderLoop();
-    platform->PreRenderLoop();
+    platform->PreRenderLoop(this);
 }
 
 void Engine::PostRenderLoop()
 {
-    platform->PostRenderLoop();
+    platform->PostRenderLoop(this);
     gpu->PostRenderLoop();
 }
 
 void Engine::OnFrameStart()
 {
     gpu->OnFrameStart();
-    platform->OnFrameStart();
+    platform->OnFrameStart(this);
 
     gpu->ClearScreen();
 }
@@ -70,7 +70,7 @@ void Engine::OnFrameEnd()
 {
     ImGui::ShowDemoWindow();
     
-    platform->OnFrameEnd();
+    platform->OnFrameEnd(this);
     gpu->OnFrameEnd();
 
     gpu->Display();
