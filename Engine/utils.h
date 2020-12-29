@@ -1,5 +1,7 @@
 #pragma once
 
+#define DXP_ASSERT(c, ...)         do { if (!(c)) DXP::Fatal(__VA_ARGS__); } while (0)
+
 namespace DXP
 {
 
