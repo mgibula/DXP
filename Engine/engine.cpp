@@ -49,39 +49,50 @@ void Engine::Run()
 void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
-    gpu->PreRenderLoop();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    // Ordering imposed by ImGui backends
     platform->PreRenderLoop(this);
+    gpu->PreRenderLoop();
 }
 
 void Engine::PostRenderLoop()
 {
-    platform->PostRenderLoop(this);
+    // Ordering imposed by ImGui backends
     gpu->PostRenderLoop();
+    platform->PostRenderLoop(this);
+
+    ImGui::DestroyContext();
 }
 
 void Engine::OnFrameStart()
 {
-    events.clear();
-
+    // Ordering imposed by ImGui backends
     gpu->OnFrameStart();
     platform->OnFrameStart(this);
+    ImGui::NewFrame();
 
     gpu->ClearScreen();
 }
 
 void Engine::OnFrameEnd()
-{
-    ImGui::ShowDemoWindow();
-    
+{    
+    // Ordering imposed by ImGui backends
     platform->OnFrameEnd(this);
     gpu->OnFrameEnd();
 
     gpu->Display();
+
+    // Clear pending events vector
+    events.clear();
 }
 
 void Engine::Frame()
 {
-
+    ImGui::ShowDemoWindow();
 }
 
 void Engine::SubmitEvent(const Event& event)

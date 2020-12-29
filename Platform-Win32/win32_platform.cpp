@@ -48,7 +48,6 @@ void Win32Platform::PreRenderLoop(Engine* engine)
         Fatal(FMT_STRING("timeBeginPeriod failed"));
 
     ImGui_ImplWin32_Init(window);
-    ImGui_ImplWin32_NewFrame();
 }
 
 void Win32Platform::PostRenderLoop(Engine* engine)
@@ -58,8 +57,6 @@ void Win32Platform::PostRenderLoop(Engine* engine)
 
 void Win32Platform::OnFrameStart(Engine* engine)
 {
-    ImGui_ImplWin32_NewFrame();
-
     MSG msg = {};
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
@@ -108,6 +105,8 @@ void Win32Platform::OnFrameStart(Engine* engine)
 
         DispatchMessage(&msg);
     }
+
+    ImGui_ImplWin32_NewFrame();
 }
 
 void Win32Platform::OnFrameEnd(Engine* engine)
