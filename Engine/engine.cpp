@@ -50,49 +50,99 @@ void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
-    // Ordering imposed by ImGui backends
     platform->PreRenderLoop(this);
     gpu->PreRenderLoop();
+
+    // ImGui setup
+    ImGuiInit();
 }
 
 void Engine::PostRenderLoop()
 {
-    // Ordering imposed by ImGui backends
+    // ImGui shutdown
+    ImGuiShutdown();
+
     gpu->PostRenderLoop();
     platform->PostRenderLoop(this);
-
-    ImGui::DestroyContext();
 }
 
 void Engine::OnFrameStart()
 {
-    // Ordering imposed by ImGui backends
-    gpu->OnFrameStart();
     platform->OnFrameStart(this);
-    ImGui::NewFrame();
+    gpu->OnFrameStart();
 
-    gpu->ClearScreen();
+    // ImGui startup
+    ImGuiFrameStart();
+
+    // Setup main dockspace (thanks imgui_demo.cpp !)
+    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 }
 
 void Engine::OnFrameEnd()
-{    
-    // Ordering imposed by ImGui backends
-    platform->OnFrameEnd(this);
-    gpu->OnFrameEnd();
+{
+    // ImGui finalization
+    ImGuiFrameEnd();
 
+    gpu->OnFrameEnd();
+    platform->OnFrameEnd(this);
+
+    // Display frame
     gpu->Display();
 
     // Clear pending events vector
     events.clear();
+
+    // Clear now to save time later
+    gpu->ClearScreen();
 }
 
 void Engine::Frame()
 {
     ImGui::ShowDemoWindow();
+
+    ImGui::Begin("Another Window");
+    ImGui::Text("Hello from another window!");
+    ImGui::End();
+
+}
+
+void Engine::ImGuiInit()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    platform->ImGuiInit();
+    gpu->ImGuiInit();
+}
+
+void Engine::ImGuiShutdown()
+{
+    gpu->ImGuiShutdown();
+    platform->ImGuiShutdown();
+
+    ImGui::DestroyContext();
+}
+
+void Engine::ImGuiFrameStart()
+{
+    gpu->ImGuiFrameStart();
+    platform->ImGuiFrameStart();
+    ImGui::NewFrame();
+}
+
+void Engine::ImGuiFrameEnd()
+{
+    platform->ImGuiFrameEnd();
+    gpu->ImGuiFrameEnd();
+
+    // Multi viewport handling
+    ImGui::UpdatePlatformWindows();
+    ImGui::RenderPlatformWindowsDefault();
 }
 
 void Engine::SubmitEvent(const Event& event)

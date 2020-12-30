@@ -46,13 +46,10 @@ void Win32Platform::PreRenderLoop(Engine* engine)
     // For high resolution sleep
     if (timeBeginPeriod(1) != TIMERR_NOERROR)
         Fatal(FMT_STRING("timeBeginPeriod failed"));
-
-    ImGui_ImplWin32_Init(window);
 }
 
 void Win32Platform::PostRenderLoop(Engine* engine)
 {
-    ImGui_ImplWin32_Shutdown();
 }
 
 void Win32Platform::OnFrameStart(Engine* engine)
@@ -105,12 +102,30 @@ void Win32Platform::OnFrameStart(Engine* engine)
 
         DispatchMessage(&msg);
     }
-
-    ImGui_ImplWin32_NewFrame();
 }
 
 void Win32Platform::OnFrameEnd(Engine* engine)
 {
+}
+
+void Win32Platform::ImGuiInit()
+{
+    ImGui_ImplWin32_Init(window);
+}
+
+void Win32Platform::ImGuiShutdown()
+{
+    ImGui_ImplWin32_Shutdown();
+}
+
+void Win32Platform::ImGuiFrameStart()
+{
+    ImGui_ImplWin32_NewFrame();
+}
+
+void Win32Platform::ImGuiFrameEnd()
+{
+
 }
 
 std::vector<RenderBackendDescription> Win32Platform::GetAvailableRenderers() const

@@ -26,6 +26,11 @@ struct Platform
     virtual void OnFrameStart(Engine* engine) = 0;
     virtual void OnFrameEnd(Engine* engine) = 0;
 
+    virtual void ImGuiInit() { };
+    virtual void ImGuiShutdown() { };
+    virtual void ImGuiFrameStart() { };
+    virtual void ImGuiFrameEnd() { };
+
     virtual std::vector<RenderBackendDescription> GetAvailableRenderers() const = 0;
     virtual std::unique_ptr<RenderBackend> CreateRenderBackend(std::string_view name) = 0;
 };

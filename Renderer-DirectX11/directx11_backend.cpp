@@ -86,22 +86,42 @@ bool DirectX11Backend::Initialize()
 
 void DirectX11Backend::PreRenderLoop()
 {
-    ImGui_ImplDX11_Init(device.Get(), context.Get());
 }
 
 void DirectX11Backend::PostRenderLoop()
 {
-    ImGui_ImplDX11_Shutdown();
 }
 
 void DirectX11Backend::OnFrameStart()
 {
-    ImGui_ImplDX11_NewFrame();
 }
 
 void DirectX11Backend::OnFrameEnd()
 {
+}
+
+void DirectX11Backend::ImGuiInit()
+{
+    ImGui_ImplDX11_Init(device.Get(), context.Get());
+}
+
+void DirectX11Backend::ImGuiShutdown()
+{
+    ImGui_ImplDX11_Shutdown();
+}
+
+void DirectX11Backend::ImGuiFrameStart()
+{
+    ImGui_ImplDX11_NewFrame();
+}
+
+void DirectX11Backend::ImGuiFrameEnd()
+{
     ImGui::Render();
+
+    // Some ImGui multi-viewport shenanigan (taken from their example file)
+    context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), NULL);
+
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 

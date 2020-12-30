@@ -35,6 +35,11 @@ private:
     void OnFrameEnd();
     void Frame();
 
+    void ImGuiInit();
+    void ImGuiShutdown();
+    void ImGuiFrameStart();
+    void ImGuiFrameEnd();
+
     Platform* platform;
     std::unique_ptr<RenderBackend> gpu;
     int32_t desiredFPS = 60;
