@@ -9,10 +9,10 @@ struct DirectX11Backend final : public RenderBackend
     DirectX11Backend(HWND window);
 
     virtual bool Initialize() override;
-    virtual void PreRenderLoop() override;
-    virtual void PostRenderLoop() override;
-    virtual void OnFrameStart() override;
-    virtual void OnFrameEnd() override;
+    virtual void PreRenderLoop(Engine* engine) override;
+    virtual void PostRenderLoop(Engine* engine) override;
+    virtual void OnFrameStart(Engine* engine) override;
+    virtual void OnFrameEnd(Engine* engine) override;
 
     virtual void ImGuiInit() override;
     virtual void ImGuiShutdown() override;

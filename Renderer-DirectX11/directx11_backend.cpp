@@ -84,19 +84,19 @@ bool DirectX11Backend::Initialize()
     return true;
 }
 
-void DirectX11Backend::PreRenderLoop()
+void DirectX11Backend::PreRenderLoop(Engine* engine)
 {
 }
 
-void DirectX11Backend::PostRenderLoop()
+void DirectX11Backend::PostRenderLoop(Engine* engine)
 {
 }
 
-void DirectX11Backend::OnFrameStart()
+void DirectX11Backend::OnFrameStart(Engine* engine)
 {
 }
 
-void DirectX11Backend::OnFrameEnd()
+void DirectX11Backend::OnFrameEnd(Engine* engine)
 {
 }
 

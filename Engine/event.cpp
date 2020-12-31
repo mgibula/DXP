@@ -55,4 +55,19 @@ Event Event::KeyReleased(int keycode)
     return result;
 }
 
+Event Event::ApplicationMinimized()
+{
+    Event result{ Event::Type::ApplicationMinimized, Event::Category::Input | Event::Category::Application };
+    return result;
+}
+
+Event Event::ApplicationResized(int width, int height)
+{
+    Event result{ Event::Type::ApplicationResized, Event::Category::Input | Event::Category::Application };
+    result.params.application.size.width = width;
+    result.params.application.size.height = height;
+
+    return result;
+}
+
 };

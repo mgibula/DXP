@@ -98,6 +98,14 @@ void Win32Platform::OnFrameStart(Engine* engine)
         case WM_KEYUP:
             engine->SubmitEvent(Event::KeyReleased(static_cast<int>(msg.wParam)));
             break;
+        case WM_SIZE:
+            if (msg.wParam == SIZE_MINIMIZED) {
+                engine->SubmitEvent(Event::ApplicationMinimized());
+            }
+            else {
+                engine->SubmitEvent(Event::ApplicationResized(static_cast<int>(LOWORD(msg.lParam)), static_cast<int>(HIWORD(msg.lParam))));
+            }
+            break;
         }
 
         DispatchMessage(&msg);

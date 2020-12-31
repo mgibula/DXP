@@ -51,7 +51,7 @@ void Engine::PreRenderLoop()
     gpu = platform->CreateRenderBackend("DirectX11");
 
     platform->PreRenderLoop(this);
-    gpu->PreRenderLoop();
+    gpu->PreRenderLoop(this);
 
     // ImGui setup
     ImGuiInit();
@@ -62,14 +62,14 @@ void Engine::PostRenderLoop()
     // ImGui shutdown
     ImGuiShutdown();
 
-    gpu->PostRenderLoop();
+    gpu->PostRenderLoop(this);
     platform->PostRenderLoop(this);
 }
 
 void Engine::OnFrameStart()
 {
     platform->OnFrameStart(this);
-    gpu->OnFrameStart();
+    gpu->OnFrameStart(this);
 
     // ImGui startup
     ImGuiFrameStart();
@@ -83,7 +83,7 @@ void Engine::OnFrameEnd()
     // ImGui finalization
     ImGuiFrameEnd();
 
-    gpu->OnFrameEnd();
+    gpu->OnFrameEnd(this);
     platform->OnFrameEnd(this);
 
     // Display frame
