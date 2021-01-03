@@ -16,6 +16,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 namespace DXP
 {
 
+Win32Platform* Win32Platform::platform_instance;
+Engine* Win32Platform::engine_instance;
+
 void Fatal(std::string_view message)
 {
     MessageBox(nullptr, message.data(), "Fatal error", MB_ICONERROR | MB_OK);
@@ -25,11 +28,14 @@ void Fatal(std::string_view message)
 Win32Platform::Win32Platform(HWND window) :
     window(window)
 {
+    Win32Platform::platform_instance = this;
     renderers.push_back({ "DirectX11", "DirectX 11 Renderer" });
 }
 
 void Win32Platform::Initialize(Engine* engine)
 {
+    Win32Platform::engine_instance = engine;
+
     auto msvc_sink = std::make_shared<spdlog::sinks::msvc_sink_st>();
     msvc_sink->set_level(spdlog::level::info);
 
@@ -63,59 +69,85 @@ void Win32Platform::PostRenderLoop(Engine* engine)
 {
 }
 
+LPARAM Win32Platform::HandleMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (!Win32Platform::platform_instance)
+        return DefWindowProc(window, message, wParam, lParam);
+
+    MSG msg = {};
+    msg.hwnd = window;
+    msg.message = message;
+    msg.wParam = wParam;
+    msg.lParam = lParam;
+
+    return Win32Platform::platform_instance->HandleMessage(msg, Win32Platform::engine_instance);
+}
+
+LPARAM Win32Platform::HandleMessage(const MSG& msg, Engine* engine)
+{
+    ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+
+    switch (msg.message) {
+    case WM_DESTROY:
+    case WM_CLOSE:
+        PostQuitMessage(0);
+        return 0;
+    case WM_LBUTTONDOWN:
+        engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Left));
+        break;
+    case WM_MBUTTONDOWN:
+        engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Middle));
+        break;
+    case WM_RBUTTONDOWN:
+        engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Right));
+        break;
+    case WM_LBUTTONUP:
+        engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Left));
+        break;
+    case WM_MBUTTONUP:
+        engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Middle));
+        break;
+    case WM_RBUTTONUP:
+        engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Right));
+        break;
+    case WM_MOUSEMOVE:
+        engine->SubmitEvent(Event::MouseMoved(GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam)));
+        break;
+    case WM_MOUSEWHEEL:
+        engine->SubmitEvent(Event::MouseScrolled(0, GET_WHEEL_DELTA_WPARAM(msg.wParam)));
+        break;
+    case WM_MOUSEHWHEEL:
+        engine->SubmitEvent(Event::MouseScrolled(GET_WHEEL_DELTA_WPARAM(msg.wParam), 0));
+        break;
+    case WM_KEYDOWN:
+        if (!((msg.lParam >> 30) & 1))
+            engine->SubmitEvent(Event::KeyPressed(static_cast<int>(msg.wParam)));
+        break;
+    case WM_KEYUP:
+        engine->SubmitEvent(Event::KeyReleased(static_cast<int>(msg.wParam)));
+        break;
+    case WM_SIZE:
+        if (msg.wParam == SIZE_MINIMIZED) {
+            engine->SubmitEvent(Event::ApplicationMinimized());
+        }
+        else {
+            engine->SubmitEvent(Event::ApplicationResized(static_cast<int>(LOWORD(msg.lParam)), static_cast<int>(HIWORD(msg.lParam))));
+        }
+        break;
+    }
+
+    return DefWindowProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+}
+
 void Win32Platform::OnFrameStart(Engine* engine)
 {
     MSG msg = {};
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
 
-        ImGui_ImplWin32_WndProcHandler(window, msg.message, msg.wParam, msg.lParam);
-
         switch (msg.message) {
         case WM_QUIT:
             engine->Terminate();
-            break;
-        case WM_LBUTTONDOWN:
-            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Left));
-            break;
-        case WM_MBUTTONDOWN:
-            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Middle));
-            break;
-        case WM_RBUTTONDOWN:
-            engine->SubmitEvent(Event::MouseButtonPressed(Event::MouseButton::Right));
-            break;
-        case WM_LBUTTONUP:
-            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Left));
-            break;
-        case WM_MBUTTONUP:
-            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Middle));
-            break;
-        case WM_RBUTTONUP:
-            engine->SubmitEvent(Event::MouseButtonReleased(Event::MouseButton::Right));
-            break;
-        case WM_MOUSEMOVE:
-            engine->SubmitEvent(Event::MouseMoved(GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam)));
-            break;
-        case WM_MOUSEWHEEL:
-            engine->SubmitEvent(Event::MouseScrolled(0, GET_WHEEL_DELTA_WPARAM(msg.wParam)));
-            break;
-        case WM_MOUSEHWHEEL:
-            engine->SubmitEvent(Event::MouseScrolled(GET_WHEEL_DELTA_WPARAM(msg.wParam), 0));
-            break;
-        case WM_KEYDOWN:
-            if (!((msg.lParam >> 30) & 1))
-                engine->SubmitEvent(Event::KeyPressed(static_cast<int>(msg.wParam)));
-            break;
-        case WM_KEYUP:
-            engine->SubmitEvent(Event::KeyReleased(static_cast<int>(msg.wParam)));
-            break;
-        case WM_SIZE:
-            if (msg.wParam == SIZE_MINIMIZED) {
-                engine->SubmitEvent(Event::ApplicationMinimized());
-            }
-            else {
-                engine->SubmitEvent(Event::ApplicationResized(static_cast<int>(LOWORD(msg.lParam)), static_cast<int>(HIWORD(msg.lParam))));
-            }
             break;
         }
 

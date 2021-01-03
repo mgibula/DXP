@@ -4,9 +4,16 @@ namespace DXP {
 
 struct Win32Platform final : public Platform
 {
+    // Ugly but needed for windows queue processing
+    static Win32Platform* platform_instance;
+    static Engine* engine_instance;
+
     static std::string GetLastSystemError();
 
     Win32Platform(HWND window);
+
+    static LRESULT HandleMessage(HWND window, UINT message, WPARAM wParam, LPARAM lParam);
+    LRESULT HandleMessage(const MSG& msg, Engine* engine);
 
     virtual void Initialize(Engine* engine) override;
 

@@ -8,14 +8,7 @@ using Win32 = DXP::Win32Platform;
 
 static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message) {
-        case WM_DESTROY:
-        case WM_CLOSE:
-            PostQuitMessage(0);
-            break;
-    }
-
-    return DefWindowProc(window, message, wParam, lParam);
+    return Win32::HandleMessage(window, message, wParam, lParam);
 }
 
 int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR cmdLine, _In_ int showCode)
