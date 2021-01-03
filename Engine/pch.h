@@ -13,3 +13,4 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/logger.h"
 #include "spdlog/sinks/sink.h"
+#include "spdlog/sinks/ringbuffer_sink.h"

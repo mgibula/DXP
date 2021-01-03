@@ -4,7 +4,6 @@
 #include "platform.h"
 #include "render_backend.h"
 #include "spdlog/logger.h"
-#include "spdlog/sinks/ringbuffer_sink.h"
 #include "../Imgui/imgui.h"
 
 namespace DXP
@@ -17,7 +16,7 @@ Engine::Engine(Platform* platform) noexcept :
     platform->Initialize(this);
 
     // Add universal in-memory ring buffer sink
-    auto memory_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_st>(1000);
+    memory_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_st>(1000);
     memory_sink->set_level(spdlog::level::debug);
     log_sinks.push_back(memory_sink);
 
@@ -114,10 +113,32 @@ void Engine::OnFrameEnd()
 
 void Engine::Frame()
 {
-    ImGui::ShowDemoWindow();
+    ImGuiFrame();
 
-    ImGui::Begin("Another Window");
-    ImGui::Text("Hello from another window!");
+}
+
+void Engine::ImGuiFrame()
+{
+    static std::string all_messages;
+    all_messages.reserve(1024 * 100);
+    all_messages.clear();
+
+    ImGui::ShowDemoWindow();
+    
+    static bool logs_opened;
+    if (ImGui::Begin("Logs", &logs_opened))
+    {
+        auto messages = memory_sink->last_formatted();
+        for (const std::string& message : messages) {
+            all_messages.append(message);
+        }
+
+        ImGui::TextUnformatted(all_messages.c_str(), all_messages.c_str() + all_messages.size());
+    }
+
+    if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+        ImGui::SetScrollHereY(1.0f);
+
     ImGui::End();
 }
 
