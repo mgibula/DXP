@@ -28,6 +28,9 @@ struct Engine
 
     void SubmitEvent(const Event& event);
 
+    void AddLogSink(std::shared_ptr<spdlog::sinks::sink> sink);
+    std::shared_ptr<spdlog::logger> CreateLogger(std::string_view name);
+
 private:
     void PreRenderLoop();
     void PostRenderLoop();
@@ -46,6 +49,8 @@ private:
     bool terminated = false;
     bool paused = false;
     std::vector<Event> events;
+    std::vector<std::shared_ptr<spdlog::sinks::sink>> log_sinks;
+    std::shared_ptr<spdlog::logger> log;
 };
 
 inline void Engine::SetDesiredFPS(int32_t fps) noexcept

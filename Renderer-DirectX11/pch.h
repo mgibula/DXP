@@ -7,3 +7,6 @@
 #include <stdio.h>
 #include <d3dcompiler.h>
 #include <string_view>
+
+#include "spdlog/spdlog.h"
+#include "spdlog/logger.h"

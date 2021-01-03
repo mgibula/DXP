@@ -6,6 +6,7 @@
 #include "../Engine/event.h"
 #include "../Engine/render_backend.h"
 #include "../Renderer-DirectX11/directx11_backend.h"
+#include "spdlog/sinks/msvc_sink.h"
 #include <windowsx.h>
 
 #pragma comment(lib, "winmm.lib")
@@ -27,12 +28,22 @@ Win32Platform::Win32Platform(HWND window) :
     renderers.push_back({ "DirectX11", "DirectX 11 Renderer" });
 }
 
+void Win32Platform::Initialize(Engine* engine)
+{
+    auto msvc_sink = std::make_shared<spdlog::sinks::msvc_sink_st>();
+    msvc_sink->set_level(spdlog::level::info);
+
+    engine->AddLogSink(msvc_sink);
+    log = engine->CreateLogger("win32");
+}
+
 void* Win32Platform::AllocateRawMemory(uint64_t size)
 {
     void* result = VirtualAlloc(nullptr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
     if (!result)
         Fatal(FMT_STRING("Allocation of {} bytes failed: {}"), size, GetLastSystemError());
 
+    SPDLOG_LOGGER_DEBUG(log, "Allocating {} bytes of memory", size);
     return result;
 }
 
@@ -145,7 +156,7 @@ std::unique_ptr<RenderBackend> Win32Platform::CreateRenderBackend(std::string_vi
 {
     std::unique_ptr<RenderBackend> result;
     if (name == "DirectX11")
-        result = std::make_unique<DirectX11Backend>(window);
+        result = std::make_unique<DirectX11Backend>(window, log->clone("gpu"));
 
     if (!result || !result->Initialize())
         return nullptr;

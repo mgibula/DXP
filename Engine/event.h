@@ -45,6 +45,9 @@ struct Event
     int category;
     Type type;
 
+    // For debugging/logging
+    std::string Description() const;
+
     int MouseButton() const;
     std::pair<int, int> MousePosition() const;
     std::pair<int, int> MouseWheelDelta() const;

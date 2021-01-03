@@ -8,9 +8,15 @@
 namespace DXP
 {
 
-DirectX11Backend::DirectX11Backend(HWND window) :
-    window(window)
+DirectX11Backend::DirectX11Backend(HWND window, std::shared_ptr<spdlog::logger> log) :
+    window(window),
+    log(log)
 {
+}
+
+std::string DirectX11Backend::InfoString() const
+{
+    return "DirectX 11 render backend";
 }
 
 bool DirectX11Backend::Initialize()

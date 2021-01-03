@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "spdlog/spdlog.h"
-#include "spdlog/sinks/msvc_sink.h"
 #include "../Engine/utils.h"
 #include "../Engine/engine.h"
 #include "win32_platform.h"
@@ -22,12 +21,6 @@ static LRESULT CALLBACK Win32MessageHandler(HWND window, UINT message, WPARAM wP
 int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR cmdLine, _In_ int showCode)
 {
     //_CrtSetAllocHook(AllocationDebugHook);
-
-    auto sink = std::make_shared<spdlog::sinks::msvc_sink_st>();
-    auto main_logger = std::make_shared<spdlog::logger>("main", sink);
-
-    spdlog::register_logger(main_logger);
-    spdlog::set_default_logger(main_logger);
 
     // Register window class
     WNDCLASSEX wc = {};

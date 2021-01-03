@@ -9,6 +9,8 @@ struct RenderBackend
 {
     virtual ~RenderBackend() = default;
 
+    virtual std::string InfoString() const = 0;
+
     virtual bool Initialize() = 0;
     virtual void PreRenderLoop(Engine* engine) { };
     virtual void PostRenderLoop(Engine* engine) { };

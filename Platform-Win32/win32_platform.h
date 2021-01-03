@@ -8,6 +8,8 @@ struct Win32Platform final : public Platform
 
     Win32Platform(HWND window);
 
+    virtual void Initialize(Engine* engine) override;
+
     virtual void* AllocateRawMemory(uint64_t size) override;
     virtual void FreeRawMemory(void* ptr) override;
 
@@ -27,6 +29,7 @@ struct Win32Platform final : public Platform
 private:
     HWND window;
     std::vector<RenderBackendDescription> renderers;
+    std::shared_ptr<spdlog::logger> log;
 };
 
 };

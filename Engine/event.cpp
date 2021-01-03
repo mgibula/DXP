@@ -5,6 +5,30 @@
 namespace DXP
 {
 
+std::string Event::Description() const
+{
+    switch (type) {
+    case Type::MouseButtonPressed:
+        return fmt::format("MouseButtonPressed({})", MouseButton());
+    case Type::MouseButtonReleased:
+        return fmt::format("MouseButtonReleased({})", MouseButton());
+    case Type::MouseMoved:
+        return fmt::format("MouseMoved({}, {})", MousePosition().first, MousePosition().second);
+    case Type::MouseScrolled:
+        return fmt::format("MouseScrolled({}, {})", MouseWheelDelta().first, MouseWheelDelta().second);
+    case Type::KeyPressed:
+        return fmt::format("KeyPressed({})", KeyCode());
+    case Type::KeyReleased:
+        return fmt::format("KeyReleased({})", KeyCode());
+    case Type::ApplicationMinimized:
+        return fmt::format("ApplicationMinimized()");
+    case Type::ApplicationResized:
+        return fmt::format("ApplicationResized({}, {})", ApplicationSize().first, ApplicationSize().second);
+    default:
+        Fatal("Unsupported event type");
+    }
+}
+
 Event Event::MouseButtonPressed(int button)
 {
     Event result{ Event::Type::MouseButtonPressed, Event::Category::Input | Event::Category::Mouse };

@@ -18,6 +18,8 @@ struct Platform
 {
     virtual ~Platform() = default;
 
+    virtual void Initialize(Engine* engine) = 0;
+
     virtual void* AllocateRawMemory(uint64_t size) = 0;
     virtual void FreeRawMemory(void* ptr) = 0;
 

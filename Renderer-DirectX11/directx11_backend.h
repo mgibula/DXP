@@ -6,7 +6,9 @@ namespace DXP
 
 struct DirectX11Backend final : public RenderBackend
 {
-    DirectX11Backend(HWND window);
+    DirectX11Backend(HWND window, std::shared_ptr<spdlog::logger> log);
+
+    virtual std::string InfoString() const override;
 
     virtual bool Initialize() override;
     virtual void PreRenderLoop(Engine* engine) override;
@@ -31,6 +33,7 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backbuffer;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizer;
+    std::shared_ptr<spdlog::logger> log;
 };
 
 };

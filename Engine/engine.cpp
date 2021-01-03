@@ -3,6 +3,8 @@
 #include "event.h"
 #include "platform.h"
 #include "render_backend.h"
+#include "spdlog/logger.h"
+#include "spdlog/sinks/ringbuffer_sink.h"
 #include "../Imgui/imgui.h"
 
 namespace DXP
@@ -11,12 +13,21 @@ namespace DXP
 Engine::Engine(Platform* platform) noexcept :
     platform(platform)
 {
+    // Initialize platform (it can inject its log sinks)
+    platform->Initialize(this);
 
+    // Add universal in-memory ring buffer sink
+    auto memory_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_st>(1000);
+    memory_sink->set_level(spdlog::level::debug);
+    log_sinks.push_back(memory_sink);
+
+    // Create core logger and use it as default logger
+    log = CreateLogger("core");
+    spdlog::set_default_logger(log);
 }
 
 Engine::~Engine()
 {
-
 }
 
 void Engine::Run()
@@ -49,6 +60,7 @@ void Engine::Run()
 void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
+    SPDLOG_LOGGER_INFO(log, "Created renderer: {}", gpu->InfoString());
 
     platform->PreRenderLoop(this);
     gpu->PreRenderLoop(this);
@@ -68,6 +80,8 @@ void Engine::PostRenderLoop()
 
 void Engine::OnFrameStart()
 {
+    SPDLOG_LOGGER_DEBUG(log, "Frame start");
+
     platform->OnFrameStart(this);
     gpu->OnFrameStart(this);
 
@@ -80,6 +94,8 @@ void Engine::OnFrameStart()
 
 void Engine::OnFrameEnd()
 {
+    SPDLOG_LOGGER_DEBUG(log, "Frame end");
+
     // ImGui finalization
     ImGuiFrameEnd();
 
@@ -103,7 +119,6 @@ void Engine::Frame()
     ImGui::Begin("Another Window");
     ImGui::Text("Hello from another window!");
     ImGui::End();
-
 }
 
 void Engine::ImGuiInit()
@@ -147,7 +162,21 @@ void Engine::ImGuiFrameEnd()
 
 void Engine::SubmitEvent(const Event& event)
 {
+    SPDLOG_LOGGER_INFO(log, "Event: {}", event.Description());
     events.push_back(event);
+}
+
+void Engine::AddLogSink(std::shared_ptr<spdlog::sinks::sink> sink)
+{
+    log_sinks.push_back(sink);
+}
+
+std::shared_ptr<spdlog::logger> Engine::CreateLogger(std::string_view name)
+{
+    auto result = std::make_shared<spdlog::logger>(std::string(name), log_sinks.begin(), log_sinks.end());
+    spdlog::register_logger(result);
+
+    return result;
 }
 
 };
