@@ -1,3 +1,4 @@
+#pragma once
 #include "../Engine/platform.h"
 
 namespace DXP {

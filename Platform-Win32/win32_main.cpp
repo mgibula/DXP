@@ -1,8 +1,4 @@
 #include "pch.h"
-#include "spdlog/spdlog.h"
-#include "../Engine/utils.h"
-#include "../Engine/engine.h"
-#include "win32_platform.h"
 
 using Win32 = DXP::Win32Platform;
 

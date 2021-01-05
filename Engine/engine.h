@@ -9,6 +9,7 @@ namespace DXP
 struct RenderBackend;
 struct Platform;
 struct Event;
+struct CyclicLog;
 
 struct Engine
 {
@@ -50,7 +51,7 @@ private:
     bool terminated = false;
     bool paused = false;
     std::vector<Event> events;
-    std::shared_ptr<spdlog::sinks::ringbuffer_sink_st> memory_sink;
+    std::shared_ptr<CyclicLogSinkST> memory_sink;
     std::vector<std::shared_ptr<spdlog::sinks::sink>> log_sinks;
     std::shared_ptr<spdlog::logger> log;
 };

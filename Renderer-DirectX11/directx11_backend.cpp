@@ -1,7 +1,4 @@
 #include "pch.h"
-#include "directx11_backend.h"
-#include "../Engine/utils.h"
-#include "../Imgui/backends/imgui_impl_dx11.h"
 
 #pragma comment(lib, "d3d11.lib")
 

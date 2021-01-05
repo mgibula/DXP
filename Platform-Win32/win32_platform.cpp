@@ -1,13 +1,4 @@
 #include "pch.h"
-#include "win32_platform.h"
-#include "../Imgui/backends/imgui_impl_win32.h"
-#include "../Engine/utils.h"
-#include "../Engine/engine.h"
-#include "../Engine/event.h"
-#include "../Engine/render_backend.h"
-#include "../Renderer-DirectX11/directx11_backend.h"
-#include "spdlog/sinks/msvc_sink.h"
-#include <windowsx.h>
 
 #pragma comment(lib, "winmm.lib")
 

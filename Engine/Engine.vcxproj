@@ -155,6 +155,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cyclic_buffer.cpp" />
+    <ClCompile Include="cyclic_log.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="pch.cpp">
@@ -170,6 +172,8 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cyclic_buffer.h" />
+    <ClInclude Include="cyclic_log.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="pch.h" />

@@ -1,10 +1,13 @@
 #include "pch.h"
+#include "cyclic_buffer.h"
+#include "cyclic_log.h"
 #include "engine.h"
 #include "event.h"
 #include "platform.h"
 #include "render_backend.h"
-#include "spdlog/logger.h"
 #include "../Imgui/imgui.h"
+
+#include "spdlog/stopwatch.h"
 
 namespace DXP
 {
@@ -16,7 +19,7 @@ Engine::Engine(Platform* platform) noexcept :
     platform->Initialize(this);
 
     // Add universal in-memory ring buffer sink
-    memory_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_st>(1000);
+    memory_sink = std::make_shared<CyclicLogSinkST>(1024 * 100);
     memory_sink->set_level(spdlog::level::debug);
     log_sinks.push_back(memory_sink);
 
@@ -128,12 +131,9 @@ void Engine::ImGuiFrame()
     static bool logs_opened;
     if (ImGui::Begin("Logs", &logs_opened))
     {
-        auto messages = memory_sink->last_formatted();
-        for (const std::string& message : messages) {
-            all_messages.append(message);
-        }
-
-        ImGui::TextUnformatted(all_messages.c_str(), all_messages.c_str() + all_messages.size());
+        auto& log_buffer_view = memory_sink->GetLogBufferRef();
+        if (!log_buffer_view.empty())
+            ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
     }
 
     if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
