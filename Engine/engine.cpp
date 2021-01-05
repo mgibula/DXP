@@ -114,6 +114,25 @@ void Engine::OnFrameEnd()
     gpu->ClearScreen();
 }
 
+void Engine::PushLayer(std::unique_ptr<Layer> layer)
+{
+    layers.push_back(std::move(layer));
+    layers.back()->OnAttach(this);
+}
+
+std::unique_ptr<Layer> Engine::PopLayer()
+{
+    if (layers.empty())
+        return nullptr;
+
+    std::unique_ptr<Layer> result = std::move(layers.back());
+    layers.pop_back();
+    
+    result->OnDetach(this);
+
+    return result;
+}
+
 void Engine::Frame()
 {
     ImGuiFrame();
@@ -183,7 +202,15 @@ void Engine::ImGuiFrameEnd()
 
 void Engine::SubmitEvent(const Event& event)
 {
-    SPDLOG_LOGGER_INFO(log, "Event: {}", event.Description());
+    switch (event.type) {
+    case Event::Type::MouseMoved:
+        SPDLOG_LOGGER_TRACE(log, "Event: {}", event.DebugDescription());
+        break;
+    default:
+        SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());
+        break;
+    }
+
     events.push_back(event);
 }
 

@@ -5,7 +5,7 @@
 namespace DXP
 {
 
-std::string Event::Description() const
+std::string Event::DebugDescription() const
 {
     switch (type) {
     case Type::MouseButtonPressed:

@@ -32,6 +32,9 @@ struct Engine
     void AddLogSink(std::shared_ptr<spdlog::sinks::sink> sink);
     std::shared_ptr<spdlog::logger> CreateLogger(std::string_view name);
 
+    void PushLayer(std::unique_ptr<Layer> layer);
+    std::unique_ptr<Layer> PopLayer();
+
 private:
     void PreRenderLoop();
     void PostRenderLoop();
@@ -50,7 +53,11 @@ private:
     int32_t desiredFPS = 60;
     bool terminated = false;
     bool paused = false;
+
     std::vector<Event> events;
+
+    std::vector<std::unique_ptr<Layer>> layers;
+
     std::shared_ptr<CyclicLogSinkST> memory_sink;
     std::vector<std::shared_ptr<spdlog::sinks::sink>> log_sinks;
     std::shared_ptr<spdlog::logger> log;

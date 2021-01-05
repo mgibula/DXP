@@ -1,5 +1,4 @@
 #pragma once
-#include "utils.h"
 
 namespace DXP
 {
@@ -46,7 +45,7 @@ struct Event
     Type type;
 
     // For debugging/logging
-    std::string Description() const;
+    std::string DebugDescription() const;
 
     int MouseButton() const;
     std::pair<int, int> MousePosition() const;
