@@ -10,10 +10,11 @@ struct RenderBackend;
 struct Platform;
 struct Event;
 struct CyclicLog;
+struct Simulation;
 
 struct Engine
 {
-    Engine(Platform* platform) noexcept;
+    Engine(Platform* platform, Simulation *simulation) noexcept;
     ~Engine();
 
     void Run();
@@ -49,6 +50,7 @@ private:
     void ImGuiFrame();
 
     Platform* platform;
+    Simulation* simulation;
     std::unique_ptr<RenderBackend> gpu;
     int32_t desiredFPS = 60;
     bool terminated = false;

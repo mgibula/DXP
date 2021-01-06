@@ -8,7 +8,7 @@
 #include <d3dcompiler.h>
 #include <string_view>
 
-#include "dxp.h"
+#include "Engine/dxp.h"
 #include "directx11_backend.h"
 
-#include "../Imgui/backends/imgui_impl_dx11.h"
+#include "Imgui/backends/imgui_impl_dx11.h"

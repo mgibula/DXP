@@ -12,8 +12,9 @@
 namespace DXP
 {
 
-Engine::Engine(Platform* platform) noexcept :
-    platform(platform)
+Engine::Engine(Platform* platform, Simulation* simulation) noexcept :
+    platform(platform),
+    simulation(simulation)
 {
     // Initialize platform (it can inject its log sinks)
     platform->Initialize(this);
@@ -66,6 +67,7 @@ void Engine::PreRenderLoop()
 
     platform->PreRenderLoop(this);
     gpu->PreRenderLoop(this);
+    simulation->PreRenderLoop(this);
 
     // ImGui setup
     ImGuiInit();
@@ -76,6 +78,7 @@ void Engine::PostRenderLoop()
     // ImGui shutdown
     ImGuiShutdown();
 
+    simulation->PostRenderLoop(this);
     gpu->PostRenderLoop(this);
     platform->PostRenderLoop(this);
 }

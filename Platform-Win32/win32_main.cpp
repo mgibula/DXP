@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Game/main.h"
 
 using Win32 = DXP::Win32Platform;
 
@@ -45,22 +46,16 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
     if (!window)
         DXP::Fatal(FMT_STRING("CreateWindowEx failed: {}"), Win32::GetLastSystemError());
 
+    auto game = Simworld::Create();
+
     DXP::Win32Platform platform{ window };
-    DXP::Engine engine{ &platform };
+    DXP::Engine engine{ &platform, game.get() };
 
     ShowWindow(window, showCode);
     if (!UpdateWindow(window))
         DXP::Fatal(FMT_STRING("UpdateWindow failed: {}"), Win32::GetLastSystemError());
 
     engine.Run();
-
-    //SG3D::SG3D_Game sg3d_game;
-
-    //GE::Win32Platform platform(window);
-    //GE::Win32Directx11 directx11(window);
-    //GE::Engine engine(&sg3d_game, &directx11, &platform);
-
-    //engine.Run();
 
     DestroyWindow(window);
 

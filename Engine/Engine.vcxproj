@@ -177,6 +177,7 @@
     <ClInclude Include="dxp.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
+    <ClInclude Include="simulation.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="platform.h" />
