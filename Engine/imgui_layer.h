@@ -9,10 +9,10 @@ struct ImGuiLayer final : public Layer
     virtual void OnDetach(Engine* engine) override;
 
     virtual void OnFrameStart(Engine* engine) override;
-
     virtual void OnFrameEnd(Engine* engine) override;
 
     virtual void OnImguiFrame(Engine* engine) override;
+    virtual bool OnEvent(Engine* engine, const Event* event) override;
 };
 
 };

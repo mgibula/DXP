@@ -114,9 +114,6 @@ void Engine::OnFrameEnd()
     // Display frame
     gpu->Display();
 
-    // Clear pending events vector
-    events.clear();
-
     // Clear now to save time later
     gpu->ClearScreen();
 }
@@ -134,7 +131,7 @@ std::unique_ptr<Layer> Engine::PopLayer()
 
     std::unique_ptr<Layer> result = std::move(layers.back());
     layers.pop_back();
-    
+     
     result->OnDetach(this);
 
     return result;
@@ -142,7 +139,7 @@ std::unique_ptr<Layer> Engine::PopLayer()
 
 void Engine::Frame(const FrameInfo& frame)
 {
-    simulation->Frame(frame);
+    simulation->Frame(this, frame);
 }
 
 void Engine::SubmitEvent(const Event& event)
@@ -156,7 +153,10 @@ void Engine::SubmitEvent(const Event& event)
         break;
     }
 
-    events.push_back(event);
+    for (auto i = layers.rbegin(); i != layers.rend(); i++) {
+        if (!i->get()->OnEvent(this, &event))
+            break;
+    }
 }
 
 void Engine::AddLogSink(std::shared_ptr<spdlog::sinks::sink> sink)

@@ -22,6 +22,7 @@ struct DirectX11Backend final : public RenderBackend
 
     virtual void ClearScreen() override;
     virtual void Display() override;
+    virtual void Resize(int width, int height) override;
 
 private:
     HWND window;

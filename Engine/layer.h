@@ -4,6 +4,7 @@ namespace DXP
 {
 
 struct Engine;
+struct Event;
 
 struct Layer
 {
@@ -23,6 +24,12 @@ struct Layer
 
     // This function is called (in order of registration) if debug layer is active and after frame generation has ended
     virtual void OnImguiFrame(Engine* engine) { };
+
+    // Called when event is received (in REVERSED order of registration) at unspecified time
+    // TODO - should events be buffered and submitted at known time?
+    //
+    // Return value indicates if event should continue propagating
+    virtual bool OnEvent(Engine* engine, const Event* event) { return true; };
 };
 
 };

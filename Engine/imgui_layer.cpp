@@ -69,4 +69,13 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
     ImGui::End();
 }
 
+bool ImGuiLayer::OnEvent(Engine* engine, const Event* event)
+{
+    if (event->type == Event::Type::ApplicationResized) {
+        engine->gpu->Resize(event->ApplicationSize().first, event->ApplicationSize().second);
+    }
+
+    return true;
+}
+
 };

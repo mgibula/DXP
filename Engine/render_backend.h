@@ -25,6 +25,8 @@ struct RenderBackend
     virtual void ClearScreen() = 0;
 
     virtual void Display() = 0;
+
+    virtual void Resize(int width, int height) = 0;
 };
 
 };

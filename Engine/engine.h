@@ -59,8 +59,6 @@ private:
     bool terminated = false;
     bool paused = false;
 
-    std::vector<Event> events;
-
     std::vector<std::unique_ptr<Layer>> layers;
 
     std::shared_ptr<CyclicLogSinkST> memory_sink;

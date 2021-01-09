@@ -14,9 +14,9 @@ void Game::PostRenderLoop(DXP::Engine* engine)
 
 }
 
-void Game::Frame(const DXP::FrameInfo& frame)
+void Game::Frame(DXP::Engine* engine, const DXP::FrameInfo& frame)
 {
-    log->info("Delta time: {}", frame.deltaTime);
+    //log->info("Delta time: {}", frame.deltaTime);
 }
 
 };

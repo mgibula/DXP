@@ -12,7 +12,7 @@ struct Simulation
 
     virtual void PreRenderLoop(Engine* engine) { };
     virtual void PostRenderLoop(Engine* engine) { };
-    virtual void Frame(const FrameInfo& frame) { };
+    virtual void Frame(Engine* engine, const FrameInfo& frame) { };
 };
 
 };

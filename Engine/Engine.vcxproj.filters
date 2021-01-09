@@ -19,12 +19,15 @@
     <Filter Include="Header Files\layers">
       <UniqueIdentifier>{fd5c1bc2-2b50-4a52-96be-c7e35d303b62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\misc">
+      <UniqueIdentifier>{8f71de4a-c1b5-4679-8793-1a4edfe0c425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{37eab78d-e7f2-4af3-b564-6b024ab11f4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
@@ -33,14 +36,17 @@
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cyclic_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cyclic_log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="imgui_layer.cpp">
       <Filter>Source Files\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="cyclic_log.cpp">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="cyclic_buffer.cpp">
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,9 +56,6 @@
     <ClInclude Include="platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render_backend.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,12 +63,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cyclic_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cyclic_log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dxp.h">
@@ -79,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="imgui_layer.h">
       <Filter>Header Files\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="cyclic_buffer.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="cyclic_log.h">
+      <Filter>Header Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
