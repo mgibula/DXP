@@ -4,6 +4,7 @@ namespace DXP
 {
 
 struct Engine;
+struct FrameInfo;
 
 struct Simulation
 {
@@ -11,6 +12,7 @@ struct Simulation
 
     virtual void PreRenderLoop(Engine* engine) { };
     virtual void PostRenderLoop(Engine* engine) { };
+    virtual void Frame(const FrameInfo& frame) { };
 };
 
 };

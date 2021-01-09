@@ -13,6 +13,12 @@ struct CyclicLog;
 struct Simulation;
 struct ImGuiLayer;
 
+struct FrameInfo
+{
+    uint64_t frame = 0;
+    float deltaTime = 0.f;
+};
+
 struct Engine
 {
     friend struct ImGuiLayer;
@@ -44,7 +50,7 @@ private:
     void PostRenderLoop();
     void OnFrameStart();
     void OnFrameEnd();
-    void Frame();
+    void Frame(const FrameInfo& frame);
 
     Platform* platform;
     Simulation* simulation;

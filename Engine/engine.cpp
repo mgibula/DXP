@@ -32,26 +32,37 @@ Engine::~Engine()
 
 void Engine::Run()
 {
+    using namespace std::chrono;
+
     PreRenderLoop();
+
+    auto previous = high_resolution_clock::now();
+    FrameInfo info;
 
     while (!IsTerminated()) {
         // Record when frame processing starts
         int32_t time_budget = (desiredFPS) ? 1000 / desiredFPS : 0;
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = high_resolution_clock::now();
 
         OnFrameStart();
 
         if (IsTerminated())
             break;
 
-        if (!IsPaused())
-            Frame();
+        if (!IsPaused()) {
+            info.frame++;
+            info.deltaTime = duration_cast<milliseconds>(start - previous).count() * 0.001f;
+
+            Frame(info);
+        }
 
         OnFrameEnd();
 
+        previous = start;
+
         // FPS throttling - calculate how long should we sleep
         if (desiredFPS)
-            std::this_thread::sleep_until(start + std::chrono::milliseconds(time_budget));
+            std::this_thread::sleep_until(start + milliseconds(time_budget));
     }
 
     PostRenderLoop();
@@ -129,10 +140,9 @@ std::unique_ptr<Layer> Engine::PopLayer()
     return result;
 }
 
-void Engine::Frame()
+void Engine::Frame(const FrameInfo& frame)
 {
-    for (auto i = layers.begin(); i != layers.end(); i++)
-        i->get()->OnFrame(this);
+    simulation->Frame(frame);
 }
 
 void Engine::SubmitEvent(const Event& event)

@@ -9,13 +9,19 @@ struct Layer
 {
     virtual ~Layer() = default;
 
+    // This function is called after layer has been attached
     virtual void OnAttach(Engine* engine) { };
+
+    // This function is called after layer has been detached
     virtual void OnDetach(Engine* engine) { };
 
+    // This function is called (in order of registration) just after frame generation has started
     virtual void OnFrameStart(Engine* engine) { };
-    virtual void OnFrame(Engine* engine) { };
+
+    // This function is called (in REVERSED order of registration) just after frame generation has ended
     virtual void OnFrameEnd(Engine* engine) { };
 
+    // This function is called (in order of registration) if debug layer is active and after frame generation has ended
     virtual void OnImguiFrame(Engine* engine) { };
 };
 
