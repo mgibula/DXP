@@ -11,3 +11,5 @@
 #include <optional>
 
 #include "dxp.h"
+#include "platform.h"
+#include "imgui_layer.h"

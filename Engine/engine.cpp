@@ -5,9 +5,6 @@
 #include "event.h"
 #include "platform.h"
 #include "render_backend.h"
-#include "../Imgui/imgui.h"
-
-#include "spdlog/stopwatch.h"
 
 namespace DXP
 {
@@ -69,14 +66,13 @@ void Engine::PreRenderLoop()
     gpu->PreRenderLoop(this);
     simulation->PreRenderLoop(this);
 
-    // ImGui setup
-    ImGuiInit();
+    PushLayer(std::make_unique<ImGuiLayer>());
 }
 
 void Engine::PostRenderLoop()
 {
-    // ImGui shutdown
-    ImGuiShutdown();
+    while (!layers.empty())
+        PopLayer();
 
     simulation->PostRenderLoop(this);
     gpu->PostRenderLoop(this);
@@ -90,19 +86,16 @@ void Engine::OnFrameStart()
     platform->OnFrameStart(this);
     gpu->OnFrameStart(this);
 
-    // ImGui startup
-    ImGuiFrameStart();
-
-    // Setup main dockspace (thanks imgui_demo.cpp !)
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+    for (auto i = layers.begin(); i != layers.end(); i++)
+        i->get()->OnFrameStart(this);
 }
 
 void Engine::OnFrameEnd()
 {
     SPDLOG_LOGGER_DEBUG(log, "Frame end");
 
-    // ImGui finalization
-    ImGuiFrameEnd();
+    for (auto i = layers.rbegin(); i != layers.rend(); i++)
+        i->get()->OnFrameEnd(this);
 
     gpu->OnFrameEnd(this);
     platform->OnFrameEnd(this);
@@ -138,69 +131,8 @@ std::unique_ptr<Layer> Engine::PopLayer()
 
 void Engine::Frame()
 {
-    ImGuiFrame();
-
-}
-
-void Engine::ImGuiFrame()
-{
-    static std::string all_messages;
-    all_messages.reserve(1024 * 100);
-    all_messages.clear();
-
-    ImGui::ShowDemoWindow();
-    
-    static bool logs_opened;
-    if (ImGui::Begin("Logs", &logs_opened))
-    {
-        auto& log_buffer_view = memory_sink->GetLogBufferRef();
-        if (!log_buffer_view.empty())
-            ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
-    }
-
-    if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-        ImGui::SetScrollHereY(1.0f);
-
-    ImGui::End();
-}
-
-void Engine::ImGuiInit()
-{
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-    platform->ImGuiInit();
-    gpu->ImGuiInit();
-}
-
-void Engine::ImGuiShutdown()
-{
-    gpu->ImGuiShutdown();
-    platform->ImGuiShutdown();
-
-    ImGui::DestroyContext();
-}
-
-void Engine::ImGuiFrameStart()
-{
-    gpu->ImGuiFrameStart();
-    platform->ImGuiFrameStart();
-    ImGui::NewFrame();
-}
-
-void Engine::ImGuiFrameEnd()
-{
-    platform->ImGuiFrameEnd();
-    gpu->ImGuiFrameEnd();
-
-    // Multi viewport handling
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
+    for (auto i = layers.begin(); i != layers.end(); i++)
+        i->get()->OnFrame(this);
 }
 
 void Engine::SubmitEvent(const Event& event)

@@ -11,9 +11,12 @@ struct Platform;
 struct Event;
 struct CyclicLog;
 struct Simulation;
+struct ImGuiLayer;
 
 struct Engine
 {
+    friend struct ImGuiLayer;
+
     Engine(Platform* platform, Simulation *simulation) noexcept;
     ~Engine();
 
@@ -42,12 +45,6 @@ private:
     void OnFrameStart();
     void OnFrameEnd();
     void Frame();
-
-    void ImGuiInit();
-    void ImGuiShutdown();
-    void ImGuiFrameStart();
-    void ImGuiFrameEnd();
-    void ImGuiFrame();
 
     Platform* platform;
     Simulation* simulation;

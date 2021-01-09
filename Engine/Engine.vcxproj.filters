@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\layers">
+      <UniqueIdentifier>{829f55bc-91ec-4109-b386-9355a5d4cb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\layers">
+      <UniqueIdentifier>{fd5c1bc2-2b50-4a52-96be-c7e35d303b62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
@@ -32,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="cyclic_log.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_layer.cpp">
+      <Filter>Source Files\layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="simulation.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_layer.h">
+      <Filter>Header Files\layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

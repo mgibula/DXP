@@ -11,7 +11,11 @@ struct Layer
 
     virtual void OnAttach(Engine* engine) { };
     virtual void OnDetach(Engine* engine) { };
+
+    virtual void OnFrameStart(Engine* engine) { };
     virtual void OnFrame(Engine* engine) { };
+    virtual void OnFrameEnd(Engine* engine) { };
+
     virtual void OnImguiFrame(Engine* engine) { };
 };
 
