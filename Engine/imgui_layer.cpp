@@ -29,6 +29,8 @@ void ImGuiLayer::OnDetach(Engine* engine)
 
 void ImGuiLayer::OnFrameStart(Engine* engine)
 {
+    started = std::chrono::high_resolution_clock::now();
+
     // ImGui startup
     engine->gpu->ImGuiFrameStart();
     engine->platform->ImGuiFrameStart();
@@ -53,14 +55,36 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
 
 void ImGuiLayer::OnImguiFrame(Engine* engine)
 {
+    std::chrono::duration<float, std::milli> duration = std::chrono::high_resolution_clock::now() - started;
+    processingTimes.Push(duration.count());
+
     ImGui::ShowDemoWindow();
 
-    static bool logs_opened;
-    if (ImGui::Begin("Logs", &logs_opened))
+    static bool debug_opened;
+    static fmt::memory_buffer buffer;
+
+    if (ImGui::Begin("Debug", &debug_opened))
     {
-        auto& log_buffer_view = engine->memory_sink->GetLogBufferRef();
-        if (!log_buffer_view.empty())
-            ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
+        {   /* Draw FPS graph */
+            float highest_processing_time = *std::max_element(processingTimes.Data(), processingTimes.Data() + processingTimes.Size());
+            float last_processing_time = processingTimes.Peek();
+
+            ImGui::PushItemWidth(-1);
+            FormatToCString(buffer, "Simulation duration: max: {:.2f}ms, last: {:.2f}", highest_processing_time, last_processing_time);
+            ImGui::PlotLines("", processingTimes.GetterFunction(), &processingTimes, processingTimes.Size(), 0, buffer.data(), 0.f, FLT_MAX);
+        }
+
+        if (ImGui::BeginTabBar("ImGuiLayer")) {
+            if (ImGui::BeginTabItem("Logs")) {
+                auto& log_buffer_view = engine->memory_sink->GetLogBufferRef();
+                if (!log_buffer_view.empty())
+                    ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
+
+                ImGui::EndTabItem();
+            }
+        }
+
+        ImGui::EndTabBar();
     }
 
     if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())

@@ -179,6 +179,7 @@
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="imgui_layer.h" />
+    <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="simulation.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="pch.h" />

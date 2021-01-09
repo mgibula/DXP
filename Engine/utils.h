@@ -18,4 +18,14 @@ template <typename S, typename... Args>
     }
 }
 
+template <typename... T>
+const char* FormatToCString(fmt::memory_buffer& buffer, T&&... args)
+{
+    buffer.clear();
+    fmt::format_to(buffer, std::forward<T>(args)...);
+    buffer.push_back('\0');
+
+    return buffer.data();
+}
+
 };

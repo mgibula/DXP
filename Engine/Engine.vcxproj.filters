@@ -86,5 +86,8 @@
     <ClInclude Include="cyclic_log.h">
       <Filter>Header Files\misc</Filter>
     </ClInclude>
+    <ClInclude Include="ring_buffer.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

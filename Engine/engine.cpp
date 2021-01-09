@@ -40,8 +40,11 @@ void Engine::Run()
     FrameInfo info;
 
     while (!IsTerminated()) {
-        // Record when frame processing starts
-        int32_t time_budget = (desiredFPS) ? 1000 / desiredFPS : 0;
+        // Record when frame processing starts and calculate budget
+        milliseconds time_budget;
+        if (desiredFPS)
+            time_budget = duration_cast<milliseconds>(seconds(1)) / 60;
+        
         auto start = high_resolution_clock::now();
 
         OnFrameStart();
@@ -51,7 +54,7 @@ void Engine::Run()
 
         if (!IsPaused()) {
             info.frame++;
-            info.deltaTime = duration_cast<milliseconds>(start - previous).count() * 0.001f;
+            info.deltaTime = duration<float, std::ratio<1>>(start - previous).count();
 
             Frame(info);
         }
@@ -62,7 +65,7 @@ void Engine::Run()
 
         // FPS throttling - calculate how long should we sleep
         if (desiredFPS)
-            std::this_thread::sleep_until(start + milliseconds(time_budget));
+            std::this_thread::sleep_until(start + time_budget);
     }
 
     PostRenderLoop();
