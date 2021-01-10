@@ -87,22 +87,6 @@ bool DirectX11Backend::Initialize()
     return true;
 }
 
-void DirectX11Backend::Resize(int width, int height)
-{
-    backbuffer->Release();
-    swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-
-    ID3D11Texture2D* pBackBuffer;
-    if (FAILED(swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &pBackBuffer)))
-        Fatal("swapchain::GetBuffer");
-
-    // Create render target
-    if (FAILED(device->CreateRenderTargetView(pBackBuffer, nullptr, backbuffer.GetAddressOf())))
-        Fatal("CreateRenderTargetView");
-
-    pBackBuffer->Release();
-}
-
 void DirectX11Backend::PreRenderLoop(Engine* engine)
 {
 }
@@ -153,6 +137,36 @@ void DirectX11Backend::ClearScreen()
 void DirectX11Backend::Display()
 {
     swapchain->Present(0, 0);
+}
+
+void DirectX11Backend::Resize(int width, int height)
+{
+    backbuffer->Release();
+    swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
+
+    ID3D11Texture2D* pBackBuffer;
+    if (FAILED(swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer)))
+        Fatal("swapchain::GetBuffer");
+
+    // Create render target
+    if (FAILED(device->CreateRenderTargetView(pBackBuffer, nullptr, backbuffer.GetAddressOf())))
+        Fatal("CreateRenderTargetView");
+
+    pBackBuffer->Release();
+}
+
+std::shared_ptr<VertexShader> DirectX11Backend::LoadVertexShader(std::string_view content)
+{
+    auto result = std::make_shared<DirectX11VertexShader>(content, device.Get());
+
+    return result;
+}
+
+std::shared_ptr<PixelShader> DirectX11Backend::LoadPixelShader(std::string_view content)
+{
+    auto result = std::make_shared<DirectX11PixelShader>(content, device.Get());
+
+    return result;
 }
 
 };

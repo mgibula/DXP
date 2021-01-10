@@ -12,6 +12,7 @@ struct Event;
 struct CyclicLog;
 struct Simulation;
 struct ImGuiLayer;
+struct Renderer;
 
 struct FrameInfo
 {
@@ -44,6 +45,8 @@ struct Engine
 
     void PushLayer(std::unique_ptr<Layer> layer);
     std::unique_ptr<Layer> PopLayer();
+
+    std::unique_ptr<Renderer> renderer;
 
 private:
     void PreRenderLoop();

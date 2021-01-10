@@ -157,11 +157,13 @@
   <ItemGroup>
     <ClInclude Include="..\Imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="directx11_backend.h" />
+    <ClInclude Include="directx11_shader.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Imgui\backends\imgui_impl_dx11.cpp" />
     <ClCompile Include="directx11_backend.cpp" />
+    <ClCompile Include="directx11_shader.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>

@@ -170,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="renderer.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,7 +180,9 @@
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="imgui_layer.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="simulation.h" />
     <ClInclude Include="layer.h" />
     <ClInclude Include="pch.h" />

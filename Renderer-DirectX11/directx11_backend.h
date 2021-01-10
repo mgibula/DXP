@@ -24,6 +24,9 @@ struct DirectX11Backend final : public RenderBackend
     virtual void Display() override;
     virtual void Resize(int width, int height) override;
 
+    virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view content) override;
+    virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view content) override;
+
 private:
     HWND window;
     int width = 0;

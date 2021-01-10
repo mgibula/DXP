@@ -28,4 +28,6 @@ const char* FormatToCString(fmt::memory_buffer& buffer, T&&... args)
     return buffer.data();
 }
 
+std::string FileGetContent(std::string_view path);
+
 };

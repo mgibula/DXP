@@ -24,6 +24,8 @@ Engine::Engine(Platform* platform, Simulation* simulation) noexcept :
     // Create core logger and use it as default logger
     log = CreateLogger("core");
     spdlog::set_default_logger(log);
+
+    renderer = std::make_unique<Renderer>(CreateLogger("renderer"));
 }
 
 Engine::~Engine()
@@ -75,6 +77,8 @@ void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
     SPDLOG_LOGGER_INFO(log, "Created renderer: {}", gpu->InfoString());
+
+    renderer->SetRenderBackend(gpu.get());
 
     platform->PreRenderLoop(this);
     gpu->PreRenderLoop(this);
