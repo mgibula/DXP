@@ -22,7 +22,12 @@ struct Renderer
 
 struct RendererState
 {
+    RendererState() = default;
     RendererState(Renderer* renderer, std::shared_ptr<spdlog::logger> log);
+
+    bool IsValid() const {
+        return (renderer && vertexShader && pixelShader);
+    };
 
     void LoadVertexShader(std::string_view path);
     void LoadPixelShader(std::string_view path);
@@ -30,7 +35,7 @@ struct RendererState
     std::shared_ptr<VertexShader> vertexShader;
     std::shared_ptr<PixelShader> pixelShader;
 
-    Renderer* renderer;
+    Renderer* renderer = nullptr;
     std::shared_ptr<spdlog::logger> log;
 };
 
