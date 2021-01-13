@@ -76,8 +76,6 @@ void Engine::Run()
 void Engine::PreRenderLoop()
 {
     gpu = platform->CreateRenderBackend("DirectX11");
-    SPDLOG_LOGGER_INFO(log, "Created renderer: {}", gpu->InfoString());
-
     renderer->SetRenderBackend(gpu.get());
 
     platform->PreRenderLoop(this);

@@ -6,11 +6,12 @@ namespace DXP
 Renderer::Renderer(std::shared_ptr<spdlog::logger> log) :
     log(log)
 {
-    log->info("Initializing");
+    SPDLOG_LOGGER_INFO(log, "Initializing");
 }
 
 void Renderer::SetRenderBackend(RenderBackend* backend)
 {
+    SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", backend->InfoString());
     gpu = backend;
 }
 
@@ -23,17 +24,19 @@ RendererState::RendererState(Renderer* renderer, std::shared_ptr<spdlog::logger>
     renderer(renderer),
     log(log)
 {
-    log->info("Created");
+    SPDLOG_LOGGER_INFO(log, "Created");
 }
 
 void RendererState::LoadVertexShader(std::string_view path)
 {
-    vertexShader = renderer->gpu->LoadVertexShader(FileGetContent(path));
+    vertexShader = renderer->gpu->LoadVertexShader(path, FileGetContent(path));
+    SPDLOG_LOGGER_INFO(log, "Loaded vertex shader {}", path);
 }
 
 void RendererState::LoadPixelShader(std::string_view path)
 {
-    pixelShader = renderer->gpu->LoadPixelShader(FileGetContent(path));
+    pixelShader = renderer->gpu->LoadPixelShader(path, FileGetContent(path));
+    SPDLOG_LOGGER_INFO(log, "Loaded pixel shader {}", path);
 }
 
 };

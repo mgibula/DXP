@@ -16,7 +16,7 @@ struct Renderer
 
     RendererState CreateState(std::string name);
 
-    RenderBackend* gpu;
+    RenderBackend* gpu = nullptr;
     std::shared_ptr<spdlog::logger> log;
 };
 

@@ -11,6 +11,7 @@
 
 #include "Engine/utils.h"
 #include "Engine/event.h"
+#include "Engine/buffer.h"
 #include "Engine/shader.h"
 #include "Engine/render_backend.h"
 #include "Engine/renderer.h"
