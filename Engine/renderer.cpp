@@ -15,9 +15,25 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     gpu = backend;
 }
 
-RendererState Renderer::CreateState(std::string name)
+std::shared_ptr<RendererState> Renderer::CreateState(std::string name)
 {
-    return RendererState(this, log->clone(std::move(name)));
+    return std::make_shared<RendererState>(this, log->clone(std::move(name)));
+}
+
+void Renderer::Draw(std::shared_ptr<RendererState> state, std::shared_ptr<Mesh> mesh)
+{
+    SetCurrentState(state);
+
+}
+
+void Renderer::SetCurrentState(const std::shared_ptr<RendererState>& state)
+{
+    if (currentState != state) {
+        gpu->BindVertexShader(state->vertexShader.get());
+        gpu->BindPixelShader(state->pixelShader.get());
+        gpu->BindTopology(state->topology);
+        currentState = state;
+    }
 }
 
 RendererState::RendererState(Renderer* renderer, std::shared_ptr<spdlog::logger> log) :

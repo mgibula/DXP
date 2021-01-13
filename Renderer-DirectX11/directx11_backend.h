@@ -30,6 +30,13 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) override;
     virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) override;
 
+    virtual void BindVertexShader(VertexShader* shader) override;
+    virtual void BindPixelShader(PixelShader* shader) override;
+    virtual void BindTopology(Topology topology) override;
+
+    virtual void Draw(uint32_t count) override;
+    virtual void DrawIndexed(uint32_t count) override;
+
 private:
     HWND window;
     int width = 0;

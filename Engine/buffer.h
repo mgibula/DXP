@@ -13,10 +13,6 @@ struct BufferLayout
 
     Type type;
     int count = 0;
-
-    // This is for DirectX
-    std::string semanticName;
-    int semanticIndex;
 };
 
 struct BufferBase

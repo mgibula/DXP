@@ -179,4 +179,42 @@ std::shared_ptr<IndexBuffer> DirectX11Backend::LoadIndexBuffer(const BufferBase*
     return result;
 }
 
+void DirectX11Backend::BindVertexShader(VertexShader* shader)
+{
+    SPDLOG_LOGGER_INFO(log, "Binding vertex shader '{}'", shader->DebugName());
+
+    DirectX11VertexShader* real_shader = dynamic_cast<DirectX11VertexShader*>(shader);
+    context->IASetInputLayout(real_shader->layout.Get());
+    context->VSSetShader(real_shader->ptr.Get(), nullptr, 0);
+}
+
+void DirectX11Backend::BindPixelShader(PixelShader* shader)
+{
+    SPDLOG_LOGGER_INFO(log, "Binding pixel shader '{}'", shader->DebugName());
+
+    DirectX11PixelShader* real_shader = dynamic_cast<DirectX11PixelShader*>(shader);
+    context->PSSetShader(real_shader->ptr.Get(), nullptr, 0);
+}
+
+void DirectX11Backend::BindTopology(Topology topology)
+{
+    switch (topology) {
+    case Topology::Triangles:
+        context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        break;
+    default:
+        Fatal("Unknown topology: {}", static_cast<int>(topology));
+    }
+}
+
+void DirectX11Backend::Draw(uint32_t count)
+{
+    context->Draw(count, 0);
+}
+
+void DirectX11Backend::DrawIndexed(uint32_t count)
+{
+    context->DrawIndexed(count, 0, 0);
+}
+
 };

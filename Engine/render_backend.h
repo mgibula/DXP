@@ -17,6 +17,10 @@ struct IndexBuffer
     virtual ~IndexBuffer() = default;
 };
 
+enum class Topology {
+    Triangles,
+};
+
 struct RenderBackend
 {
     virtual ~RenderBackend() = default;
@@ -41,8 +45,15 @@ struct RenderBackend
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) = 0;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) = 0;
 
+    virtual void BindVertexShader(VertexShader* shader) = 0;
+    virtual void BindPixelShader(PixelShader* shader) = 0;
+    virtual void BindTopology(Topology topology) = 0;
+
     virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) = 0;
     virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) = 0;
+
+    virtual void Draw(uint32_t count) = 0;
+    virtual void DrawIndexed(uint32_t count) = 0;
 };
 
 };

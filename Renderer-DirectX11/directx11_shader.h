@@ -18,16 +18,28 @@ struct DirectX11VertexShader : public VertexShader, public DirectX11Shader
 {
     DirectX11VertexShader(std::string_view path, std::string_view content, ID3D11Device* device);
 
-    virtual std::vector<BufferLayout> GetInputLayout() override;
+    void CreateInputLayout(ID3D11Device* device, ID3DBlob *compiled);
 
-    std::vector<BufferLayout> layout;
+    virtual std::vector<BufferLayout> GetInputLayout() override;
+    virtual std::string DebugName() const override {
+        return path;
+    };
+
+    //std::vector<BufferLayout> layout;
+    std::string path;
     Microsoft::WRL::ComPtr<ID3D11VertexShader> ptr;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> layout;
 };
 
 struct DirectX11PixelShader : public PixelShader, public DirectX11Shader
 {
     DirectX11PixelShader(std::string_view path, std::string_view content, ID3D11Device* device);
 
+    virtual std::string DebugName() const override {
+        return path;
+    };
+
+    std::string path;
     Microsoft::WRL::ComPtr<ID3D11PixelShader> ptr;
 };
 
