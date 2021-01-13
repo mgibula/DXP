@@ -7,6 +7,16 @@ struct Engine;
 struct VertexShader;
 struct PixelShader;
 
+struct VertexBuffer
+{
+    virtual ~VertexBuffer() = default;
+};
+
+struct IndexBuffer
+{
+    virtual ~IndexBuffer() = default;
+};
+
 struct RenderBackend
 {
     virtual ~RenderBackend() = default;
@@ -30,6 +40,9 @@ struct RenderBackend
 
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) = 0;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) = 0;
+
+    virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) = 0;
+    virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) = 0;
 };
 
 };

@@ -158,14 +158,24 @@ void DirectX11Backend::Resize(int width, int height)
 std::shared_ptr<VertexShader> DirectX11Backend::LoadVertexShader(std::string_view path, std::string_view content)
 {
     auto result = std::make_shared<DirectX11VertexShader>(path, content, device.Get());
-
     return result;
 }
 
 std::shared_ptr<PixelShader> DirectX11Backend::LoadPixelShader(std::string_view path, std::string_view content)
 {
     auto result = std::make_shared<DirectX11PixelShader>(path, content, device.Get());
+    return result;
+}
 
+std::shared_ptr<VertexBuffer> DirectX11Backend::LoadVertexBuffer(const BufferBase* buffer)
+{
+    auto result = std::make_shared<DirectX11VertexBuffer>(buffer, device.Get());
+    return result;
+}
+
+std::shared_ptr<IndexBuffer> DirectX11Backend::LoadIndexBuffer(const BufferBase* buffer)
+{
+    auto result = std::make_shared<DirectX11IndexBuffer>(buffer, device.Get());
     return result;
 }
 

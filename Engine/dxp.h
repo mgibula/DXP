@@ -14,6 +14,7 @@
 #include "Engine/buffer.h"
 #include "Engine/shader.h"
 #include "Engine/render_backend.h"
+#include "Engine/mesh.h"
 #include "Engine/renderer.h"
 #include "Engine/layer.h"
 #include "Engine/simulation.h"

@@ -27,6 +27,9 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) override;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) override;
 
+    virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) override;
+    virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) override;
+
 private:
     HWND window;
     int width = 0;

@@ -6,6 +6,7 @@ namespace Simworld
 DXP::RendererState state;
 DXP::Buffer<float32_t, 3> vertices;
 DXP::Buffer<int16_t, 3> triangles;
+DXP::Mesh mesh;
 
 void Game::PreRenderLoop(DXP::Engine* engine)
 {
@@ -27,7 +28,8 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     SPDLOG_LOGGER_INFO(log, "Test float buffer component count: {}, component size: {}, raw size: {}, elements: {}", vertices.ComponentCount(), vertices.ComponentSize(), vertices.GetBufferSize(), vertices.Elements());
     SPDLOG_LOGGER_INFO(log, "Test int16 buffer component count: {}, component size: {}, raw size: {}, elements: {}", triangles.ComponentCount(), triangles.ComponentSize(), triangles.GetBufferSize(), triangles.Elements());
 
-
+    mesh.vertices = vertices;
+    mesh.triangles = std::make_unique<decltype(triangles)>(triangles);
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)
@@ -37,7 +39,8 @@ void Game::PostRenderLoop(DXP::Engine* engine)
 
 void Game::Frame(DXP::Engine* engine, const DXP::FrameInfo& frame)
 {
-
+    //engine->renderer->Draw(state, mesh);
+    //state.Draw(mesh);
 }
 
 };

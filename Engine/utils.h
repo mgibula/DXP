@@ -1,5 +1,8 @@
 #pragma once
 
+using float32_t = float;
+using float64_t = double;
+
 #define DXP_ASSERT(c, ...)         do { if (!(c)) DXP::Fatal(__VA_ARGS__); } while (0)
 
 namespace DXP

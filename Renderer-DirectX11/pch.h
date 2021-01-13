@@ -11,5 +11,6 @@
 #include "Engine/dxp.h"
 #include "directx11_backend.h"
 #include "directx11_shader.h"
+#include "directx11_buffer.h"
 
 #include "Imgui/backends/imgui_impl_dx11.h"
