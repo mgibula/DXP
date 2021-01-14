@@ -20,7 +20,7 @@ Win32Platform::Win32Platform(HWND window) :
     window(window)
 {
     Win32Platform::platform_instance = this;
-    renderers.push_back({ "DirectX11", "DirectX 11 Renderer" });
+    renderers.push_back({ "DirectX11", "DirectX 11" });
 }
 
 void Win32Platform::Initialize(Engine* engine)

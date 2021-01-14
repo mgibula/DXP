@@ -24,6 +24,23 @@ void Renderer::Draw(std::shared_ptr<RendererState> state, std::shared_ptr<Mesh> 
 {
     SetCurrentState(state);
 
+    if (!mesh->vertexBuffer)
+        mesh->vertexBuffer = gpu->LoadVertexBuffer(&mesh->vertices);
+
+    if (mesh->triangles && !mesh->indexBuffer)
+        mesh->indexBuffer = gpu->LoadIndexBuffer(mesh->triangles.get());
+
+    std::vector<const VertexBuffer*> buffers;
+    buffers.push_back(mesh->vertexBuffer.get());
+
+    gpu->BindVertexBuffers(buffers.data(), buffers.size(), 0);
+    
+    if (mesh->indexBuffer) {
+        gpu->BindIndexBuffer(mesh->indexBuffer.get());
+        gpu->DrawIndexed(mesh->triangles->Elements() * mesh->triangles->ComponentCount());
+    } else {
+        gpu->Draw(mesh->vertices.Elements());
+    }
 }
 
 void Renderer::SetCurrentState(const std::shared_ptr<RendererState>& state)

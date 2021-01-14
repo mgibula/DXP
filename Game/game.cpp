@@ -17,13 +17,12 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     state->LoadVertexShader("shaders/solid.vs");
     state->LoadPixelShader("shaders/solid.ps");
 
-    vertices.PushElements({ -0.5f, -0.5f, 0.0f });
-    vertices.PushElements({ -0.5f, 0.5f, 0.0f });
-    vertices.PushElements({ 0.5f, 0.5f, 0.0f });
-    vertices.PushElements({ 0.5f, -0.5f, 0.0f });
+    vertices.PushElements({ 0.f, 0.5f, 0.0f}); // bottom left
+    vertices.PushElements({ 0.5f, -0.5f, 0.0f });  // top left
+    vertices.PushElements({ -0.5f, -0.5f, 0.0f });   // top right
 
     triangles.PushElements({ 0, 1, 2 });
-    triangles.PushElements({ 0, 2, 3 });
+    //triangles.PushElements({ 0, 2, 3 });
 
     SPDLOG_LOGGER_INFO(log, "Test float buffer component count: {}, component size: {}, raw size: {}, elements: {}", vertices.ComponentCount(), vertices.ComponentSize(), vertices.GetBufferSize(), vertices.Elements());
     SPDLOG_LOGGER_INFO(log, "Test int16 buffer component count: {}, component size: {}, raw size: {}, elements: {}", triangles.ComponentCount(), triangles.ComponentSize(), triangles.GetBufferSize(), triangles.Elements());

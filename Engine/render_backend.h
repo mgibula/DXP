@@ -52,6 +52,9 @@ struct RenderBackend
     virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) = 0;
     virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) = 0;
 
+    virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) = 0;
+    virtual void BindIndexBuffer(const IndexBuffer* buffer) = 0;
+
     virtual void Draw(uint32_t count) = 0;
     virtual void DrawIndexed(uint32_t count) = 0;
 };

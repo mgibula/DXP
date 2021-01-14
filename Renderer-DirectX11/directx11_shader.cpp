@@ -7,9 +7,7 @@ namespace DXP
 ID3DBlob* DirectX11Shader::CompileShader(std::string_view path, std::string_view content, const char *target)
 {
     int flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#ifdef DEBUG
     flags |= D3DCOMPILE_DEBUG;
-#endif
 
     ID3DBlob* compiled, * errors;
     HRESULT success = D3DCompile2(
@@ -79,8 +77,13 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
             mask >>= 1;
         }
 
+        auto& cacheEntry = layoutCache.emplace_back();
+        cacheEntry.count = components;
+
         switch (paramDesc.ComponentType) {
         case D3D_REGISTER_COMPONENT_UINT32:
+            cacheEntry.type = BufferLayout::Type::UInt32;
+
             if (components == 1) {
                 slot.Format = DXGI_FORMAT_R32_UINT;
             } else if (components == 2) {
@@ -95,6 +98,8 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
 
             break;
         case D3D_REGISTER_COMPONENT_SINT32:
+            cacheEntry.type = BufferLayout::Type::Int32;
+
             if (components == 1) {
                 slot.Format = DXGI_FORMAT_R32_SINT;
             } else if (components == 2) {
@@ -109,6 +114,8 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
 
             break;
         case D3D_REGISTER_COMPONENT_FLOAT32:
+            cacheEntry.type = BufferLayout::Type::Float32;
+
             if (components == 1) {
                 slot.Format = DXGI_FORMAT_R32_FLOAT;
             } else if (components == 2) {
@@ -116,7 +123,7 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
             } else if (components == 3) {
                 slot.Format = DXGI_FORMAT_R32G32B32_FLOAT;
             } else if (components == 4) {
-                slot.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                slot.Format = DXGI_FORMAT_R32G32B32_FLOAT; // DXGI_FORMAT_R32G32B32A32_FLOAT;
             } else {
                 Fatal("Shader input - float with {} components", components);
             }
@@ -129,53 +136,6 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
 
     success = device->CreateInputLayout(&layout[0], static_cast<UINT>(layout.size()), compiled->GetBufferPointer(), compiled->GetBufferSize(), this->layout.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateInputLayout");
-}
-
-std::vector<BufferLayout> DirectX11VertexShader::GetInputLayout()
-{
-    return {};
-#if 0
-    if (!layout.empty())
-        return layout;
-
-    D3D11_SHADER_DESC desc;
-    HRESULT success = reflector->GetDesc(&desc);
-    DXP_ASSERT(SUCCEEDED(success), "Reflector::GetDesc");
-
-    for (unsigned int i = 0; i < desc.InputParameters; i++) {
-        D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
-        success = reflector->GetInputParameterDesc(i, &paramDesc);
-        DXP_ASSERT(SUCCEEDED(success), "Reflector::GetInputParameterDesc");
-
-        auto& slot = layout.emplace_back();
-
-        switch (paramDesc.ComponentType) {
-        case D3D_REGISTER_COMPONENT_UINT32:
-            slot.type = BufferLayout::UInt32;
-            break;
-        case D3D_REGISTER_COMPONENT_SINT32:
-            slot.type = BufferLayout::Int32;
-            break;
-        case D3D_REGISTER_COMPONENT_FLOAT32:
-            slot.type = BufferLayout::Float32;
-            break;
-        default:
-            Fatal("Unknown component type: {}", static_cast<int>(paramDesc.ComponentType));
-        }
-
-        // Calculate number of components
-        auto mask = paramDesc.Mask;
-        while (mask) {
-            slot.count += mask & 1;
-            mask >>= 1;
-        }
-
-        slot.semanticName = paramDesc.SemanticName;
-        slot.semanticIndex = paramDesc.SemanticIndex;
-    }
-
-    return layout;
-#endif
 }
 
 DirectX11PixelShader::DirectX11PixelShader(std::string_view path, std::string_view content, ID3D11Device* device) :

@@ -13,13 +13,13 @@ Engine::Engine(Platform* platform, Simulation* simulation) noexcept :
     platform(platform),
     simulation(simulation)
 {
-    // Initialize platform (it can inject its log sinks)
-    platform->Initialize(this);
-
     // Add universal in-memory ring buffer sink
     memory_sink = std::make_shared<CyclicLogSinkST>(1024 * 100);
     memory_sink->set_level(spdlog::level::debug);
     log_sinks.push_back(memory_sink);
+
+    // Initialize platform (it can inject its log sinks)
+    platform->Initialize(this);
 
     // Create core logger and use it as default logger
     log = CreateLogger("core");
@@ -119,7 +119,7 @@ void Engine::OnFrameEnd()
     // Display frame
     gpu->Display();
 
-    // Clear now to save time later
+    // Do it now to save time later
     gpu->ClearScreen();
 }
 

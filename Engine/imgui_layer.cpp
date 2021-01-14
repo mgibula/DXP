@@ -36,8 +36,8 @@ void ImGuiLayer::OnFrameStart(Engine* engine)
     engine->platform->ImGuiFrameStart();
     ImGui::NewFrame();
 
-    // Setup main dockspace (thanks imgui_demo.cpp !)
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+     //Setup main dockspace (thanks imgui_demo.cpp !)
+    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_NoDockingInCentralNode | ImGuiDockNodeFlags_PassthruCentralNode);
 }
 
 void ImGuiLayer::OnFrameEnd(Engine* engine)
@@ -49,8 +49,11 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
     engine->gpu->ImGuiFrameEnd();
 
     // Multi viewport handling
-    ImGui::UpdatePlatformWindows();
-    ImGui::RenderPlatformWindowsDefault();
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+    }
 }
 
 void ImGuiLayer::OnImguiFrame(Engine* engine)

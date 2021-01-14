@@ -101,6 +101,8 @@ void DirectX11Backend::OnFrameStart(Engine* engine)
 
 void DirectX11Backend::OnFrameEnd(Engine* engine)
 {
+    // ImGui multiviewport messes this up
+    context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), nullptr);
 }
 
 void DirectX11Backend::ImGuiInit()
@@ -121,10 +123,6 @@ void DirectX11Backend::ImGuiFrameStart()
 void DirectX11Backend::ImGuiFrameEnd()
 {
     ImGui::Render();
-
-    // Some ImGui multi-viewport shenanigan (taken from their example file)
-    context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), NULL);
-
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -205,6 +203,50 @@ void DirectX11Backend::BindTopology(Topology topology)
     default:
         Fatal("Unknown topology: {}", static_cast<int>(topology));
     }
+}
+
+void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot)
+{
+#if 0
+    std::vector< ID3D11Buffer*> ptrs;
+    std::vector<UINT> strides;
+    std::vector<UINT> offsets;
+
+    ptrs.resize(count);
+    strides.resize(count);
+    offsets.resize(count);
+
+    for (int i = 0; i < count; i++) {
+        const DirectX11VertexBuffer* real_buffer = dynamic_cast<const DirectX11VertexBuffer*>(buffers[i]);
+        ptrs[i] = real_buffer->ptr.Get();
+        strides[i] = real_buffer->stride;
+    }
+
+    context->IASetVertexBuffers(startingSlot, count, ptrs.data(), strides.data(), offsets.data());
+#endif
+
+    const DirectX11VertexBuffer* real_buffer = dynamic_cast<const DirectX11VertexBuffer*>(buffers[0]);
+
+    uint32_t offsets = 0;
+    uint32_t strides = real_buffer->stride;
+
+    context->IASetVertexBuffers(startingSlot, 1, real_buffer->ptr.GetAddressOf(), &strides, &offsets);
+}
+
+void DirectX11Backend::BindIndexBuffer(const IndexBuffer* buffer)
+{
+    auto* real_buffer = dynamic_cast<const DirectX11IndexBuffer*>(buffer);
+
+    DXGI_FORMAT format;
+    if (real_buffer->componentSize == 2) {
+        format = DXGI_FORMAT_R16_UINT;
+    } else if (real_buffer->componentSize == 4) {
+        format = DXGI_FORMAT_R32_UINT;
+    } else {
+        Fatal("Unknown format for index buffer. Component size: {}", real_buffer->componentSize);
+    }
+
+    context->IASetIndexBuffer(real_buffer->ptr.Get(), format, 0);
 }
 
 void DirectX11Backend::Draw(uint32_t count)
