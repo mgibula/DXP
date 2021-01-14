@@ -123,7 +123,7 @@ void DirectX11VertexShader::CreateInputLayout(ID3D11Device* device, ID3DBlob* co
             } else if (components == 3) {
                 slot.Format = DXGI_FORMAT_R32G32B32_FLOAT;
             } else if (components == 4) {
-                slot.Format = DXGI_FORMAT_R32G32B32_FLOAT; // DXGI_FORMAT_R32G32B32A32_FLOAT;
+                slot.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
             } else {
                 Fatal("Shader input - float with {} components", components);
             }
