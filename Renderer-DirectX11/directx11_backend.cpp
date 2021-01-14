@@ -207,7 +207,6 @@ void DirectX11Backend::BindTopology(Topology topology)
 
 void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot)
 {
-#if 0
     std::vector< ID3D11Buffer*> ptrs;
     std::vector<UINT> strides;
     std::vector<UINT> offsets;
@@ -223,14 +222,6 @@ void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count
     }
 
     context->IASetVertexBuffers(startingSlot, count, ptrs.data(), strides.data(), offsets.data());
-#endif
-
-    const DirectX11VertexBuffer* real_buffer = dynamic_cast<const DirectX11VertexBuffer*>(buffers[0]);
-
-    uint32_t offsets = 0;
-    uint32_t strides = real_buffer->stride;
-
-    context->IASetVertexBuffers(startingSlot, 1, real_buffer->ptr.GetAddressOf(), &strides, &offsets);
 }
 
 void DirectX11Backend::BindIndexBuffer(const IndexBuffer* buffer)
@@ -238,9 +229,9 @@ void DirectX11Backend::BindIndexBuffer(const IndexBuffer* buffer)
     auto* real_buffer = dynamic_cast<const DirectX11IndexBuffer*>(buffer);
 
     DXGI_FORMAT format;
-    if (real_buffer->componentSize == 2) {
+    if (real_buffer->componentSize == sizeof(uint16_t)) {
         format = DXGI_FORMAT_R16_UINT;
-    } else if (real_buffer->componentSize == 4) {
+    } else if (real_buffer->componentSize == sizeof(uint32_t)) {
         format = DXGI_FORMAT_R32_UINT;
     } else {
         Fatal("Unknown format for index buffer. Component size: {}", real_buffer->componentSize);

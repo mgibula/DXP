@@ -6,18 +6,23 @@ namespace DXP
 struct BufferLayout
 {
     enum Type {
+        Unknown,
         Float32,
         Int32,
         UInt32,
     };
 
-    Type type;
+    Type type = Type::Unknown;
     int count = 0;
 };
 
 struct BufferBase
 {
     virtual ~BufferBase() = default;
+
+    virtual BufferLayout::Type ComponentType() const {
+        return BufferLayout::Type::Unknown;
+    };
 
     virtual int ComponentSize() const = 0;
 
@@ -33,6 +38,18 @@ struct BufferBase
 template <typename T, int COUNT = 1>
 struct Buffer final : public BufferBase
 {
+    virtual BufferLayout::Type ComponentType() const {
+        if constexpr (std::is_same_v<T, int32_t>) {
+            return BufferLayout::Type::Int32;
+        } else if constexpr (std::is_same_v<T, uint32_t>) {
+            return BufferLayout::Type::UInt32;
+        } else if constexpr (std::is_same_v<T, float32_t>) {
+            return BufferLayout::Type::Float32;
+        } else {
+            return BufferLayout::Type::Unknown;
+        }
+    };
+
     virtual int ComponentSize() const override {
         return sizeof(T);
     };
