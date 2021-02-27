@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 #include <d3d11.h>
 #include <windowsx.h>
+#include <map>
 
 #include "Engine/dxp.h"
 

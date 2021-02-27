@@ -4,7 +4,7 @@ namespace DXP
 {
 
 DirectX11VertexBuffer::DirectX11VertexBuffer(const BufferBase* buffer, ID3D11Device* device) :
-    stride(buffer->ComponentSize() * buffer->ComponentCount())
+    stride(buffer->Stride())
 {
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -19,7 +19,7 @@ DirectX11VertexBuffer::DirectX11VertexBuffer(const BufferBase* buffer, ID3D11Dev
 }
 
 DirectX11IndexBuffer::DirectX11IndexBuffer(const BufferBase* buffer, ID3D11Device* device) :
-    componentSize(buffer->ComponentSize())
+    format(buffer->Format())
 {
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_IMMUTABLE;

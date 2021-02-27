@@ -34,6 +34,7 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) override;
     virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) override;
 
+    virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) override;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) override;
     virtual void BindIndexBuffer(const IndexBuffer* buffer) override;
 
@@ -50,6 +51,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backbuffer;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizer;
     std::shared_ptr<spdlog::logger> log;
+
+    std::map<VertexShaderInputLayout, Microsoft::WRL::ComPtr<ID3D11InputLayout>> inputLayouts;
 };
 
 };

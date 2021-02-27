@@ -17,15 +17,26 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     mesh = std::make_shared<DXP::Mesh>();
 
-    auto triangles = std::make_unique<DXP::Buffer<int16_t, 3>>();
-    triangles->PushElements({ 0, 1, 2 });
+    auto triangles = std::make_unique<DXP::Buffer<DXP::BufferFormat::Uint16_1>>();
+    triangles->PushElement(0);
+    triangles->PushElement(1);
+    triangles->PushElement(2);
     mesh->indices = std::move(triangles);
 
-    auto vertices = std::make_unique<DXP::Buffer<float32_t, 3>>();
-    vertices->PushElements({ 0.f, 0.5f, 0.0f });        // bottom left
-    vertices->PushElements({ 0.5f, -0.5f, 0.0f });      // top left
-    vertices->PushElements({ -0.5f, -0.5f, 0.0f });     // top right
-    mesh->channels.push_back(std::move(vertices));
+    auto vertices = std::make_unique<DXP::Buffer<DXP::BufferFormat::Float32_3>>();
+    vertices->PushElement(0.f);
+    vertices->PushElement(0.5f);
+    vertices->PushElement(0.f);
+
+    vertices->PushElement(0.5f);
+    vertices->PushElement(-0.5f);
+    vertices->PushElement(0.f);
+
+    vertices->PushElement(-0.5f);
+    vertices->PushElement(-0.5f);
+    vertices->PushElement(0.f);
+
+    mesh->SetChannel(DXP::VertexShaderInput::Position0, std::move(vertices));
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)

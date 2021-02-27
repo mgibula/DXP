@@ -3,108 +3,97 @@
 namespace DXP
 {
 
-struct BufferLayout
+enum class BufferFormat : int 
 {
-    enum Type {
-        Unknown,
-        Float32,
-        Int32,
-        UInt32,
-    };
+    Float32_4,
+    Float32_3,
+    Float32_2,
+    Float32_1,
+    Uint16_1,
+    Uint32_1,
+};
 
-    Type type = Type::Unknown;
-    int count = 0;
+template <BufferFormat T> struct BufferProperties;
+
+template <> struct BufferProperties<BufferFormat::Float32_4>
+{
+    using underlying_type = float32_t;
+    static constexpr int stride = sizeof(float32_t) * 4;
+};
+
+template <> struct BufferProperties<BufferFormat::Float32_3>
+{
+    using underlying_type = float32_t;
+    static constexpr int stride = sizeof(float32_t) * 3;
+};
+
+template <> struct BufferProperties<BufferFormat::Float32_2>
+{
+    using underlying_type = float32_t;
+    static constexpr int stride = sizeof(float32_t) * 2;
+};
+
+template <> struct BufferProperties<BufferFormat::Float32_1>
+{
+    using underlying_type = float32_t;
+    static constexpr int stride = sizeof(float32_t) * 1;
+};
+
+template <> struct BufferProperties<BufferFormat::Uint16_1>
+{
+    using underlying_type = uint16_t;
+    static constexpr int stride = sizeof(uint16_t) * 1;
+};
+
+template <> struct BufferProperties<BufferFormat::Uint32_1>
+{
+    using underlying_type = uint32_t;
+    static constexpr int stride = sizeof(uint32_t) * 1;
 };
 
 struct BufferBase
 {
     virtual ~BufferBase() = default;
 
-    virtual BufferLayout::Type ComponentType() const {
-        return BufferLayout::Type::Unknown;
-    };
+    virtual BufferFormat Format() const = 0;
 
-    virtual int ComponentSize() const = 0;
-
-    virtual int ComponentCount() const = 0;
-
-    virtual size_t Elements() const = 0;
+    virtual uint32_t Stride() const = 0;
 
     virtual const void* GetBufferPtr() const = 0;
 
     virtual size_t GetBufferSize() const = 0;
+
+    virtual size_t Elements() const = 0;
 };
 
-template <typename T, int COUNT = 1>
-struct Buffer final : public BufferBase
+template <BufferFormat T>
+struct Buffer : public BufferBase
 {
-    virtual BufferLayout::Type ComponentType() const {
-        if constexpr (std::is_same_v<T, int32_t>) {
-            return BufferLayout::Type::Int32;
-        } else if constexpr (std::is_same_v<T, uint32_t>) {
-            return BufferLayout::Type::UInt32;
-        } else if constexpr (std::is_same_v<T, float32_t>) {
-            return BufferLayout::Type::Float32;
-        } else {
-            return BufferLayout::Type::Unknown;
-        }
+    BufferFormat Format() const override {
+        return T;
     };
 
-    virtual int ComponentSize() const override {
-        return sizeof(T);
-    };
-
-    virtual int ComponentCount() const override {
-        return COUNT;
-    };
-
-    virtual size_t Elements() const override {
-        return data.size() / COUNT;
+    virtual uint32_t Stride() const override {
+        return BufferProperties<T>::stride;
     };
 
     virtual const void* GetBufferPtr() const override {
-        return &data[0];
+        return static_cast<const void *>(&data[0]);
     };
 
     virtual size_t GetBufferSize() const override {
-        return sizeof(T) * data.size();
+        return data.size() * sizeof(typename BufferProperties<T>::underlying_type);
     };
 
-    void PushElement(T value) {
+    virtual size_t Elements() const override {
+        return data.size();
+    };
+
+    void PushElement(typename BufferProperties<T>::underlying_type value) {
         data.push_back(value);
     };
 
-    void PushElements(const T* ptr) {
-        for (int i = 0; i < COUNT; i++)
-            data.push_back(*(ptr + i));
-    };
-
-    void PushElements(const std::array<T, COUNT>& values) {
-        PushElements(values.data());
-    };
-
-    T GetElement(int index) {
-        return data[index];
-    };
-
-    std::array<T, COUNT> GetElements(int index) {
-        return { &data[index * COUNT], &data[index * COUNT + COUNT] };
-    };
-
-    void SetElement(int index, T value) {
-        data[index] = value;
-    };
-
-    void SetElements(int index, const T* ptr) {
-        for (int i = 0; i < COUNT; i++)
-            data[index * COUNT + i] = *(ptr + i);
-    };
-
-    void SetElements(int index, const std::array<T, COUNT>& values) {
-        SetElements(index, values.data());
-    };
-
-    std::vector<T> data;
+    std::vector<typename BufferProperties<T>::underlying_type> data;
 };
 
 };

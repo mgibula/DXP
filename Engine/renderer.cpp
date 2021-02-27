@@ -20,16 +20,6 @@ std::shared_ptr<RendererState> Renderer::CreateState(std::string name)
     return std::make_shared<RendererState>(this, log->clone(std::move(name)));
 }
 
-static int FindMatchingChannel(BufferBase** buffers, int count, DXP::BufferLayout::Type componentType, int componentCount)
-{
-    for (int i = 0; i < count; i++) {
-        if (buffers[i]->ComponentType() == componentType && buffers[i]->ComponentCount() == componentCount)
-            return i;
-    }
-
-    return -1;
-}
-
 void Renderer::Draw(std::shared_ptr<RendererState> state, std::shared_ptr<Mesh> mesh)
 {
     SetCurrentState(state);
@@ -37,35 +27,28 @@ void Renderer::Draw(std::shared_ptr<RendererState> state, std::shared_ptr<Mesh> 
     if (mesh->indices && !mesh->indexBuffer)
         mesh->indexBuffer = gpu->LoadIndexBuffer(mesh->indices.get());
 
-    std::array<BufferBase*, 16> buffers;
-    int buffersCount = static_cast<int>(mesh->channels.size());
-    mesh->vertexBuffers.resize(buffersCount);
-
-    for (int i = 0; i < buffersCount; i++) {
-        buffers[i] = mesh->channels[i].get();
-    }
-
-    const auto& inputLayout = state->vertexShader->GetInputLayout();
     std::array<const VertexBuffer*, 16> vertexBuffers;
-    int vertexBuffersCount = static_cast<int>(inputLayout.size());
+    VertexShaderInputLayout inputLayout;
+    int i = 0;
 
-    for (int i = 0; i < vertexBuffersCount; i++) {
-        const DXP::BufferLayout& layout = inputLayout[i];
+    const auto& shaderInput = state->vertexShader->GetInputFormat();
+    for (VertexShaderInput input : shaderInput) {
+        int index = static_cast<int>(input);
+        DXP_ASSERT(mesh->channels[index], "Unable to find matching channel {} in mesh", index);
 
-        int channel = FindMatchingChannel(&buffers[0], buffersCount, layout.type, layout.count);
-        DXP_ASSERT(channel != -1, "Unable to find matching channel in mesh");
-
-        if (!mesh->vertexBuffers[channel])
-            mesh->vertexBuffers[channel] = gpu->LoadVertexBuffer(buffers[channel]);
-
-        vertexBuffers[i] = mesh->vertexBuffers[channel].get();
+        if (!mesh->vertexBuffers[index])
+            mesh->vertexBuffers[index] = gpu->LoadVertexBuffer(mesh->channels[index].get());
+        
+        vertexBuffers[i++] = mesh->vertexBuffers[index].get();
+        inputLayout.PushElement(input, mesh->channels[index]->Format());
     }
 
-    gpu->BindVertexBuffers(&vertexBuffers[0], vertexBuffersCount, 0);
+    gpu->BindVertexShaderInputLayout(state->vertexShader.get(), inputLayout);
+    gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
 
     if (mesh->indexBuffer) {
-        gpu->BindIndexBuffer(mesh->indexBuffer.get());
-        gpu->DrawIndexed(mesh->indices->Elements() * mesh->indices->ComponentCount());
+        gpu->BindIndexBuffer(mesh->indexBuffer.get()); 
+        gpu->DrawIndexed(mesh->indices->Elements());
     } else {
         gpu->Draw(mesh->channels[0]->Elements());
     }

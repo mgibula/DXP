@@ -5,6 +5,73 @@
 namespace DXP
 {
 
+static const char* GetSemanticName(VertexShaderInput input)
+{
+    switch (input) {
+    case VertexShaderInput::Position0:
+    case VertexShaderInput::Position1:
+    case VertexShaderInput::Position2:
+    case VertexShaderInput::Position3:
+        return "POSITION";
+    case VertexShaderInput::Color0:
+    case VertexShaderInput::Color1:
+    case VertexShaderInput::Color2:
+    case VertexShaderInput::Color3:
+        return "COLOR";
+    case VertexShaderInput::UV0:
+    case VertexShaderInput::UV1:
+    case VertexShaderInput::UV2:
+    case VertexShaderInput::UV3:
+        return "UV";
+    default:
+        Fatal("Unsupported input {}", static_cast<int>(input));
+    }
+}
+
+static int GetSemanticIndex(VertexShaderInput input)
+{
+    switch (input) {
+    case VertexShaderInput::Position0:
+    case VertexShaderInput::Color0:
+    case VertexShaderInput::UV0:
+        return 0;
+    case VertexShaderInput::Position1:
+    case VertexShaderInput::Color1:
+    case VertexShaderInput::UV1:
+        return 1;
+    case VertexShaderInput::Position2:
+    case VertexShaderInput::Color2:
+    case VertexShaderInput::UV2:
+        return 2;
+    case VertexShaderInput::Position3:
+    case VertexShaderInput::Color3:
+    case VertexShaderInput::UV3:
+        return 3;
+    default:
+        Fatal("Unsupported input {}", static_cast<int>(input));
+    }
+}
+
+static DXGI_FORMAT GetBufferFormat(BufferFormat format)
+{
+    switch (format) {
+    case BufferFormat::Float32_1:
+        return DXGI_FORMAT_R32_FLOAT;
+    case BufferFormat::Float32_2:
+        return DXGI_FORMAT_R32G32_FLOAT;
+    case BufferFormat::Float32_3:
+        return DXGI_FORMAT_R32G32B32_FLOAT;
+    case BufferFormat::Float32_4:
+        return DXGI_FORMAT_R32G32B32A32_FLOAT;
+    case BufferFormat::Uint16_1:
+        return DXGI_FORMAT_R16_UINT;
+    case BufferFormat::Uint32_1:
+        return DXGI_FORMAT_R32_UINT;
+    default:
+        Fatal("Unsupported format {}", static_cast<int>(format));
+    }
+}
+
 DirectX11Backend::DirectX11Backend(HWND window, std::shared_ptr<spdlog::logger> log) :
     window(window),
     log(log)
@@ -182,7 +249,7 @@ void DirectX11Backend::BindVertexShader(VertexShader* shader)
     SPDLOG_LOGGER_INFO(log, "Binding vertex shader '{}'", shader->DebugName());
 
     DirectX11VertexShader* real_shader = dynamic_cast<DirectX11VertexShader*>(shader);
-    context->IASetInputLayout(real_shader->layout.Get());
+    //context->IASetInputLayout(real_shader->layout.Get());
     context->VSSetShader(real_shader->ptr.Get(), nullptr, 0);
 }
 
@@ -203,6 +270,33 @@ void DirectX11Backend::BindTopology(Topology topology)
     default:
         Fatal("Unknown topology: {}", static_cast<int>(topology));
     }
+}
+
+void DirectX11Backend::BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout)
+{
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> layoutPtr;
+
+    auto found = inputLayouts.find(layout);
+    if (found == inputLayouts.end()) {
+        std::array<D3D11_INPUT_ELEMENT_DESC, 16> description = { };
+        for (int i = 0; i < layout.elements; i++) {
+            description[i].SemanticName = GetSemanticName(layout.semantics[i]);
+            description[i].SemanticIndex = GetSemanticIndex(layout.semantics[i]);
+            description[i].Format = GetBufferFormat(layout.formats[i]);
+            description[i].InputSlot = i;
+            description[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+        }
+
+        DirectX11VertexShader* real_shader = dynamic_cast<DirectX11VertexShader*>(shader);
+        HRESULT result = device->CreateInputLayout(&description[0], layout.elements, real_shader->bytecode->GetBufferPointer(), real_shader->bytecode->GetBufferSize(), layoutPtr.GetAddressOf());
+        DXP_ASSERT(SUCCEEDED(result), "CreateInputLayout");
+
+        inputLayouts[layout] = layoutPtr;
+    } else {
+        layoutPtr = found->second;
+    }
+
+    context->IASetInputLayout(layoutPtr.Get());
 }
 
 void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot)
@@ -229,12 +323,12 @@ void DirectX11Backend::BindIndexBuffer(const IndexBuffer* buffer)
     auto* real_buffer = dynamic_cast<const DirectX11IndexBuffer*>(buffer);
 
     DXGI_FORMAT format;
-    if (real_buffer->componentSize == sizeof(uint16_t)) {
+    if (real_buffer->format == BufferFormat::Uint16_1) {
         format = DXGI_FORMAT_R16_UINT;
-    } else if (real_buffer->componentSize == sizeof(uint32_t)) {
+    } else if (real_buffer->format == BufferFormat::Uint32_1) {
         format = DXGI_FORMAT_R32_UINT;
     } else {
-        Fatal("Unknown format for index buffer. Component size: {}", real_buffer->componentSize);
+        Fatal("Unknown format for index buffer: {}", static_cast<int>(real_buffer->format));
     }
 
     context->IASetIndexBuffer(real_buffer->ptr.Get(), format, 0);

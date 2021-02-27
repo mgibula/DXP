@@ -17,7 +17,7 @@ struct DirectX11IndexBuffer : public IndexBuffer
     DirectX11IndexBuffer(const BufferBase* buffer, ID3D11Device* device);
     virtual ~DirectX11IndexBuffer() = default;
 
-    UINT componentSize = 0;
+    BufferFormat format;
     Microsoft::WRL::ComPtr<ID3D11Buffer> ptr;
 };
 

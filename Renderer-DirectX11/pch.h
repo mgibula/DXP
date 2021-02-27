@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <d3dcompiler.h>
 #include <string_view>
+#include <map>
 
 #include "Engine/dxp.h"
 #include "directx11_backend.h"

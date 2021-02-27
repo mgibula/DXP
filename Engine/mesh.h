@@ -5,12 +5,16 @@ namespace DXP
 
 struct Mesh
 {
+    void SetChannel(VertexShaderInput channel, std::unique_ptr<BufferBase> buffer) {
+        channels[static_cast<int>(channel)] = std::move(buffer);
+    };
+
     // Mesh data, CPU side
-    std::vector<std::unique_ptr<BufferBase>> channels;
+    std::array<std::unique_ptr<BufferBase>, static_cast<size_t>(VertexShaderInput::_Count)> channels;
     std::unique_ptr<BufferBase> indices;
 
     // Mesh data, GPU side
-    std::vector<std::shared_ptr<VertexBuffer>> vertexBuffers;
+    std::array<std::shared_ptr<VertexBuffer>, static_cast<size_t>(VertexShaderInput::_Count)> vertexBuffers;
     std::shared_ptr<IndexBuffer> indexBuffer;
 };
 
