@@ -4,6 +4,7 @@ namespace DXP
 {
 
 Renderer::Renderer(std::shared_ptr<spdlog::logger> log) :
+    scene(std::make_unique<SceneNode>()),
     log(log)
 {
     SPDLOG_LOGGER_INFO(log, "Initializing");
@@ -13,6 +14,18 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 {
     SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", backend->InfoString());
     gpu = backend;
+
+    predefinedStates.resize(Renderer::Mode::_size);
+
+    auto state = CreateState("None");
+    state->LoadVertexShader("shaders/null.vs");
+    state->LoadPixelShader("shaders/null.ps");
+    predefinedStates[Renderer::Mode::None] = state;
+
+    state = CreateState("SolidColor");
+    state->LoadVertexShader("shaders/solid.vs");
+    state->LoadPixelShader("shaders/solid.ps");
+    predefinedStates[Renderer::Mode::SolidColor] = state;
 }
 
 std::shared_ptr<RendererState> Renderer::CreateState(std::string name)
@@ -20,7 +33,18 @@ std::shared_ptr<RendererState> Renderer::CreateState(std::string name)
     return std::make_shared<RendererState>(this, log->clone(std::move(name)));
 }
 
-void Renderer::Draw(std::shared_ptr<RendererState> state, std::shared_ptr<Mesh> mesh)
+void Renderer::DrawScene(SceneNode* root)
+{
+    for (auto& node : root->children) {
+        if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
+            Draw(predefinedStates[obj->mode], obj->mesh.get());
+        }
+
+        DrawScene(node.get());
+    }
+}
+
+void Renderer::Draw(std::shared_ptr<RendererState> state, Mesh* mesh)
 {
     SetCurrentState(state);
 

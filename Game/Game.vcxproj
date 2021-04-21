@@ -180,6 +180,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\null.ps" />
+    <None Include="shaders\null.vs" />
     <None Include="shaders\solid.ps" />
     <None Include="shaders\solid.vs">
       <FileType>Document</FileType>
@@ -188,6 +190,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="Transform.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

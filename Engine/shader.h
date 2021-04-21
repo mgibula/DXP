@@ -64,7 +64,8 @@ struct VertexShader
 {
     virtual ~VertexShader() = default;
 
-    virtual const std::vector<VertexShaderInput>& GetInputFormat() = 0;
+    virtual const std::vector<VertexShaderInput>& GetInputFormat() const = 0;
+    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const = 0;
     virtual std::string DebugName() const = 0;
 };
 
@@ -72,6 +73,7 @@ struct PixelShader
 {
     virtual ~PixelShader() = default;
 
+    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const = 0;
     virtual std::string DebugName() const = 0;
 };
 

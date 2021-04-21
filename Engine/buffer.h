@@ -18,37 +18,37 @@ template <BufferFormat T> struct BufferProperties;
 template <> struct BufferProperties<BufferFormat::Float32_4>
 {
     using underlying_type = float32_t;
-    static constexpr int stride = sizeof(float32_t) * 4;
+    static constexpr int stride = sizeof(underlying_type) * 4;
 };
 
 template <> struct BufferProperties<BufferFormat::Float32_3>
 {
     using underlying_type = float32_t;
-    static constexpr int stride = sizeof(float32_t) * 3;
+    static constexpr int stride = sizeof(underlying_type) * 3;
 };
 
 template <> struct BufferProperties<BufferFormat::Float32_2>
 {
     using underlying_type = float32_t;
-    static constexpr int stride = sizeof(float32_t) * 2;
+    static constexpr int stride = sizeof(underlying_type) * 2;
 };
 
 template <> struct BufferProperties<BufferFormat::Float32_1>
 {
     using underlying_type = float32_t;
-    static constexpr int stride = sizeof(float32_t) * 1;
+    static constexpr int stride = sizeof(underlying_type) * 1;
 };
 
 template <> struct BufferProperties<BufferFormat::Uint16_1>
 {
     using underlying_type = uint16_t;
-    static constexpr int stride = sizeof(uint16_t) * 1;
+    static constexpr int stride = sizeof(underlying_type) * 1;
 };
 
 template <> struct BufferProperties<BufferFormat::Uint32_1>
 {
     using underlying_type = uint32_t;
-    static constexpr int stride = sizeof(uint32_t) * 1;
+    static constexpr int stride = sizeof(underlying_type) * 1;
 };
 
 struct BufferBase

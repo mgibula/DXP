@@ -222,13 +222,13 @@ void DirectX11Backend::Resize(int width, int height)
 
 std::shared_ptr<VertexShader> DirectX11Backend::LoadVertexShader(std::string_view path, std::string_view content)
 {
-    auto result = std::make_shared<DirectX11VertexShader>(path, content, device.Get());
+    auto result = std::make_shared<DirectX11VertexShader>(path, content, device.Get(), log);
     return result;
 }
 
 std::shared_ptr<PixelShader> DirectX11Backend::LoadPixelShader(std::string_view path, std::string_view content)
 {
-    auto result = std::make_shared<DirectX11PixelShader>(path, content, device.Get());
+    auto result = std::make_shared<DirectX11PixelShader>(path, content, device.Get(), log);
     return result;
 }
 
@@ -301,7 +301,7 @@ void DirectX11Backend::BindVertexShaderInputLayout(VertexShader* shader, const V
 
 void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot)
 {
-    std::vector< ID3D11Buffer*> ptrs;
+    std::vector<ID3D11Buffer*> ptrs;
     std::vector<UINT> strides;
     std::vector<UINT> offsets;
 

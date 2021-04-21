@@ -9,6 +9,7 @@
 #include <chrono>
 #include <thread>
 #include <optional>
+#include <map>
 
 #include "dxp.h"
 #include "platform.h"

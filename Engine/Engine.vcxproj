@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="constant-buffer.cpp" />
     <ClCompile Include="cyclic_buffer.cpp" />
     <ClCompile Include="cyclic_log.cpp" />
     <ClCompile Include="engine.cpp" />
@@ -170,11 +171,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="render-object.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="buffer.h" />
+    <ClInclude Include="constant-buffer.h" />
     <ClInclude Include="cyclic_buffer.h" />
     <ClInclude Include="cyclic_log.h" />
     <ClInclude Include="dxp.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="event.h" />
     <ClInclude Include="imgui_layer.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="render-object.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="shader.h" />

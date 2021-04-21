@@ -3,17 +3,13 @@
 namespace Simworld
 {
 
-std::shared_ptr<DXP::RendererState> state;
 std::shared_ptr<DXP::Mesh> mesh;
+DXP::SceneNode* root;
 
 void Game::PreRenderLoop(DXP::Engine* engine)
 {
     log = engine->CreateLogger("game");
     SPDLOG_LOGGER_INFO(log, "Starting");
-
-    state = engine->renderer->CreateState("render-state-1");
-    state->LoadVertexShader("shaders/solid.vs");
-    state->LoadPixelShader("shaders/solid.ps");
 
     mesh = std::make_shared<DXP::Mesh>();
 
@@ -37,6 +33,13 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     vertices->PushElement(0.f);
 
     mesh->SetChannel(DXP::VertexShaderInput::Position0, std::move(vertices));
+
+    root = engine->renderer->GetScene();
+    DXP::RenderObject* r1 = root->AddChild<DXP::RenderObject>(mesh);
+    r1->position.x = 0.1f;
+    r1->mode = DXP::Renderer::Mode::SolidColor;
+    r1->GetVariables(DXP::ConstantBufferSlot::Transform)->Set("offsetX", 0.1f);
+
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)
@@ -46,7 +49,6 @@ void Game::PostRenderLoop(DXP::Engine* engine)
 
 void Game::Frame(DXP::Engine* engine, const DXP::FrameInfo& frame)
 {
-    engine->renderer->Draw(state, mesh);
 }
 
 };
