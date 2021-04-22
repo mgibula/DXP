@@ -4,6 +4,7 @@ namespace Simworld
 {
 
 std::shared_ptr<DXP::Mesh> mesh;
+std::shared_ptr<DXP::Material> material;
 DXP::SceneNode* root;
 
 void Game::PreRenderLoop(DXP::Engine* engine)
@@ -34,10 +35,16 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     mesh->SetChannel(DXP::VertexShaderInput::Position0, std::move(vertices));
 
+    material = engine->renderer->CreateMaterial("shaders/solid.vs", "shaders/solid.ps");
+
     root = engine->renderer->GetScene();
     DXP::RenderObject* r1 = root->AddChild<DXP::RenderObject>(mesh);
     r1->position.x = 0.1f;
-    r1->mode = DXP::Renderer::Mode::SolidColor;
+    r1->material = material;
+
+    /*auto solid_variables = r1->AddRenderMode(DXP::Renderer::Mode::SolidColor);
+    solid_variables->SetVariable(DXP::ConstantBufferSlot::Transform, "offsetX", 0.1f);*/
+
     r1->GetVariables(DXP::ConstantBufferSlot::Transform)->Set("offsetX", 0.1f);
 
 }
