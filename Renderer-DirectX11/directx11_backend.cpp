@@ -244,18 +244,29 @@ std::shared_ptr<IndexBuffer> DirectX11Backend::LoadIndexBuffer(const BufferBase*
     return result;
 }
 
+std::shared_ptr<ConstantBuffer> DirectX11Backend::CreateConstantBuffer(size_t size)
+{
+    auto result = std::make_shared<DirectX11ConstantBuffer>(size, device.Get());
+    return result;
+}
+
+void DirectX11Backend::UpdateConstantBuffer(ConstantBuffer* buffer, const void* data, size_t size)
+{
+    DirectX11ConstantBuffer* real_buffer= dynamic_cast<DirectX11ConstantBuffer*>(buffer);
+    real_buffer->Update(data, size, context.Get());
+}
+
 void DirectX11Backend::BindVertexShader(VertexShader* shader)
 {
-    SPDLOG_LOGGER_INFO(log, "Binding vertex shader '{}'", shader->DebugName());
+    SPDLOG_LOGGER_TRACE(log, "Binding vertex shader '{}'", shader->DebugName());
 
     DirectX11VertexShader* real_shader = dynamic_cast<DirectX11VertexShader*>(shader);
-    //context->IASetInputLayout(real_shader->layout.Get());
     context->VSSetShader(real_shader->ptr.Get(), nullptr, 0);
 }
 
 void DirectX11Backend::BindPixelShader(PixelShader* shader)
 {
-    SPDLOG_LOGGER_INFO(log, "Binding pixel shader '{}'", shader->DebugName());
+    SPDLOG_LOGGER_TRACE(log, "Binding pixel shader '{}'", shader->DebugName());
 
     DirectX11PixelShader* real_shader = dynamic_cast<DirectX11PixelShader*>(shader);
     context->PSSetShader(real_shader->ptr.Get(), nullptr, 0);

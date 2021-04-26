@@ -16,6 +16,7 @@
 #include "Engine/shader.h"
 #include "Engine/render_backend.h"
 #include "Engine/mesh.h"
+#include "Engine/material.h"
 #include "Engine/renderer.h"
 #include "Engine/render-object.h"
 #include "Engine/layer.h"

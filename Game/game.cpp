@@ -38,15 +38,10 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     material = engine->renderer->CreateMaterial("shaders/solid.vs", "shaders/solid.ps");
 
     root = engine->renderer->GetScene();
-    DXP::RenderObject* r1 = root->AddChild<DXP::RenderObject>(mesh);
+    DXP::RenderObject* r1 = root->AddChild<DXP::RenderObject>(mesh, material);
     r1->position.x = 0.1f;
-    r1->material = material;
 
-    /*auto solid_variables = r1->AddRenderMode(DXP::Renderer::Mode::SolidColor);
-    solid_variables->SetVariable(DXP::ConstantBufferSlot::Transform, "offsetX", 0.1f);*/
-
-    r1->GetVariables(DXP::ConstantBufferSlot::Transform)->Set("offsetX", 0.1f);
-
+    r1->ShaderVariables()->Write("offsetX", 0.1f);
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)

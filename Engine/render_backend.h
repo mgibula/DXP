@@ -17,6 +17,11 @@ struct IndexBuffer
     virtual ~IndexBuffer() = default;
 };
 
+struct ConstantBuffer
+{
+    virtual ~ConstantBuffer() = default;
+};
+
 enum class Topology {
     Triangles,
 };
@@ -51,6 +56,9 @@ struct RenderBackend
 
     virtual std::shared_ptr<VertexBuffer> LoadVertexBuffer(const BufferBase* buffer) = 0;
     virtual std::shared_ptr<IndexBuffer> LoadIndexBuffer(const BufferBase* buffer) = 0;
+
+    virtual std::shared_ptr<ConstantBuffer> CreateConstantBuffer(size_t size) = 0;
+    virtual void UpdateConstantBuffer(ConstantBuffer* buffer, const void* data, size_t size) = 0;
 
     virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) = 0;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) = 0;

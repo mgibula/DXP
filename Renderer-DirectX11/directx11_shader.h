@@ -10,9 +10,18 @@ struct DirectX11Shader
 
 protected:
     ID3DBlob* CompileShader(std::string_view path, std::string_view content, const char* target, const std::shared_ptr<spdlog::logger>& log);
-    ConstantBufferLayout ReadConstantBufferLayout(int slot, const std::shared_ptr<spdlog::logger>& log);
+    void ReflectShader(const std::shared_ptr<spdlog::logger>& log);
 
-    void InitializeConstantBuffer(ConstantBufferSlot slot, const std::shared_ptr<spdlog::logger>& log);
+    const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const {
+        if (constantBufferLayouts.size() <= static_cast<int>(slot))
+            return nullptr;
+
+        const ConstantBufferLayout* result = &constantBufferLayouts[static_cast<int>(slot)];
+        if (!result->size)
+            return nullptr;
+        
+        return result;
+    };
 
     std::vector<ConstantBufferLayout> constantBufferLayouts;
     Microsoft::WRL::ComPtr< ID3D11ShaderReflection> reflector;
@@ -29,7 +38,7 @@ struct DirectX11VertexShader : public VertexShader, public DirectX11Shader
     };
 
     virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const override {
-        return &constantBufferLayouts[static_cast<int>(slot)];
+        return DirectX11Shader::GetConstantBufferLayout(slot);
     };
 
     virtual std::string DebugName() const override {

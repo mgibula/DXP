@@ -21,4 +21,15 @@ struct DirectX11IndexBuffer : public IndexBuffer
     Microsoft::WRL::ComPtr<ID3D11Buffer> ptr;
 };
 
+struct DirectX11ConstantBuffer : public ConstantBuffer
+{
+    DirectX11ConstantBuffer(size_t size, ID3D11Device* device);
+    virtual ~DirectX11ConstantBuffer() = default;
+
+    void Update(const void* data, size_t size, ID3D11DeviceContext* context);
+
+    size_t size;
+    Microsoft::WRL::ComPtr<ID3D11Buffer> ptr;
+};
+
 };

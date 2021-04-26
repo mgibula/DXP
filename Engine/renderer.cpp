@@ -14,39 +14,65 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 {
     SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", backend->InfoString());
     gpu = backend;
-
-    predefinedStates.resize(Renderer::Mode::_size);
-
-    auto state = CreateState("None");
-    state->LoadVertexShader("shaders/null.vs");
-    state->LoadPixelShader("shaders/null.ps");
-    predefinedStates[Renderer::Mode::None] = state;
-
-    state = CreateState("SolidColor");
-    state->LoadVertexShader("shaders/solid.vs");
-    state->LoadPixelShader("shaders/solid.ps");
-    predefinedStates[Renderer::Mode::SolidColor] = state;
 }
 
-std::shared_ptr<RendererState> Renderer::CreateState(std::string name)
+std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
 {
-    return std::make_shared<RendererState>(this, log->clone(std::move(name)));
+    std::shared_ptr<VertexShader>& result = cache.vertexShaders[std::string(path)];
+    if (!result)
+        result = gpu->LoadVertexShader(path, FileGetContent(path));
+
+    return result;
+}
+
+std::shared_ptr<PixelShader> Renderer::LoadPixelShader(std::string_view path)
+{
+    std::shared_ptr<PixelShader>& result = cache.pixelShaders[std::string(path)];
+    if (!result)
+        result = gpu->LoadPixelShader(path, FileGetContent(path));
+
+    return result;
+}
+
+std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath)
+{
+    std::shared_ptr<Material> result = std::make_shared<Material>();
+
+    result->vertexShader = LoadVertexShader(vertexShaderPath);
+    result->pixelShader = LoadPixelShader(pixelShaderPath);
+
+    for (auto slot : { ConstantBufferSlot::Transform , ConstantBufferSlot::Object, ConstantBufferSlot::Material, ConstantBufferSlot::Frame, ConstantBufferSlot::Camera }) {
+        const ConstantBufferLayout* layout = result->vertexShader->GetConstantBufferLayout(slot);
+        if (layout) {
+            SPDLOG_LOGGER_INFO(log, "Creating constant buffer of {} bytes", layout->size);
+            result->constantBuffers[static_cast<int>(slot)] = gpu->CreateConstantBuffer(layout->size);
+        }
+    }
+
+    return result;
 }
 
 void Renderer::DrawScene(SceneNode* root)
 {
     for (auto& node : root->children) {
         if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
-            Draw(predefinedStates[obj->mode], obj->mesh.get());
+            Draw(obj->material.get(), obj->mesh.get());
         }
 
         DrawScene(node.get());
     }
 }
 
-void Renderer::Draw(std::shared_ptr<RendererState> state, Mesh* mesh)
+void Renderer::BindTransformCB(DXP::RenderObject* object)
 {
-    SetCurrentState(state);
+
+}
+
+void Renderer::Draw(Material *material, Mesh* mesh)
+{
+    gpu->BindVertexShader(material->vertexShader.get());
+    gpu->BindPixelShader(material->pixelShader.get());
+    gpu->BindTopology(mesh->topology);
 
     if (mesh->indices && !mesh->indexBuffer)
         mesh->indexBuffer = gpu->LoadIndexBuffer(mesh->indices.get());
@@ -55,7 +81,7 @@ void Renderer::Draw(std::shared_ptr<RendererState> state, Mesh* mesh)
     VertexShaderInputLayout inputLayout;
     int i = 0;
 
-    const auto& shaderInput = state->vertexShader->GetInputFormat();
+    const auto& shaderInput = material->vertexShader->GetInputFormat();
     for (VertexShaderInput input : shaderInput) {
         int index = static_cast<int>(input);
         DXP_ASSERT(mesh->channels[index], "Unable to find matching channel {} in mesh", index);
@@ -67,7 +93,7 @@ void Renderer::Draw(std::shared_ptr<RendererState> state, Mesh* mesh)
         inputLayout.PushElement(input, mesh->channels[index]->Format());
     }
 
-    gpu->BindVertexShaderInputLayout(state->vertexShader.get(), inputLayout);
+    gpu->BindVertexShaderInputLayout(material->vertexShader.get(), inputLayout);
     gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
 
     if (mesh->indexBuffer) {
@@ -76,35 +102,6 @@ void Renderer::Draw(std::shared_ptr<RendererState> state, Mesh* mesh)
     } else {
         gpu->Draw(mesh->channels[0]->Elements());
     }
-}
-
-void Renderer::SetCurrentState(const std::shared_ptr<RendererState>& state)
-{
-    if (currentState != state) {
-        gpu->BindVertexShader(state->vertexShader.get());
-        gpu->BindPixelShader(state->pixelShader.get());
-        gpu->BindTopology(state->topology);
-        currentState = state;
-    }
-}
-
-RendererState::RendererState(Renderer* renderer, std::shared_ptr<spdlog::logger> log) :
-    renderer(renderer),
-    log(log)
-{
-    SPDLOG_LOGGER_INFO(log, "Created");
-}
-
-void RendererState::LoadVertexShader(std::string_view path)
-{
-    vertexShader = renderer->gpu->LoadVertexShader(path, FileGetContent(path));
-    SPDLOG_LOGGER_INFO(log, "Loaded vertex shader {}", path);
-}
-
-void RendererState::LoadPixelShader(std::string_view path)
-{
-    pixelShader = renderer->gpu->LoadPixelShader(path, FileGetContent(path));
-    SPDLOG_LOGGER_INFO(log, "Loaded pixel shader {}", path);
 }
 
 };

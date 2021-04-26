@@ -16,6 +16,8 @@ struct Mesh
     // Mesh data, GPU side
     std::array<std::shared_ptr<VertexBuffer>, static_cast<size_t>(VertexShaderInput::_Count)> vertexBuffers;
     std::shared_ptr<IndexBuffer> indexBuffer;
+
+    Topology topology = Topology::Triangles;
 };
 
 };
