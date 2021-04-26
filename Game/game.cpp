@@ -41,7 +41,8 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     DXP::RenderObject* r1 = root->AddChild<DXP::RenderObject>(mesh, material);
     r1->position.x = 0.1f;
 
-    r1->ShaderVariables()->Write("offsetX", 0.1f);
+    r1->ShaderVariables()->Write("offsetX", .5f);
+    r1->ShaderVariables()->Write("offsetY", -.5f);
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)

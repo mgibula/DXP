@@ -256,6 +256,32 @@ void DirectX11Backend::UpdateConstantBuffer(ConstantBuffer* buffer, const void* 
     real_buffer->Update(data, size, context.Get());
 }
 
+void DirectX11Backend::BindVertexConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot)
+{
+    std::vector<ID3D11Buffer*> ptrs;
+    ptrs.resize(count);
+
+    for (int i = 0; i < count; i++) {
+        const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
+        ptrs[i] = real_buffer->ptr.Get();
+    }
+
+    context->VSSetConstantBuffers(startingSlot, count, ptrs.data());
+}
+
+void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot)
+{
+    std::vector<ID3D11Buffer*> ptrs;
+    ptrs.resize(count);
+
+    for (int i = 0; i < count; i++) {
+        const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
+        ptrs[i] = real_buffer->ptr.Get();
+    }
+
+    context->PSSetConstantBuffers(startingSlot, count, ptrs.data());
+}
+
 void DirectX11Backend::BindVertexShader(VertexShader* shader)
 {
     SPDLOG_LOGGER_TRACE(log, "Binding vertex shader '{}'", shader->DebugName());

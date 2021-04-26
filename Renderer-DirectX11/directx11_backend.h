@@ -37,6 +37,9 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<ConstantBuffer> CreateConstantBuffer(size_t size) override;
     virtual void UpdateConstantBuffer(ConstantBuffer* buffer, const void* data, size_t size) override;
 
+    virtual void BindVertexConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) override;
+    virtual void BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) override;
+
     virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) override;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) override;
     virtual void BindIndexBuffer(const IndexBuffer* buffer) override;

@@ -56,6 +56,7 @@ void Renderer::DrawScene(SceneNode* root)
 {
     for (auto& node : root->children) {
         if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
+            BindTransformCB(obj);
             Draw(obj->material.get(), obj->mesh.get());
         }
 
@@ -65,7 +66,11 @@ void Renderer::DrawScene(SceneNode* root)
 
 void Renderer::BindTransformCB(DXP::RenderObject* object)
 {
+    int slot = static_cast<int>(ConstantBufferSlot::Object);
+    ConstantBuffer* cb = object->material->constantBuffers[slot].get();
 
+    gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.data.data(), object->constantBufferPerObject.data.size());
+    gpu->BindVertexConstantBuffers(&cb, 1, slot);
 }
 
 void Renderer::Draw(Material *material, Mesh* mesh)
