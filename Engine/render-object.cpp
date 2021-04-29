@@ -11,9 +11,4 @@ RenderObject::RenderObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material>
     
 }
 
-void ConstantBufferValues::Set(std::string_view name, float value)
-{
-    values.insert(std::make_pair(name, value));
-}
-
 };

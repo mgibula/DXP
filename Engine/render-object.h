@@ -35,13 +35,6 @@ struct SceneNode
     std::vector<std::unique_ptr<SceneNode>> children;
 };
 
-struct ConstantBufferValues
-{
-    void Set(std::string_view name, float value);
-
-    std::map<std::string, float> values;
-};
-
 struct RenderObject : public SceneNode
 {
     RenderObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);

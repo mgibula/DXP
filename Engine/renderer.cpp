@@ -69,7 +69,7 @@ void Renderer::BindTransformCB(DXP::RenderObject* object)
     int slot = static_cast<int>(ConstantBufferSlot::Object);
     ConstantBuffer* cb = object->material->constantBuffers[slot].get();
 
-    gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.data.data(), object->constantBufferPerObject.data.size());
+    gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.buffer.data(), object->constantBufferPerObject.buffer.size());
     gpu->BindVertexConstantBuffers(&cb, 1, slot);
 }
 

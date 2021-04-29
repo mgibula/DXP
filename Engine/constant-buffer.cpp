@@ -7,7 +7,7 @@ ConstantBufferContent::ConstantBufferContent(const ConstantBufferLayout* layout)
     layout(layout)
 {
     if (layout)
-        data.resize(layout->size);
+        buffer.resize(layout->size);
 }
 
 void ConstantBufferContent::Write(std::string_view name, const void* data, size_t length)
@@ -19,7 +19,7 @@ void ConstantBufferContent::Write(std::string_view name, const void* data, size_
             continue;
 
         DXP_ASSERT(length == field.size, "Constant buffer field length mismatch ({} != {})", length, field.size);
-        memcpy(&this->data[0] + field.offset, data, length);
+        memcpy(&this->buffer[0] + field.offset, data, length);
         return;
     }
 

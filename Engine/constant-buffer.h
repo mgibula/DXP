@@ -38,7 +38,7 @@ struct ConstantBufferContent
     void Write(std::string_view name, const void* data, size_t length);
 
     const ConstantBufferLayout *layout;
-    std::vector<char> data;
+    std::vector<char> buffer;
 };
 
 };
