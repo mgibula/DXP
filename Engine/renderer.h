@@ -26,7 +26,7 @@ struct Renderer
     void Draw(Material* material, Mesh *mesh);
 
     void DrawScene(SceneNode* root);
-
+    
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
 
@@ -37,11 +37,13 @@ private:
     } cache;
 
     std::unique_ptr<SceneNode> scene;
+    std::shared_ptr<ConstantBuffer> transformConstantBuffer;
 
     RenderBackend* gpu = nullptr;
     std::shared_ptr<spdlog::logger> log;
 
-    void BindTransformCB(DXP::RenderObject* object);
+    void BindConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX parent);
+    void DrawScene(SceneNode* root, DirectX::FXMMATRIX parent);
 };
 
 };

@@ -5,6 +5,8 @@
 #include "spdlog/sinks/sink.h"
 #include "spdlog/sinks/base_sink.h"
 
+#include <DirectXMath.h>
+
 // Prefix Engine/ is used so this file works in other projects too
 #include "Engine/cyclic_buffer.h"
 #include "Engine/cyclic_log.h"

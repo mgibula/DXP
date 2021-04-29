@@ -12,8 +12,12 @@ Renderer::Renderer(std::shared_ptr<spdlog::logger> log) :
 
 void Renderer::SetRenderBackend(RenderBackend* backend)
 {
+    using namespace DirectX;
+
     SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", backend->InfoString());
     gpu = backend;
+
+    transformConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4));
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -36,12 +40,9 @@ std::shared_ptr<PixelShader> Renderer::LoadPixelShader(std::string_view path)
 
 std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath)
 {
-    std::shared_ptr<Material> result = std::make_shared<Material>();
+    std::shared_ptr<Material> result = std::make_shared<Material>(LoadVertexShader(vertexShaderPath), LoadPixelShader(pixelShaderPath));
 
-    result->vertexShader = LoadVertexShader(vertexShaderPath);
-    result->pixelShader = LoadPixelShader(pixelShaderPath);
-
-    for (auto slot : { ConstantBufferSlot::Transform , ConstantBufferSlot::Object, ConstantBufferSlot::Material, ConstantBufferSlot::Frame, ConstantBufferSlot::Camera }) {
+    for (auto slot : { ConstantBufferSlot::Object, ConstantBufferSlot::Material, ConstantBufferSlot::Frame, ConstantBufferSlot::Camera }) {
         const ConstantBufferLayout* layout = result->vertexShader->GetConstantBufferLayout(slot);
         if (layout) {
             SPDLOG_LOGGER_INFO(log, "Creating constant buffer of {} bytes", layout->size);
@@ -54,23 +55,56 @@ std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShader
 
 void Renderer::DrawScene(SceneNode* root)
 {
+    using namespace DirectX;
+    XMMATRIX parent = XMMatrixIdentity();
+
+    DrawScene(root, parent);
+}
+
+void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)
+{
+    using namespace DirectX;
+
     for (auto& node : root->children) {
+        XMMATRIX worldMatrix = node->GetWorldMatrix() * parent;
+
         if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
-            BindTransformCB(obj);
+            BindConstantBuffers(obj, worldMatrix);
             Draw(obj->material.get(), obj->mesh.get());
         }
 
-        DrawScene(node.get());
+        DrawScene(node.get(), worldMatrix);
     }
 }
 
-void Renderer::BindTransformCB(DXP::RenderObject* object)
+void Renderer::BindConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX worldMatrix)
 {
-    int slot = static_cast<int>(ConstantBufferSlot::Object);
-    ConstantBuffer* cb = object->material->constantBuffers[slot].get();
+    using namespace DirectX;
 
-    gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.buffer.data(), object->constantBufferPerObject.buffer.size());
-    gpu->BindVertexConstantBuffers(&cb, 1, slot);
+    {
+        ConstantBuffer* cb = transformConstantBuffer.get();
+        XMFLOAT4X4 matrix;
+
+        XMStoreFloat4x4(&matrix, XMMatrixTranspose(worldMatrix));
+        gpu->UpdateConstantBuffer(cb, &matrix, sizeof(matrix));
+        gpu->BindVertexConstantBuffers(&cb, 1, static_cast<int>(ConstantBufferSlot::Transform));
+    }
+
+    if (object->material->constantBufferPerMaterial.buffer.size()) {
+        int slot = static_cast<int>(ConstantBufferSlot::Material);
+        ConstantBuffer* cb = object->material->constantBuffers[slot].get();
+
+        gpu->UpdateConstantBuffer(cb, object->material->constantBufferPerMaterial.buffer.data(), object->material->constantBufferPerMaterial.buffer.size());
+        gpu->BindVertexConstantBuffers(&cb, 1, slot);
+    }
+
+    if (object->constantBufferPerObject.buffer.size()) {
+        int slot = static_cast<int>(ConstantBufferSlot::Object);
+        ConstantBuffer* cb = object->material->constantBuffers[slot].get();
+        
+        gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.buffer.data(), object->constantBufferPerObject.buffer.size());
+        gpu->BindVertexConstantBuffers(&cb, 1, slot);
+    }
 }
 
 void Renderer::Draw(Material *material, Mesh* mesh)
