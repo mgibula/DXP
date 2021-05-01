@@ -40,17 +40,7 @@ std::shared_ptr<PixelShader> Renderer::LoadPixelShader(std::string_view path)
 
 std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath)
 {
-    std::shared_ptr<Material> result = std::make_shared<Material>(LoadVertexShader(vertexShaderPath), LoadPixelShader(pixelShaderPath));
-
-    for (auto slot : { ConstantBufferSlot::Object, ConstantBufferSlot::Material, ConstantBufferSlot::Frame, ConstantBufferSlot::Camera }) {
-        const ConstantBufferLayout* layout = result->vertexShader->GetConstantBufferLayout(slot);
-        if (layout) {
-            SPDLOG_LOGGER_INFO(log, "Creating constant buffer of {} bytes", layout->size);
-            result->constantBuffers[static_cast<int>(slot)] = gpu->CreateConstantBuffer(layout->size);
-        }
-    }
-
-    return result;
+    return std::make_shared<Material>(gpu, LoadVertexShader(vertexShaderPath), LoadPixelShader(pixelShaderPath));
 }
 
 void Renderer::DrawScene(SceneNode* root)
@@ -81,36 +71,50 @@ void Renderer::BindConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX
 {
     using namespace DirectX;
 
+    // Bind transform CB
     {
         ConstantBuffer* cb = transformConstantBuffer.get();
         XMFLOAT4X4 matrix;
 
         XMStoreFloat4x4(&matrix, XMMatrixTranspose(worldMatrix));
         gpu->UpdateConstantBuffer(cb, &matrix, sizeof(matrix));
-        gpu->BindVertexConstantBuffers(&cb, 1, static_cast<int>(ConstantBufferSlot::Transform));
+
+        if (object->material->vertexShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Transform))
+            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Transform);
+
+        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Transform))
+            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Transform);
     }
 
-    if (object->material->constantBufferPerMaterial.buffer.size()) {
-        int slot = static_cast<int>(ConstantBufferSlot::Material);
-        ConstantBuffer* cb = object->material->constantBuffers[slot].get();
+    if (object->material->constantBufferPerMaterial) {
+        ConstantBuffer* cb = object->material->constantBuffers[ConstantBufferSlot::CB_Material].get();
 
-        gpu->UpdateConstantBuffer(cb, object->material->constantBufferPerMaterial.buffer.data(), object->material->constantBufferPerMaterial.buffer.size());
-        gpu->BindVertexConstantBuffers(&cb, 1, slot);
+        gpu->UpdateConstantBuffer(cb, object->material->constantBufferPerMaterial->buffer.data(), object->material->constantBufferPerMaterial->buffer.size());
+
+        if (object->material->vertexShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Material))
+            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Material);
+
+        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Material))
+            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Material);
     }
 
-    if (object->constantBufferPerObject.buffer.size()) {
-        int slot = static_cast<int>(ConstantBufferSlot::Object);
-        ConstantBuffer* cb = object->material->constantBuffers[slot].get();
+    if (object->constantBufferPerObject) {
+        ConstantBuffer* cb = object->material->constantBuffers[ConstantBufferSlot::CB_Object].get();
         
-        gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject.buffer.data(), object->constantBufferPerObject.buffer.size());
-        gpu->BindVertexConstantBuffers(&cb, 1, slot);
+        gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject->buffer.data(), object->constantBufferPerObject->buffer.size());
+
+        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Object))
+            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Object);
+
+        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Object))
+            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Object);
     }
 }
 
 void Renderer::Draw(Material *material, Mesh* mesh)
 {
-    gpu->BindVertexShader(material->vertexShader.get());
-    gpu->BindPixelShader(material->pixelShader.get());
+    gpu->BindVertexShader(material->vertexShader.program.get());
+    gpu->BindPixelShader(material->pixelShader.program.get());
     gpu->BindTopology(mesh->topology);
 
     if (mesh->indices && !mesh->indexBuffer)
@@ -120,7 +124,7 @@ void Renderer::Draw(Material *material, Mesh* mesh)
     VertexShaderInputLayout inputLayout;
     int i = 0;
 
-    const auto& shaderInput = material->vertexShader->GetInputFormat();
+    const auto& shaderInput = material->vertexShader.program->GetInputFormat();
     for (VertexShaderInput input : shaderInput) {
         int index = static_cast<int>(input);
         DXP_ASSERT(mesh->channels[index], "Unable to find matching channel {} in mesh", index);
@@ -132,7 +136,7 @@ void Renderer::Draw(Material *material, Mesh* mesh)
         inputLayout.PushElement(input, mesh->channels[index]->Format());
     }
 
-    gpu->BindVertexShaderInputLayout(material->vertexShader.get(), inputLayout);
+    gpu->BindVertexShaderInputLayout(material->vertexShader.program.get(), inputLayout);
     gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
 
     if (mesh->indexBuffer) {

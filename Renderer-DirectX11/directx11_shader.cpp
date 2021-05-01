@@ -45,7 +45,7 @@ void DirectX11Shader::ReflectShader(const std::shared_ptr<spdlog::logger>& log)
     HRESULT success = reflector->GetDesc(&shaderDesc);
     DXP_ASSERT(SUCCEEDED(success), "ID3D11ShaderReflection::GetDesc");
 
-    for (int i = 0; i < shaderDesc.ConstantBuffers; i++) {
+    for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++) {
         ID3D11ShaderReflectionConstantBuffer* cbReflector = reflector->GetConstantBufferByIndex(i);
 
         D3D11_SHADER_BUFFER_DESC cbDesc;
@@ -61,7 +61,7 @@ void DirectX11Shader::ReflectShader(const std::shared_ptr<spdlog::logger>& log)
         ConstantBufferLayout layout;
         layout.size = cbDesc.Size;
 
-        for (int j = 0; j < cbDesc.Variables; j++) {
+        for (UINT j = 0; j < cbDesc.Variables; j++) {
             ID3D11ShaderReflectionVariable* varReflector = cbReflector->GetVariableByIndex(j);
             D3D11_SHADER_VARIABLE_DESC varDesc;
             success = varReflector->GetDesc(&varDesc);

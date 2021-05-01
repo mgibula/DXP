@@ -26,6 +26,10 @@ struct DirectX11ConstantBuffer : public ConstantBuffer
     DirectX11ConstantBuffer(size_t size, ID3D11Device* device);
     virtual ~DirectX11ConstantBuffer() = default;
 
+    virtual size_t GetSize() override {
+        return size;
+    };
+
     void Update(const void* data, size_t size, ID3D11DeviceContext* context);
 
     size_t size;

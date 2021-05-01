@@ -3,17 +3,40 @@
 namespace DXP
 {
 
+template <typename T>
+struct LoadedShader
+{
+    LoadedShader(std::shared_ptr<T> shader) : 
+        program(shader)
+    { };
+
+    bool IsConstantBufferUsed(int slot) const {
+        return (program->GetConstantBufferLayout(slot) != nullptr);
+    };
+
+    std::shared_ptr<T> program;
+};
+
 struct Material
 {
-    Material(std::shared_ptr<VertexShader> vertexShader, std::shared_ptr<PixelShader> pixelShader);
+    Material(RenderBackend* gpu, std::shared_ptr<VertexShader> vertexShader, std::shared_ptr<PixelShader> pixelShader);
 
-    std::shared_ptr<VertexShader> vertexShader;
-    std::shared_ptr<PixelShader> pixelShader;
+    std::unique_ptr<ConstantBufferContent> CreateConstantBufferData(int slot);
 
-    std::array<std::shared_ptr<ConstantBuffer>, static_cast<int>(ConstantBufferSlot::_Count)> constantBuffers;
+    LoadedShader<VertexShader> vertexShader;
+    LoadedShader<PixelShader> pixelShader;
+
     // textures
 
-    ConstantBufferContent constantBufferPerMaterial;
+    std::unique_ptr<ConstantBufferContent> constantBufferPerMaterial;
+
+    std::vector<const ConstantBufferLayout*> constantBufferLayouts;
+    std::vector<std::shared_ptr<ConstantBuffer>> constantBuffers;
+
+
+private:
+    void FillConstantBufferFromShader(RenderBackend* gpu, Shader* shader, int slot);
+
 };
 
 };

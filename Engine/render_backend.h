@@ -20,6 +20,8 @@ struct IndexBuffer
 struct ConstantBuffer
 {
     virtual ~ConstantBuffer() = default;
+
+    virtual size_t GetSize() = 0;
 };
 
 enum class Topology {
@@ -28,6 +30,10 @@ enum class Topology {
 
 struct RenderBackend
 {
+    enum class Limit {
+        ConstantBufferSlots,
+    };
+
     virtual ~RenderBackend() = default;
 
     virtual std::string InfoString() const = 0;
@@ -42,6 +48,8 @@ struct RenderBackend
     virtual void ImGuiShutdown() { };
     virtual void ImGuiFrameStart() { };
     virtual void ImGuiFrameEnd() { };
+
+    virtual uint64_t GetLimitValue(Limit limit) = 0;
 
     virtual void ClearScreen() = 0;
     virtual void Display() = 0;

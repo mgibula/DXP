@@ -12,11 +12,11 @@ protected:
     ID3DBlob* CompileShader(std::string_view path, std::string_view content, const char* target, const std::shared_ptr<spdlog::logger>& log);
     void ReflectShader(const std::shared_ptr<spdlog::logger>& log);
 
-    const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const {
-        if (constantBufferLayouts.size() <= static_cast<int>(slot))
+    const ConstantBufferLayout* GetConstantBufferLayout(int slot) const {
+        if (constantBufferLayouts.size() <= slot)
             return nullptr;
 
-        const ConstantBufferLayout* result = &constantBufferLayouts[static_cast<int>(slot)];
+        const ConstantBufferLayout* result = &constantBufferLayouts[slot];
         if (!result->size)
             return nullptr;
         
@@ -37,7 +37,7 @@ struct DirectX11VertexShader : public VertexShader, public DirectX11Shader
         return inputFormat;
     };
 
-    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const override {
+    virtual const ConstantBufferLayout* GetConstantBufferLayout(int slot) const override {
         return DirectX11Shader::GetConstantBufferLayout(slot);
     };
 
@@ -55,8 +55,8 @@ struct DirectX11PixelShader : public PixelShader, public DirectX11Shader
 {
     DirectX11PixelShader(std::string_view path, std::string_view content, ID3D11Device* device, std::shared_ptr<spdlog::logger> log);
 
-    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const override {
-        return &constantBufferLayouts[static_cast<int>(slot)];
+    virtual const ConstantBufferLayout* GetConstantBufferLayout(int slot) const override {
+        return DirectX11Shader::GetConstantBufferLayout(slot);
     };
 
     virtual std::string DebugName() const override {

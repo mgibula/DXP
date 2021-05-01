@@ -60,21 +60,27 @@ struct VertexShaderInputLayout
     };
 };
 
-struct VertexShader
+struct RenderBackend;
+struct ConstantBuffer;
+
+struct Shader
+{
+    virtual ~Shader() = default;
+
+    virtual const ConstantBufferLayout* GetConstantBufferLayout(int slot) const = 0;
+    virtual std::string DebugName() const = 0;
+};
+
+struct VertexShader : public Shader
 {
     virtual ~VertexShader() = default;
 
     virtual const std::vector<VertexShaderInput>& GetInputFormat() const = 0;
-    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const = 0;
-    virtual std::string DebugName() const = 0;
 };
 
-struct PixelShader
+struct PixelShader : public Shader
 {
     virtual ~PixelShader() = default;
-
-    virtual const ConstantBufferLayout* GetConstantBufferLayout(ConstantBufferSlot slot) const = 0;
-    virtual std::string DebugName() const = 0;
 };
 
 };

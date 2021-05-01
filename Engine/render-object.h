@@ -82,15 +82,11 @@ struct SceneNode
 struct RenderObject : public SceneNode
 {
     RenderObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
-
-    ConstantBufferContent* ShaderVariables() {
-        return &constantBufferPerObject;
-    };
     
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Material> material;
     
-    ConstantBufferContent constantBufferPerObject;
+    std::unique_ptr<ConstantBufferContent> constantBufferPerObject;
 };
 
 };

@@ -193,6 +193,16 @@ void DirectX11Backend::ImGuiFrameEnd()
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
+uint64_t DirectX11Backend::GetLimitValue(Limit limit)
+{
+    switch (limit) {
+    case RenderBackend::Limit::ConstantBufferSlots:
+        return D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+    default:
+        DXP::Fatal("Unknown limit option: {}", static_cast<int>(limit));
+    }
+}
+
 void DirectX11Backend::ClearScreen()
 {
     float black[4] = {};

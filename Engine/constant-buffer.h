@@ -3,13 +3,13 @@
 namespace DXP
 {
 
-enum class ConstantBufferSlot : int
+enum ConstantBufferSlot 
 {
-    Transform           = 0,
-    Camera              = 1,             
-    Frame               = 2,
-    Material            = 3,
-    Object              = 4,
+    CB_Transform           = 0,
+    CB_Camera              = 1,
+    CB_Frame               = 2,
+    CB_Material            = 3,
+    CB_Object              = 4,
     _Count,             // Always last
 };
 
