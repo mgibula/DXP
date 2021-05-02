@@ -81,9 +81,14 @@ std::shared_ptr<PixelShader> Renderer::LoadPixelShader(std::string_view path)
     return result;
 }
 
-std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath)
+std::shared_ptr<Material> Renderer::CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath, std::vector<std::shared_ptr<Texture>> textures)
 {
-    return std::make_shared<Material>(gpu, LoadVertexShader(vertexShaderPath), LoadPixelShader(pixelShaderPath));
+    return std::make_shared<Material>(gpu, LoadVertexShader(vertexShaderPath), LoadPixelShader(pixelShaderPath), std::move(textures));
+}
+
+std::shared_ptr<Texture> Renderer::LoadTexture(const TextureData& textureData)
+{
+    return gpu->CreateTexture2D(textureData);
 }
 
 void Renderer::DrawScene(SceneNode* root)
@@ -114,24 +119,43 @@ void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)
 
 void Renderer::BindMaterial(DXP::Material *material)
 {
-    int slots = material->constantBuffers.size();
-
-    ConstantBuffer** ptrs = reinterpret_cast<ConstantBuffer **>(_alloca(sizeof(void*) * slots));
-    memset(ptrs, '\0', sizeof(void*) * slots);
-
-    ptrs[ConstantBufferSlot::CB_Transform] = transformConstantBuffer.get();
-    for (int i = ConstantBufferSlot::CB_Material; i < slots; i++) {
-        ptrs[i] = material->constantBuffers[i].get();
-    }
-
+    // Bind shaders
     if (material->vertexShader.program)
-        gpu->BindVertexConstantBuffers(ptrs, slots, 0);
+        gpu->BindVertexShader(material->vertexShader.program.get());
 
     if (material->pixelShader.program)
-        gpu->BindPixelConstantBuffers(ptrs, slots, 0);
+        gpu->BindPixelShader(material->pixelShader.program.get());
 
-    gpu->BindVertexShader(material->vertexShader.program.get());
-    gpu->BindPixelShader(material->pixelShader.program.get());
+    // Bind textures
+    {
+        int textures = material->textures.size();
+        const Texture** ptrs = reinterpret_cast<const Texture**>(_alloca(sizeof(void*) * textures));
+        memset(ptrs, '\0', sizeof(void*) * textures);
+
+        for (int i = 0; i < textures; i++) {
+            ptrs[i] = material->textures[i].get();
+        }
+
+        gpu->BindTextures(ptrs, textures, 0);
+    }
+
+    // Bind constant buffers
+    {
+        int slots = material->constantBuffers.size();
+        ConstantBuffer** ptrs = reinterpret_cast<ConstantBuffer**>(_alloca(sizeof(void*) * slots));
+        memset(ptrs, '\0', sizeof(void*) * slots);
+
+        ptrs[ConstantBufferSlot::CB_Transform] = transformConstantBuffer.get();
+        for (int i = ConstantBufferSlot::CB_Material; i < slots; i++) {
+            ptrs[i] = material->constantBuffers[i].get();
+        }
+
+        if (material->vertexShader.program)
+            gpu->BindVertexConstantBuffers(ptrs, slots, 0);
+
+        if (material->pixelShader.program)
+            gpu->BindPixelConstantBuffers(ptrs, slots, 0);
+    }
 }
 
 void Renderer::UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX worldMatrix)

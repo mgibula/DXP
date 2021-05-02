@@ -80,6 +80,9 @@ struct RenderBackend
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) = 0;
     virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) = 0;
 
+    virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
+    virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;
+
     virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) = 0;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) = 0;
     virtual void BindIndexBuffer(const IndexBuffer* buffer) = 0;

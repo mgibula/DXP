@@ -44,6 +44,7 @@ struct Engine
     std::unique_ptr<Layer> PopLayer();
 
     std::unique_ptr<Renderer> renderer;
+    TextureLoader textureLoader;
 
 private:
     void PreRenderLoop();

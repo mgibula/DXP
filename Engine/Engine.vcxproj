@@ -175,6 +175,7 @@
     <ClCompile Include="render-object.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="texture-loader.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -198,8 +199,10 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="render_backend.h" />
+    <ClInclude Include="texture-loader.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="vendor\stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

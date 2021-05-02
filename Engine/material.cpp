@@ -3,9 +3,10 @@
 namespace DXP
 {
 
-Material::Material(RenderBackend *gpu, std::shared_ptr<VertexShader> vertexShader, std::shared_ptr<PixelShader> pixelShader) :
+Material::Material(RenderBackend *gpu, std::shared_ptr<VertexShader> vertexShader, std::shared_ptr<PixelShader> pixelShader, std::vector<std::shared_ptr<Texture>> textures) :
     vertexShader(vertexShader),
-    pixelShader(pixelShader)
+    pixelShader(pixelShader),
+    textures(std::move(textures))
 {
     uint64_t slots = gpu->GetLimitValue(RenderBackend::Limit::ConstantBufferSlots);
     constantBuffers.resize(slots);

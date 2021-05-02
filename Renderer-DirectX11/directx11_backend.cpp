@@ -22,7 +22,7 @@ static const char* GetSemanticName(VertexShaderInput input)
     case VertexShaderInput::UV1:
     case VertexShaderInput::UV2:
     case VertexShaderInput::UV3:
-        return "UV";
+        return "TEXCOORD";
     default:
         Fatal("Unsupported input {}", static_cast<int>(input));
     }
@@ -302,8 +302,7 @@ void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int co
 
 std::shared_ptr<Sampler> DirectX11Backend::CreateSampler(const SamplerSettings& settings)
 {
-    auto result = std::make_shared<DirectX11Sampler>(device.Get(), settings);
-    return result;
+    return std::make_shared<DirectX11Sampler>(device.Get(), settings);
 }
 
 void DirectX11Backend::BindSamplers(const Sampler** samplers, int count, int startingSlot)
@@ -320,6 +319,27 @@ void DirectX11Backend::BindSamplers(const Sampler** samplers, int count, int sta
     }
 
     context->PSSetSamplers(startingSlot, count, ptrs);
+}
+
+std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)
+{
+    return std::make_shared<DirectX11Texture2D>(device.Get(), textureData);
+}
+
+void DirectX11Backend::BindTextures(const Texture** textures, int count, int startingSlot)
+{
+    ID3D11ShaderResourceView** ptrs = reinterpret_cast<ID3D11ShaderResourceView**>(_alloca(count * sizeof(void*)));
+
+    for (int i = 0; i < count; i++) {
+        const DirectX11Texture2D* real_texture = dynamic_cast<const DirectX11Texture2D*>(textures[i]);
+        if (real_texture) {
+            ptrs[i] = real_texture->view.Get();
+        } else {
+            ptrs[i] = nullptr;
+        }
+    }
+
+    context->PSSetShaderResources(startingSlot, count, ptrs);
 }
 
 void DirectX11Backend::BindVertexShader(VertexShader* shader)

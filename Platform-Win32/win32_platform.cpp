@@ -13,6 +13,7 @@ Engine* Win32Platform::engine_instance;
 void Fatal(std::string_view message)
 {
     MessageBox(nullptr, message.data(), "Fatal error", MB_ICONERROR | MB_OK);
+    __debugbreak();
     ExitProcess(1);
 }
 

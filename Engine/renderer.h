@@ -17,7 +17,9 @@ struct Renderer
 
     void SetRenderBackend(RenderBackend* backend);
 
-    std::shared_ptr<Material> CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath);
+    std::shared_ptr<Material> CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath, std::vector<std::shared_ptr<Texture>> textures);
+
+    std::shared_ptr<Texture> LoadTexture(const TextureData& textureData);
 
     SceneNode* GetScene() {
         return scene.get();

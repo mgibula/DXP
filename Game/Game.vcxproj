@@ -182,6 +182,7 @@
   <ItemGroup>
     <None Include="shaders\null.ps" />
     <None Include="shaders\null.vs" />
+    <None Include="shaders\solid.hlsli" />
     <None Include="shaders\solid.ps" />
     <None Include="shaders\solid.vs">
       <FileType>Document</FileType>

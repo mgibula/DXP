@@ -1,6 +1,11 @@
 #include "DXP.hlsli"
+#include "solid.hlsli"
 
-float4 main( float3 pos : POSITION ) : SV_POSITION
+PS_in main(VS_in input)
 {
-	return mul(float4(pos, 1.f), transform);
+	PS_in output;
+	output.position = mul(float4(input.position, 1.f), transform);
+	output.uv = input.uv;
+
+	return output;
 }

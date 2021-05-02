@@ -12,4 +12,4 @@ cbuffer CB_PerObject: register(b4)
 SamplerState pointSampler : register(s0);
 SamplerState bilinearSampler : register(s1);
 SamplerState trilinearSampler : register(s2);
-SamplerState anizotropicSampler : register(s3);
+SamplerState anisotropicSampler : register(s3);

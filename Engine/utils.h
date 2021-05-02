@@ -3,7 +3,8 @@
 using float32_t = float;
 using float64_t = double;
 
-#define DXP_ASSERT(c, ...)         do { if (!(c)) DXP::Fatal(__VA_ARGS__); } while (0)
+#define DXP_ASSERT(c, ...)          do { if (!(c)) DXP::Fatal(__VA_ARGS__); } while (0)
+#define DXP_ASSERT_SIMPLE(c)        do { if (!(c)) DXP::Fatal(#c); } while (0)
 
 namespace DXP
 {
@@ -32,5 +33,7 @@ const char* FormatToCString(fmt::memory_buffer& buffer, T&&... args)
 }
 
 std::string FileGetContent(std::string_view path);
+
+std::vector<uint8_t> FileGetContentBytes(std::string_view path);
 
 };

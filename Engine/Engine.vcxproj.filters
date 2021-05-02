@@ -25,6 +25,9 @@
     <Filter Include="Source Files\misc">
       <UniqueIdentifier>{37eab78d-e7f2-4af3-b564-6b024ab11f4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\vendor">
+      <UniqueIdentifier>{b5af3f7a-eb45-4e52-ad90-5e678f1e6b74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine.cpp">
@@ -61,6 +64,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="texture-loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -129,6 +135,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image.h">
+      <Filter>Header Files\vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="texture-loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
