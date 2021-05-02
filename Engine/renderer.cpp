@@ -85,6 +85,9 @@ void Renderer::BindMaterial(DXP::Material *material)
 
     if (material->pixelShader.program)
         gpu->BindPixelConstantBuffers(ptrs, slots, 0);
+
+    gpu->BindVertexShader(material->vertexShader.program.get());
+    gpu->BindPixelShader(material->pixelShader.program.get());
 }
 
 void Renderer::UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX worldMatrix)
@@ -113,14 +116,15 @@ void Renderer::UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATR
 
 void Renderer::Draw(Material *material, Mesh* mesh)
 {
-    gpu->BindVertexShader(material->vertexShader.program.get());
-    gpu->BindPixelShader(material->pixelShader.program.get());
     gpu->BindTopology(mesh->topology);
 
     if (mesh->indices && !mesh->indexBuffer)
         mesh->indexBuffer = gpu->LoadIndexBuffer(mesh->indices.get());
 
-    std::array<const VertexBuffer*, 16> vertexBuffers;
+    int maxSlots = gpu->GetLimitValue(RenderBackend::Limit::VertexBufferSlots);
+    const VertexBuffer** vertexBuffers = reinterpret_cast<const VertexBuffer **>(alloca(sizeof(void *) * maxSlots));
+    memset(vertexBuffers, '\0', maxSlots * sizeof(void*));
+
     VertexShaderInputLayout inputLayout;
     int i = 0;
 

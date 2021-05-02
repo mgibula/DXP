@@ -198,6 +198,8 @@ uint64_t DirectX11Backend::GetLimitValue(Limit limit)
     switch (limit) {
     case RenderBackend::Limit::ConstantBufferSlots:
         return D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+    case RenderBackend::Limit::VertexBufferSlots:
+        return D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT;
     default:
         DXP::Fatal("Unknown limit option: {}", static_cast<int>(limit));
     }

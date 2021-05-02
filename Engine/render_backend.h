@@ -32,6 +32,7 @@ struct RenderBackend
 {
     enum class Limit {
         ConstantBufferSlots,
+        VertexBufferSlots,
     };
 
     virtual ~RenderBackend() = default;
