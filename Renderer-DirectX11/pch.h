@@ -10,6 +10,7 @@
 #include <map>
 
 #include "Engine/dxp.h"
+#include "directx11_sampler.h"
 #include "directx11_backend.h"
 #include "directx11_shader.h"
 #include "directx11_buffer.h"

@@ -46,7 +46,7 @@
     <None Include="shaders\solid.ps">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="Transform.hlsli">
+    <None Include="DXP.hlsli">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\null.vs">

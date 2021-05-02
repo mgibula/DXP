@@ -42,6 +42,9 @@ struct DirectX11Backend final : public RenderBackend
     virtual void BindVertexConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) override;
     virtual void BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) override;
 
+    virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) override;
+    virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) override;
+
     virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) override;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) override;
     virtual void BindIndexBuffer(const IndexBuffer* buffer) override;

@@ -18,6 +18,49 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     gpu = backend;
 
     transformConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4));
+
+    // Create general samplers and bind them
+    {
+        SamplerSettings settings;
+        settings.type = SamplerType::Point;
+
+        pointSampler = gpu->CreateSampler(settings);
+    }
+
+    {
+        SamplerSettings settings;
+        settings.type = SamplerType::Point;
+        settings.point.minification_linear = true;
+        settings.point.magnification_linear = true;
+
+        bilinearSampler = gpu->CreateSampler(settings);
+    }
+
+    {
+        SamplerSettings settings;
+        settings.type = SamplerType::Point;
+        settings.point.minification_linear = true;
+        settings.point.magnification_linear = true;
+        settings.point.mip_linear = true;
+
+        trilinearSampler = gpu->CreateSampler(settings);
+    }
+
+    {
+        SamplerSettings settings;
+        settings.type = SamplerType::Anisotropic;
+        settings.anisotropic.level = 16;
+
+        anisotropicSampler = gpu->CreateSampler(settings);
+    }
+
+    std::array<const Sampler*, 4> ptrs;
+    ptrs[SamplerSlot::Sampler_Point] = pointSampler.get();
+    ptrs[SamplerSlot::Sampler_Bilinear] = bilinearSampler.get();
+    ptrs[SamplerSlot::Sampler_Trilinear] = trilinearSampler.get();
+    ptrs[SamplerSlot::Sampler_Anisotropic] = anisotropicSampler.get();
+
+    gpu->BindSamplers(ptrs.data(), 4, 0);
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -60,6 +103,7 @@ void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)
 
         if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
             BindMaterial(obj->material.get());
+
             UpdateConstantBuffers(obj, worldMatrix);
             Draw(obj->material.get(), obj->mesh.get());
         }
@@ -72,7 +116,7 @@ void Renderer::BindMaterial(DXP::Material *material)
 {
     int slots = material->constantBuffers.size();
 
-    ConstantBuffer** ptrs = reinterpret_cast<ConstantBuffer **>(alloca(sizeof(void*) * slots));
+    ConstantBuffer** ptrs = reinterpret_cast<ConstantBuffer **>(_alloca(sizeof(void*) * slots));
     memset(ptrs, '\0', sizeof(void*) * slots);
 
     ptrs[ConstantBufferSlot::CB_Transform] = transformConstantBuffer.get();
@@ -122,7 +166,7 @@ void Renderer::Draw(Material *material, Mesh* mesh)
         mesh->indexBuffer = gpu->LoadIndexBuffer(mesh->indices.get());
 
     int maxSlots = gpu->GetLimitValue(RenderBackend::Limit::VertexBufferSlots);
-    const VertexBuffer** vertexBuffers = reinterpret_cast<const VertexBuffer **>(alloca(sizeof(void *) * maxSlots));
+    const VertexBuffer** vertexBuffers = reinterpret_cast<const VertexBuffer **>(_alloca(sizeof(void *) * maxSlots));
     memset(vertexBuffers, '\0', maxSlots * sizeof(void*));
 
     VertexShaderInputLayout inputLayout;

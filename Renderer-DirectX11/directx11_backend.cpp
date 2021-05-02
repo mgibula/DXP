@@ -270,7 +270,7 @@ void DirectX11Backend::UpdateConstantBuffer(ConstantBuffer* buffer, const void* 
 
 void DirectX11Backend::BindVertexConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot)
 {
-    ID3D11Buffer** ptrs = reinterpret_cast<ID3D11Buffer **>(alloca(sizeof(void *) * count));
+    ID3D11Buffer** ptrs = reinterpret_cast<ID3D11Buffer **>(_alloca(sizeof(void *) * count));
 
     for (int i = 0; i < count; i++) {
         const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
@@ -286,7 +286,7 @@ void DirectX11Backend::BindVertexConstantBuffers(ConstantBuffer** buffers, int c
 
 void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot)
 {
-    ID3D11Buffer** ptrs = reinterpret_cast<ID3D11Buffer**>(alloca(sizeof(void *) * count));
+    ID3D11Buffer** ptrs = reinterpret_cast<ID3D11Buffer**>(_alloca(sizeof(void *) * count));
 
     for (int i = 0; i < count; i++) {
         const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
@@ -298,6 +298,28 @@ void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int co
     }
 
     context->PSSetConstantBuffers(startingSlot, count, ptrs);
+}
+
+std::shared_ptr<Sampler> DirectX11Backend::CreateSampler(const SamplerSettings& settings)
+{
+    auto result = std::make_shared<DirectX11Sampler>(device.Get(), settings);
+    return result;
+}
+
+void DirectX11Backend::BindSamplers(const Sampler** samplers, int count, int startingSlot)
+{
+    ID3D11SamplerState** ptrs = reinterpret_cast<ID3D11SamplerState**>(_alloca(count * sizeof(void *)));
+
+    for (int i = 0; i < count; i++) {
+        const DirectX11Sampler* real_sampler = dynamic_cast<const DirectX11Sampler*>(samplers[i]);
+        if (real_sampler) {
+            ptrs[i] = real_sampler->ptr.Get();
+        } else {
+            ptrs[i] = nullptr;
+        }
+    }
+
+    context->PSSetSamplers(startingSlot, count, ptrs);
 }
 
 void DirectX11Backend::BindVertexShader(VertexShader* shader)
@@ -356,21 +378,26 @@ void DirectX11Backend::BindVertexShaderInputLayout(VertexShader* shader, const V
 
 void DirectX11Backend::BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot)
 {
-    std::vector<ID3D11Buffer*> ptrs;
-    std::vector<UINT> strides;
-    std::vector<UINT> offsets;
+    ID3D11Buffer** ptrs = reinterpret_cast<ID3D11Buffer **>(_alloca(count * sizeof(void *)));
+    UINT* strides = reinterpret_cast<UINT * >(_alloca(sizeof(UINT) * count));
+    UINT* offsets = reinterpret_cast<UINT*>(_alloca(sizeof(UINT) * count));
 
-    ptrs.resize(count);
-    strides.resize(count);
-    offsets.resize(count);
+    memset(ptrs, '\0', sizeof(void*) * count);
+    memset(strides, '\0', sizeof(UINT) * count);
+    memset(offsets, '\0', sizeof(UINT) * count);
 
     for (int i = 0; i < count; i++) {
         const DirectX11VertexBuffer* real_buffer = dynamic_cast<const DirectX11VertexBuffer*>(buffers[i]);
-        ptrs[i] = real_buffer->ptr.Get();
-        strides[i] = real_buffer->stride;
+        if (real_buffer) {
+            ptrs[i] = real_buffer->ptr.Get();
+            strides[i] = real_buffer->stride;
+        } else {
+            ptrs[i] = nullptr;
+            strides[i] = 0;
+        }
     }
 
-    context->IASetVertexBuffers(startingSlot, count, ptrs.data(), strides.data(), offsets.data());
+    context->IASetVertexBuffers(startingSlot, count, ptrs, strides, offsets);
 }
 
 void DirectX11Backend::BindIndexBuffer(const IndexBuffer* buffer)

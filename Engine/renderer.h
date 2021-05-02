@@ -37,7 +37,13 @@ private:
     } cache;
 
     std::unique_ptr<SceneNode> scene;
+
+    // Runtime resources
     std::shared_ptr<ConstantBuffer> transformConstantBuffer;
+    std::shared_ptr<Sampler> pointSampler;
+    std::shared_ptr<Sampler> bilinearSampler;
+    std::shared_ptr<Sampler> trilinearSampler;
+    std::shared_ptr<Sampler> anisotropicSampler;
 
     RenderBackend* gpu = nullptr;
     std::shared_ptr<spdlog::logger> log;

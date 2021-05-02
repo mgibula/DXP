@@ -12,7 +12,6 @@ enum ConstantBufferSlot
     CB_Frame               = 2,
     CB_Material            = 3,
     CB_Object              = 4,
-    _Count,             // Always last
 };
 
 struct ConstantBufferField

@@ -13,6 +13,7 @@
 
 #include "Engine/utils.h"
 #include "Engine/event.h"
+#include "Engine/sampler.h"
 #include "Engine/texture.h"
 #include "Engine/constant-buffer.h"
 #include "Engine/buffer.h"

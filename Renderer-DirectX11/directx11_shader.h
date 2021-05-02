@@ -24,7 +24,7 @@ protected:
     };
 
     std::vector<ConstantBufferLayout> constantBufferLayouts;
-    Microsoft::WRL::ComPtr< ID3D11ShaderReflection> reflector;
+    Microsoft::WRL::ComPtr<ID3D11ShaderReflection> reflector;
 };
 
 struct DirectX11VertexShader : public VertexShader, public DirectX11Shader

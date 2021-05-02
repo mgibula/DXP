@@ -24,6 +24,11 @@ struct ConstantBuffer
     virtual size_t GetSize() = 0;
 };
 
+struct Sampler
+{
+    virtual ~Sampler() = default;
+};
+
 enum class Topology {
     Triangles,
 };
@@ -71,6 +76,9 @@ struct RenderBackend
 
     virtual void BindVertexConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) = 0;
     virtual void BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) = 0;
+
+    virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) = 0;
+    virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) = 0;
 
     virtual void BindVertexShaderInputLayout(VertexShader* shader, const VertexShaderInputLayout& layout) = 0;
     virtual void BindVertexBuffers(const VertexBuffer** buffers, int count, int startingSlot) = 0;

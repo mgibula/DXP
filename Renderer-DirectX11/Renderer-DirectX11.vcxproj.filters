@@ -30,6 +30,9 @@
     <ClInclude Include="directx11_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="directx11_sampler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="directx11_backend.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="directx11_buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="directx11_sampler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

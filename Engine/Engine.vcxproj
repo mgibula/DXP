@@ -191,6 +191,7 @@
     <ClInclude Include="render-object.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="ring_buffer.h" />
+    <ClInclude Include="sampler.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="simulation.h" />
     <ClInclude Include="layer.h" />
