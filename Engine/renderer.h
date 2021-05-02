@@ -42,7 +42,8 @@ private:
     RenderBackend* gpu = nullptr;
     std::shared_ptr<spdlog::logger> log;
 
-    void BindConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX parent);
+    void BindMaterial(DXP::Material* material);
+    void UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX parent);
     void DrawScene(SceneNode* root, DirectX::FXMMATRIX parent);
 };
 

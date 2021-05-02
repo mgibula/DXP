@@ -272,7 +272,11 @@ void DirectX11Backend::BindVertexConstantBuffers(ConstantBuffer** buffers, int c
 
     for (int i = 0; i < count; i++) {
         const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
-        ptrs[i] = real_buffer->ptr.Get();
+        if (real_buffer) {
+            ptrs[i] = real_buffer->ptr.Get();
+        } else {
+            ptrs[i] = nullptr;
+        }
     }
 
     context->VSSetConstantBuffers(startingSlot, count, ptrs);
@@ -284,7 +288,11 @@ void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int co
 
     for (int i = 0; i < count; i++) {
         const DirectX11ConstantBuffer* real_buffer = dynamic_cast<const DirectX11ConstantBuffer*>(buffers[i]);
-        ptrs[i] = real_buffer->ptr.Get();
+        if (real_buffer) {
+            ptrs[i] = real_buffer->ptr.Get();
+        } else {
+            ptrs[i] = nullptr;
+        }
     }
 
     context->PSSetConstantBuffers(startingSlot, count, ptrs);

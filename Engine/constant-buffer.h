@@ -5,6 +5,8 @@ namespace DXP
 
 enum ConstantBufferSlot 
 {
+    // Order is important - materials are starting their bindings
+    // from CB_Material upwards
     CB_Transform           = 0,
     CB_Camera              = 1,
     CB_Frame               = 2,

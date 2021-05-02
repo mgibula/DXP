@@ -11,11 +11,7 @@ Material::Material(RenderBackend *gpu, std::shared_ptr<VertexShader> vertexShade
     constantBuffers.resize(slots);
     constantBufferLayouts.resize(slots);
 
-    for (int i = 0; i < slots - 1; i++) {
-        // Transform slot is hardcoded
-        if (i == ConstantBufferSlot::CB_Transform)
-            continue;
-
+    for (int i = ConstantBufferSlot::CB_Material; i < slots - 1; i++) {
         FillConstantBufferFromShader(gpu, vertexShader.get(), i);
         FillConstantBufferFromShader(gpu, pixelShader.get(), i);
     }

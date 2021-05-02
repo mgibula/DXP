@@ -59,7 +59,8 @@ void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)
         XMMATRIX worldMatrix = node->GetWorldMatrix() * parent;
 
         if (DXP::RenderObject* obj = dynamic_cast<DXP::RenderObject*>(node.get()); obj) {
-            BindConstantBuffers(obj, worldMatrix);
+            BindMaterial(obj->material.get());
+            UpdateConstantBuffers(obj, worldMatrix);
             Draw(obj->material.get(), obj->mesh.get());
         }
 
@@ -67,47 +68,46 @@ void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)
     }
 }
 
-void Renderer::BindConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX worldMatrix)
+void Renderer::BindMaterial(DXP::Material *material)
+{
+    int slots = material->constantBuffers.size();
+
+    ConstantBuffer** ptrs = reinterpret_cast<ConstantBuffer **>(alloca(sizeof(void*) * slots));
+    memset(ptrs, '\0', sizeof(void*) * slots);
+
+    ptrs[ConstantBufferSlot::CB_Transform] = transformConstantBuffer.get();
+    for (int i = ConstantBufferSlot::CB_Material; i < slots; i++) {
+        ptrs[i] = material->constantBuffers[i].get();
+    }
+
+    if (material->vertexShader.program)
+        gpu->BindVertexConstantBuffers(ptrs, slots, 0);
+
+    if (material->pixelShader.program)
+        gpu->BindPixelConstantBuffers(ptrs, slots, 0);
+}
+
+void Renderer::UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX worldMatrix)
 {
     using namespace DirectX;
 
-    // Bind transform CB
+    // Transform CB
     {
         ConstantBuffer* cb = transformConstantBuffer.get();
         XMFLOAT4X4 matrix;
 
         XMStoreFloat4x4(&matrix, XMMatrixTranspose(worldMatrix));
         gpu->UpdateConstantBuffer(cb, &matrix, sizeof(matrix));
-
-        if (object->material->vertexShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Transform))
-            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Transform);
-
-        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Transform))
-            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Transform);
     }
 
     if (object->material->constantBufferPerMaterial) {
         ConstantBuffer* cb = object->material->constantBuffers[ConstantBufferSlot::CB_Material].get();
-
         gpu->UpdateConstantBuffer(cb, object->material->constantBufferPerMaterial->buffer.data(), object->material->constantBufferPerMaterial->buffer.size());
-
-        if (object->material->vertexShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Material))
-            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Material);
-
-        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Material))
-            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Material);
     }
 
     if (object->constantBufferPerObject) {
-        ConstantBuffer* cb = object->material->constantBuffers[ConstantBufferSlot::CB_Object].get();
-        
+        ConstantBuffer* cb = object->material->constantBuffers[ConstantBufferSlot::CB_Object].get();       
         gpu->UpdateConstantBuffer(cb, object->constantBufferPerObject->buffer.data(), object->constantBufferPerObject->buffer.size());
-
-        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Object))
-            gpu->BindVertexConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Object);
-
-        if (object->material->pixelShader.IsConstantBufferUsed(ConstantBufferSlot::CB_Object))
-            gpu->BindPixelConstantBuffers(&cb, 1, ConstantBufferSlot::CB_Object);
     }
 }
 
