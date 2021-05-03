@@ -25,6 +25,8 @@ struct DirectX11Backend final : public RenderBackend
     virtual void ClearScreen() override;
     virtual void Display() override;
     virtual void Resize(int width, int height) override;
+    virtual int Width() override;
+    virtual int Height() override;
 
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) override;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) override;

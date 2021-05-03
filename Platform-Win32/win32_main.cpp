@@ -27,6 +27,9 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
     if (!RegisterClassEx(&wc))
         DXP::Fatal(FMT_STRING("RegisterClassEx failed: {}"), Win32::GetLastSystemError());
 
+    RECT windowRectangle = { 0, 0, 1024, 768 };
+    AdjustWindowRect(&windowRectangle, WS_OVERLAPPEDWINDOW, false);
+
     // Create and show window
     HWND window = CreateWindowEx(
         NULL,
@@ -35,8 +38,8 @@ int WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In_ LPSTR
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        800,
-        600,
+        windowRectangle.right - windowRectangle.left,
+        windowRectangle.bottom - windowRectangle.top,
         NULL,
         NULL,
         instance,

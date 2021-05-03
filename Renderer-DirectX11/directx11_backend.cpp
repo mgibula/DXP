@@ -129,8 +129,8 @@ bool DirectX11Backend::Initialize()
 
     // Viewport setup
     RECT rect;
-    if (!GetWindowRect(window, &rect))
-        Fatal("GetWindowRect");
+    if (!GetClientRect(window, &rect))
+        Fatal("GetClientRect");
 
     width = rect.right - rect.left;
     height = rect.bottom - rect.top;
@@ -230,6 +230,16 @@ void DirectX11Backend::Resize(int width, int height)
         Fatal("CreateRenderTargetView");
 
     pBackBuffer->Release();
+}
+
+int DirectX11Backend::Width()
+{
+    return width;
+}
+
+int DirectX11Backend::Height()
+{
+    return height;
 }
 
 std::shared_ptr<VertexShader> DirectX11Backend::LoadVertexShader(std::string_view path, std::string_view content)
