@@ -4,7 +4,7 @@ namespace DXP
 {
 
 Renderer::Renderer(std::shared_ptr<spdlog::logger> log) :
-    scene(std::make_unique<SceneNode>()),
+    scene(std::make_unique<SceneRoot>()),
     log(log)
 {
     SPDLOG_LOGGER_INFO(log, "Initializing");
@@ -18,6 +18,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     gpu = backend;
 
     transformConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4));
+    cameraConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4) * 2);
 
     // Create general samplers and bind them
     {
@@ -91,10 +92,19 @@ std::shared_ptr<Texture> Renderer::LoadTexture(const TextureData& textureData)
     return gpu->CreateTexture2D(textureData);
 }
 
-void Renderer::DrawScene(SceneNode* root)
+void Renderer::DrawScene(SceneRoot* root)
 {
     using namespace DirectX;
     XMMATRIX parent = XMMatrixIdentity();
+
+    if (root->mainCamera) {
+        ConstantBuffer* cb = cameraConstantBuffer.get();
+        XMFLOAT4X4 matrix[2];
+
+        XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix()));
+        XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(gpu->Width(), gpu->Height()))) ;
+        gpu->UpdateConstantBuffer(cb, &matrix[0], sizeof(matrix[0]) * 2);
+    }
 
     DrawScene(root, parent);
 }
@@ -146,6 +156,7 @@ void Renderer::BindMaterial(DXP::Material *material)
         memset(ptrs, '\0', sizeof(void*) * slots);
 
         ptrs[ConstantBufferSlot::CB_Transform] = transformConstantBuffer.get();
+        ptrs[ConstantBufferSlot::CB_Camera] = cameraConstantBuffer.get();
         for (int i = ConstantBufferSlot::CB_Material; i < slots; i++) {
             ptrs[i] = material->constantBuffers[i].get();
         }

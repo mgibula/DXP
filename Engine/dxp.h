@@ -25,6 +25,7 @@
 #include "Engine/material.h"
 #include "Engine/renderer.h"
 #include "Engine/render-object.h"
+#include "Engine/camera.h"
 #include "Engine/layer.h"
 #include "Engine/simulation.h"
 #include "Engine/engine.h"

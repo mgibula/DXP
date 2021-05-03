@@ -4,18 +4,15 @@ namespace DXP
 {
 
 struct Renderer;
-
-struct SceneNode;
-
-struct Scene
-{
-    std::unique_ptr<SceneNode> root;
-
-};
+struct Camera;
 
 struct SceneNode
 {
+    SceneNode();
+
     virtual ~SceneNode() = default;
+
+    virtual void ImGuiDebug();
 
     template <typename T, typename... Args>
     T* AddChild(Args... args) {
@@ -25,58 +22,68 @@ struct SceneNode
         return result;
     };
 
-    struct {
-        float x = 0.f;
-        float y = 0.f;
-        float z = 0.f;
-    } position;
-
-    struct {
-        float pitch = 0.f;
-        float yaw = 0.f;
-        float roll = 0.f;
-    } rotation;
-
-    struct {
-        float x = 1.f;
-        float y = 1.f;
-        float z = 1.f;
-    } scaling;
+    void SetName(std::string_view name) {
+        this->name = name;
+    };
 
     void MoveTo(float x, float y, float z) {
-        position.x = x;
-        position.y = y;
-        position.z = z;
+        using namespace DirectX;
+        position = XMFLOAT3(x, y, z);
     };
 
     void MoveBy(float x, float y, float z) {
-        position.x += x;
-        position.y += y;
-        position.z += z;
+        using namespace DirectX;
+        XMStoreFloat3(&position, XMVectorAdd(XMLoadFloat3(&position), XMVectorSet(x, y, z, 0.f)));
+    };
+
+    void RotateTo(float pitch, float yaw, float roll) {
+        using namespace DirectX;
+        rotation = XMFLOAT3(
+            XMConvertToRadians(pitch),
+            XMConvertToRadians(yaw),
+            XMConvertToRadians(roll)
+        );
     };
 
     void ScaleTo(float x, float y, float z) {
-        scaling.x = x;
-        scaling.y = y;
-        scaling.z = z;
+        using namespace DirectX;
+        scaling = XMFLOAT3(x, y, z);
     };
 
     void ScaleBy(float x, float y, float z) {
-        scaling.x += x;
-        scaling.y += y;
-        scaling.z += z;
+        using namespace DirectX;
+        XMStoreFloat3(&scaling, XMVectorAdd(XMLoadFloat3(&scaling), XMVectorSet(x, y, z, 0.f)));
     };
 
     DirectX::XMMATRIX GetWorldMatrix() const {
         using namespace DirectX;
 
-        return  XMMatrixTranslation(position.x, position.y, position.z) *
-            XMMatrixRotationRollPitchYaw(rotation.pitch, rotation.yaw, rotation.roll) *
+        return  XMMatrixTranslationFromVector(XMLoadFloat3(&position)) *
+            XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)) *
             XMMatrixScaling(scaling.x, scaling.y, scaling.z);
     };
 
+    DirectX::XMFLOAT3 position;
+    DirectX::XMFLOAT3 rotation;
+    DirectX::XMFLOAT3 scaling;
+
+    std::string name;
+
     SceneNode* parent = nullptr;
     std::vector<std::unique_ptr<SceneNode>> children;
+};
+
+struct SceneRoot : public SceneNode
+{
+    SceneRoot() {
+        SetName("[root]");
+    };
+
+    void SetMainCamera(Camera* camera) {
+        mainCamera = camera;
+    };
+
+    Camera* mainCamera = nullptr;
 };
 
 struct RenderObject : public SceneNode

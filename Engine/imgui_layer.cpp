@@ -63,10 +63,10 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
 
     ImGui::ShowDemoWindow();
 
-    static bool debug_opened;
+    static bool debug_opened, scene_opened;
     static fmt::memory_buffer buffer;
 
-    if (ImGui::Begin("Debug", &debug_opened))
+    if (ImGui::Begin("Logs", &debug_opened))
     {
         {   /* Draw FPS graph */
             float highest_processing_time = *std::max_element(processingTimes.Data(), processingTimes.Data() + processingTimes.Size());
@@ -77,21 +77,22 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
             ImGui::PlotLines("", processingTimes.GetterFunction(), &processingTimes, processingTimes.Size(), 0, buffer.data(), 0.f, FLT_MAX);
         }
 
-        if (ImGui::BeginTabBar("ImGuiLayer")) {
-            if (ImGui::BeginTabItem("Logs")) {
-                auto& log_buffer_view = engine->memory_sink->GetLogBufferRef();
-                if (!log_buffer_view.empty())
-                    ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
-
-                ImGui::EndTabItem();
-            }
-        }
-
-        ImGui::EndTabBar();
+        auto& log_buffer_view = engine->memory_sink->GetLogBufferRef();
+        if (!log_buffer_view.empty())
+            ImGui::TextUnformatted(&log_buffer_view[0], &log_buffer_view[log_buffer_view.size() - 1]);
     }
 
     if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
         ImGui::SetScrollHereY(1.0f);
+
+    ImGui::End();
+
+    if (ImGui::Begin("Scene", &scene_opened))
+    {
+        DXP::SceneRoot* root = engine->renderer->GetScene();
+        if (root)
+            root->ImGuiDebug();
+    }
 
     ImGui::End();
 }

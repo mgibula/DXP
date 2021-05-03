@@ -6,6 +6,7 @@ namespace DXP
 struct VertexShader;
 struct PixelShader;
 struct RenderBackend;
+struct SceneRoot;
 struct SceneNode;
 struct RenderObject;
 
@@ -21,13 +22,13 @@ struct Renderer
 
     std::shared_ptr<Texture> LoadTexture(const TextureData& textureData);
 
-    SceneNode* GetScene() {
+    SceneRoot* GetScene() {
         return scene.get();
     };
 
     void Draw(Material* material, Mesh *mesh);
 
-    void DrawScene(SceneNode* root);
+    void DrawScene(SceneRoot* root);
     
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
@@ -38,10 +39,13 @@ private:
         std::unordered_map<std::string, std::shared_ptr<PixelShader>> pixelShaders;
     } cache;
 
-    std::unique_ptr<SceneNode> scene;
+    std::unique_ptr<SceneRoot> scene;
 
-    // Runtime resources
+    // Runtime resources - constant buffers
     std::shared_ptr<ConstantBuffer> transformConstantBuffer;
+    std::shared_ptr<ConstantBuffer> cameraConstantBuffer;
+
+    // Predefined samplers
     std::shared_ptr<Sampler> pointSampler;
     std::shared_ptr<Sampler> bilinearSampler;
     std::shared_ptr<Sampler> trilinearSampler;

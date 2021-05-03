@@ -1,6 +1,12 @@
 cbuffer CB_Transform : register(b0)
 {
-    float4x4 transform;
+    float4x4 worldMatrix;
+};
+
+cbuffer CB_Camera : register(b1)
+{
+    float4x4 viewMatrix;
+    float4x4 projectionMatrix;
 };
 
 cbuffer CB_PerObject: register(b4)

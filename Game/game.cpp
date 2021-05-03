@@ -6,8 +6,9 @@ namespace Simworld
 std::shared_ptr<DXP::Mesh> mesh;
 std::shared_ptr<DXP::Material> material;
 std::shared_ptr<DXP::Texture> texture;
-DXP::SceneNode* root;
+DXP::SceneRoot* root;
 DXP::RenderObject* r1;
+DXP::Camera* c1;
 
 //uv - mapper
 
@@ -73,6 +74,17 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     root = engine->renderer->GetScene();
     r1 = root->AddChild<DXP::RenderObject>(mesh, material);
+    r1->SetName("square 1");
+
+    c1 = root->AddChild<DXP::Camera>();
+    c1->SetName("Camera 1");
+    //c1->SetPerspective(.5f);
+    //c1->SetOrthographic(2.f);
+    c1->SetPerspective(0.05f);
+    //c1->MoveTo(0.f, 0.f, -3.f);
+    //c1->LookAt(0.f, 0.5f, 1.f);
+
+    root->SetMainCamera(c1);
 
     //r1->ShaderVariables()->Write("offsetX", .5f);
     //r1->ShaderVariables()->Write("offsetY", -.5f);
@@ -86,6 +98,8 @@ void Game::PostRenderLoop(DXP::Engine* engine)
 void Game::Frame(DXP::Engine* engine, const DXP::FrameInfo& frame)
 {
     //r1->MoveBy(.001f, 0.f, 0.f);
+    //c1->MoveBy(.001f, 0.f, 0.f);
+    //c1->LookAt(0.f, 0.f, 1.f);
 }
 
 };

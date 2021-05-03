@@ -5,6 +5,5 @@ Texture2D shaderTexture : register(t0);
 
 float4 main(PS_in input) : SV_TARGET
 {
-	//return float4(input.uv, 0.f, 0.f);
-	return shaderTexture.Sample(anisotropicSampler, input.uv); 
+	return shaderTexture.Sample(bilinearSampler, input.uv); 
 }

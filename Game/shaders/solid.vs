@@ -4,7 +4,8 @@
 PS_in main(VS_in input)
 {
 	PS_in output;
-	output.position = mul(float4(input.position, 1.f), transform);
+
+	output.position = mul(mul(mul(float4(input.position, 1.f), worldMatrix), viewMatrix), projectionMatrix);
 	output.uv = input.uv;
 
 	return output;
