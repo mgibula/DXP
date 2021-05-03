@@ -75,13 +75,14 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     root = engine->renderer->GetScene();
     r1 = root->AddChild<DXP::RenderObject>(mesh, material);
     r1->SetName("square 1");
+    r1->MoveTo(0.f, 0.f, 2.5f);
 
     c1 = root->AddChild<DXP::Camera>();
     c1->SetName("Camera 1");
+    c1->MoveTo(0.f, 0.f, -1.f);
     //c1->SetPerspective(.5f);
     //c1->SetOrthographic(2.f);
     c1->SetPerspective(0.05f);
-    //c1->MoveTo(0.f, 0.f, -3.f);
     //c1->LookAt(0.f, 0.5f, 1.f);
 
     root->SetMainCamera(c1);

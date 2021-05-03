@@ -12,7 +12,7 @@ struct Camera : public SceneNode
 
     void LookAt(float x, float y, float z);
 
-    DirectX::XMMATRIX GetViewMatrix();
+    DirectX::XMMATRIX GetViewMatrix(DirectX::FXMMATRIX parent);
     DirectX::XMMATRIX GetProjectionMatrix(int width, int height);
 
     DirectX::XMFLOAT4X4 viewMatrix;
@@ -22,6 +22,9 @@ struct Camera : public SceneNode
     float scale = 1.f;
     float nearZ = 0.1f;
     float farZ = 1000.f;
+
+    DirectX::XMFLOAT3 target;
+
 };
 
 };
