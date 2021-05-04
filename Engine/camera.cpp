@@ -31,7 +31,7 @@ void Camera::SetOrthographic(float scale, float nearZ, float farZ)
 XMMATRIX Camera::GetProjectionMatrix(int width, int height)
 {
     if (is_perspective_camera) {
-        return XMMatrixPerspectiveFovLH(3.141592654f / 4.0f, (float) width / height, nearZ, farZ);
+        return XMMatrixPerspectiveFovLH(3.141592654f / 6.0f, (float) width / height, nearZ, farZ);
     } else {
         return XMMatrixOrthographicLH(scale, (float) height / width * scale, nearZ, farZ);
     }
@@ -39,22 +39,10 @@ XMMATRIX Camera::GetProjectionMatrix(int width, int height)
 
 XMMATRIX Camera::GetViewMatrix(FXMMATRIX parent)
 {
-#if 0
-    XMFLOAT3 upDirection{ 0.f, 1.f, 1.f };
-
-    XMVECTOR cameraPosition = XMLoadFloat3(&position);
-    cameraPosition = XMVector3Transform(cameraPosition, parent);
-
-    XMVECTOR focalPoint = XMLoadFloat3(&target);
-    //focalPoint = XMVector3Transform(focalPoint, GetWorldMatrix());
-
-    return XMMatrixLookAtLH(cameraPosition, focalPoint, XMLoadFloat3(&upDirection));
-#endif
-
     XMVECTOR forward = XMVectorSet(0.f, 0.f, 1.f, 0.f);
     XMVECTOR right = XMVectorSet(1.f, 0.f, 0.f, 0.f);
 
-    XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation));
+    XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&rotation));
     XMVECTOR cameraTarget = XMVector3TransformCoord(forward, rotationMatrix);
     cameraTarget = XMVector3Normalize(cameraTarget);
 

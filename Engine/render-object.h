@@ -38,11 +38,14 @@ struct SceneNode
 
     void RotateTo(float pitch, float yaw, float roll) {
         using namespace DirectX;
-        rotation = XMFLOAT3(
-            XMConvertToRadians(pitch),
-            XMConvertToRadians(yaw),
-            XMConvertToRadians(roll)
-        );
+        XMStoreFloat4(&rotation, XMQuaternionNormalize(XMQuaternionRotationRollPitchYaw(XMConvertToRadians(pitch), XMConvertToRadians(yaw), XMConvertToRadians(roll))));
+    };
+
+    void RotateBy(float pitch, float yaw, float roll) {
+        using namespace DirectX;
+        XMVECTOR currentRotation = XMLoadFloat4(&rotation);
+        currentRotation = XMQuaternionMultiply(currentRotation, XMQuaternionRotationRollPitchYaw(XMConvertToRadians(pitch), XMConvertToRadians(yaw), XMConvertToRadians(roll)));
+        XMStoreFloat4(&rotation, currentRotation);
     };
 
     void ScaleTo(float x, float y, float z) {
@@ -59,12 +62,12 @@ struct SceneNode
         using namespace DirectX;
 
         return  XMMatrixTranslationFromVector(XMLoadFloat3(&position)) *
-            XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&rotation)) *
+            XMMatrixRotationQuaternion(XMLoadFloat4(&rotation)) *
             XMMatrixScaling(scaling.x, scaling.y, scaling.z);
     };
 
     DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT3 rotation;
+    DirectX::XMFLOAT4 rotation;
     DirectX::XMFLOAT3 scaling;
 
     std::string name;
