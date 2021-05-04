@@ -95,13 +95,13 @@ std::shared_ptr<Texture> Renderer::LoadTexture(const TextureData& textureData)
 void Renderer::DrawScene(SceneRoot* root)
 {
     using namespace DirectX;
-    XMMATRIX parent = root->GetWorldMatrix();
+    XMMATRIX parent = XMMatrixIdentity();//  root->GetWorldMatrix();
 
     if (root->mainCamera) {
         ConstantBuffer* cb = cameraConstantBuffer.get();
         XMFLOAT4X4 matrix[2];
 
-        XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix(parent)));
+        XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix(root->mainCamera->parent->GetWorldMatrix())));
         XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(gpu->Width(), gpu->Height()))) ;
         gpu->UpdateConstantBuffer(cb, &matrix[0], sizeof(matrix[0]) * 2);
     }

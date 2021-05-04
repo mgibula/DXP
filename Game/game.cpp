@@ -9,7 +9,7 @@ std::shared_ptr<DXP::Texture> texture;
 DXP::SceneRoot* root;
 DXP::RenderObject* r1;
 DXP::Camera* c1;
-
+DXP::SceneNode* n1;
 //uv - mapper
 
 void Game::PreRenderLoop(DXP::Engine* engine)
@@ -76,17 +76,25 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     r1 = root->AddChild<DXP::RenderObject>(mesh, material);
     r1->SetName("square 1");
     r1->MoveTo(0.f, 0.f, 0.f);
-    r1->RotateTo(0.f, 0.f, 10.f);
+    r1->RotateTo(0.f, 0.f, 0.f);
 
-    c1 = root->AddChild<DXP::Camera>();
+    n1 = root->AddChild<DXP::SceneNode>();
+    n1->SetName("Node 1");
+
+    c1 = n1->AddChild<DXP::Camera>();
     c1->SetName("Camera 1");
-    c1->MoveTo(0.f, 0.f, -3.f);
-    //c1->SetPerspective(.5f);
-    //c1->SetOrthographic(2.f);
+    //c1->MoveTo(0.f, 0.f, -1.5f);
+
     c1->SetPerspective(0.05f);
+    //c1->SetOrthographic(2.f);
     //c1->LookAt(0.f, 0.5f, 1.f);
 
     root->SetMainCamera(c1);
+
+    c1->MoveTo(0.f, 0.f, -1.5f);
+
+    //n1->MoveTo(0.f, 0.f, -1.5f);
+
 
     //r1->ShaderVariables()->Write("offsetX", .5f);
     //r1->ShaderVariables()->Write("offsetY", -.5f);

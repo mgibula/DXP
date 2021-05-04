@@ -41,20 +41,27 @@ XMMATRIX Camera::GetViewMatrix(FXMMATRIX parent)
 {
     XMVECTOR forward = XMVectorSet(0.f, 0.f, 1.f, 0.f);
     XMVECTOR right = XMVectorSet(1.f, 0.f, 0.f, 0.f);
+    XMVECTOR up;
 
-    XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMLoadFloat4(&rotation));
-    XMVECTOR cameraTarget = XMVector3TransformCoord(forward, rotationMatrix);
-    cameraTarget = XMVector3Normalize(cameraTarget);
+    XMMATRIX worldMatrix = GetWorldMatrix() * parent;
+    XMVECTOR scale, rotation, transform;
 
-    right = XMVector3TransformCoord(right, rotationMatrix);
-    forward = XMVector3TransformCoord(forward, rotationMatrix);
-    XMVECTOR up = XMVector3Cross(forward, right);
+    XMMatrixDecompose(
+        &scale,
+        &rotation,
+        &transform,
+        worldMatrix
+    );
 
-    XMVECTOR cameraPosition = XMLoadFloat3(&position);
-    cameraPosition = XMVector3TransformCoord(cameraPosition, parent);
-    cameraTarget = cameraPosition + cameraTarget;
+    XMVECTOR cameraTarget = XMVector3Rotate(forward, rotation);
 
-    return XMMatrixLookAtLH(cameraPosition, cameraTarget, up);
+    right = XMVector3Rotate(right, rotation);
+    forward = XMVector3Rotate(forward, rotation);
+    up = XMVector3Cross(forward, right);
+
+    cameraTarget = XMVectorAdd(transform, cameraTarget);
+
+    return XMMatrixLookAtLH(transform, cameraTarget, up);
 }
 
 void Camera::LookAt(float x, float y, float z)

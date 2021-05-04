@@ -45,7 +45,7 @@ struct SceneNode
         using namespace DirectX;
         XMVECTOR currentRotation = XMLoadFloat4(&rotation);
         currentRotation = XMQuaternionMultiply(currentRotation, XMQuaternionRotationRollPitchYaw(XMConvertToRadians(pitch), XMConvertToRadians(yaw), XMConvertToRadians(roll)));
-        XMStoreFloat4(&rotation, currentRotation);
+        XMStoreFloat4(&rotation, XMQuaternionNormalize(currentRotation));
     };
 
     void ScaleTo(float x, float y, float z) {
@@ -61,9 +61,11 @@ struct SceneNode
     DirectX::XMMATRIX GetWorldMatrix() const {
         using namespace DirectX;
 
-        return  XMMatrixTranslationFromVector(XMLoadFloat3(&position)) *
-            XMMatrixRotationQuaternion(XMLoadFloat4(&rotation)) *
-            XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+        XMMATRIX result = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+        result *= XMMatrixRotationQuaternion(XMLoadFloat4(&rotation));
+        result *= XMMatrixTranslationFromVector(XMLoadFloat3(&position));
+
+        return result;
     };
 
     DirectX::XMFLOAT3 position;
