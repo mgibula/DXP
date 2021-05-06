@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "imgui_layer.h"
+#include "imgui.h"
 #include "../Imgui/imgui.h"
 
 namespace DXP
@@ -61,7 +61,8 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
     std::chrono::duration<float, std::milli> duration = std::chrono::high_resolution_clock::now() - started;
     processingTimes.Push(duration.count());
 
-    ImGui::ShowDemoWindow();
+    static bool demo_opened = true;
+    ImGui::ShowDemoWindow(&demo_opened);
 
     static bool debug_opened, scene_opened;
     static fmt::memory_buffer buffer;

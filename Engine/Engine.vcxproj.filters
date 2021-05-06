@@ -39,7 +39,7 @@
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_layer.cpp">
+    <ClCompile Include="layers\imgui.cpp">
       <Filter>Source Files\layers</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
@@ -72,6 +72,9 @@
     <ClCompile Include="camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="layers\input.cpp">
+      <Filter>Source Files\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine.h">
@@ -98,7 +101,7 @@
     <ClInclude Include="simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_layer.h">
+    <ClInclude Include="layers\imgui.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="layers\input.h">
+      <Filter>Header Files\layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

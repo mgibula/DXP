@@ -101,7 +101,7 @@ void Renderer::DrawScene(SceneRoot* root)
         ConstantBuffer* cb = cameraConstantBuffer.get();
         XMFLOAT4X4 matrix[2];
 
-        XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix(root->mainCamera->parent->GetWorldMatrix())));
+        XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix()));
         XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(gpu->Width(), gpu->Height()))) ;
         gpu->UpdateConstantBuffer(cb, &matrix[0], sizeof(matrix[0]) * 2);
     }

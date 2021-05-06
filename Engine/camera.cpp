@@ -37,13 +37,13 @@ XMMATRIX Camera::GetProjectionMatrix(int width, int height)
     }
 }
 
-XMMATRIX Camera::GetViewMatrix(FXMMATRIX parent)
+XMMATRIX Camera::GetViewMatrix()
 {
     XMVECTOR forward = XMVectorSet(0.f, 0.f, 1.f, 0.f);
     XMVECTOR right = XMVectorSet(1.f, 0.f, 0.f, 0.f);
     XMVECTOR up;
 
-    XMMATRIX worldMatrix = GetWorldMatrix() * parent;
+    XMMATRIX worldMatrix = GetLocalToWorldMatrix();
     XMVECTOR scale, rotation, transform;
 
     XMMatrixDecompose(
@@ -54,12 +54,11 @@ XMMATRIX Camera::GetViewMatrix(FXMMATRIX parent)
     );
 
     XMVECTOR cameraTarget = XMVector3Rotate(forward, rotation);
+    cameraTarget = XMVectorAdd(transform, cameraTarget);
 
     right = XMVector3Rotate(right, rotation);
     forward = XMVector3Rotate(forward, rotation);
     up = XMVector3Cross(forward, right);
-
-    cameraTarget = XMVectorAdd(transform, cameraTarget);
 
     return XMMatrixLookAtLH(transform, cameraTarget, up);
 }

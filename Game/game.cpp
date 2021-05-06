@@ -75,7 +75,7 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     root = engine->renderer->GetScene();
     r1 = root->AddChild<DXP::RenderObject>(mesh, material);
     r1->SetName("square 1");
-    r1->MoveTo(0.f, 0.f, 0.f);
+    r1->MoveTo(0.f, 0.f, 10.f);
     r1->RotateTo(0.f, 0.f, 0.f);
 
     n1 = root->AddChild<DXP::SceneNode>();
@@ -85,13 +85,13 @@ void Game::PreRenderLoop(DXP::Engine* engine)
     c1->SetName("Camera 1");
     //c1->MoveTo(0.f, 0.f, -1.5f);
 
-    c1->SetPerspective(0.05f);
-    //c1->SetOrthographic(2.f);
+    c1->SetPerspective(1.f);
+    c1->SetOrthographic(2.f);
     //c1->LookAt(0.f, 0.5f, 1.f);
 
     root->SetMainCamera(c1);
 
-    c1->MoveTo(0.f, 0.f, -1.5f);
+    c1->MoveTo(0.f, 0.f, 0.f);
 
     //n1->MoveTo(0.f, 0.f, -1.5f);
 
@@ -107,6 +107,8 @@ void Game::PostRenderLoop(DXP::Engine* engine)
 
 void Game::Frame(DXP::Engine* engine, const DXP::FrameInfo& frame)
 {
+    auto oldPosition = engine->input->GetMousePosition();
+
     //r1->RotateBy(0.5f, 0.5f, 0.5f);
      
     //r1->MoveBy(.001f, 0.f, 0.f);

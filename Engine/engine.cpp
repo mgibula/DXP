@@ -82,7 +82,8 @@ void Engine::PreRenderLoop()
     gpu->PreRenderLoop(this);
     simulation->PreRenderLoop(this);
 
-    PushLayer(std::make_unique<ImGuiLayer>());
+    input = CreateLayer<InputLayer>();
+    imgui = CreateLayer<ImGuiLayer>();
 }
 
 void Engine::PostRenderLoop()
@@ -126,10 +127,13 @@ void Engine::OnFrameEnd()
     gpu->ClearScreen();
 }
 
-void Engine::PushLayer(std::unique_ptr<Layer> layer)
+Layer *Engine::PushLayer(std::unique_ptr<Layer> layer)
 {
     layers.push_back(std::move(layer));
-    layers.back()->OnAttach(this);
+    Layer* result = layers.back().get();
+
+    result->OnAttach(this);
+    return result;
 }
 
 std::unique_ptr<Layer> Engine::PopLayer()
@@ -154,14 +158,14 @@ void Engine::SubmitEvent(const Event& event)
 {
     switch (event.type) {
     case Event::Type::MouseMoved:
-        SPDLOG_LOGGER_TRACE(log, "Event: {}", event.DebugDescription());
+        SPDLOG_LOGGER_DEBUG(log, "Event: {}", event.DebugDescription());
         break;
     default:
         SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());
         break;
     }
 
-    for (auto i = layers.rbegin(); i != layers.rend(); i++) {
+    for (auto i = layers.begin(); i != layers.end(); i++) {
         if (!i->get()->OnEvent(this, &event))
             break;
     }

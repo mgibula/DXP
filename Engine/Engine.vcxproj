@@ -161,7 +161,8 @@
     <ClCompile Include="cyclic_log.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="event.cpp" />
-    <ClCompile Include="imgui_layer.cpp" />
+    <ClCompile Include="layers\imgui.cpp" />
+    <ClCompile Include="layers\input.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -188,7 +189,8 @@
     <ClInclude Include="dxp.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
-    <ClInclude Include="imgui_layer.h" />
+    <ClInclude Include="layers\imgui.h" />
+    <ClInclude Include="layers\input.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="render-object.h" />

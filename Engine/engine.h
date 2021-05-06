@@ -9,6 +9,7 @@ struct Event;
 struct CyclicLog;
 struct Simulation;
 struct ImGuiLayer;
+struct InputLayer;
 struct Renderer;
 
 struct FrameInfo
@@ -20,6 +21,7 @@ struct FrameInfo
 struct Engine
 {
     friend struct ImGuiLayer;
+    friend struct InputLayer;
 
     Engine(Platform* platform, Simulation *simulation) noexcept;
     ~Engine();
@@ -40,11 +42,19 @@ struct Engine
     void AddLogSink(std::shared_ptr<spdlog::sinks::sink> sink);
     std::shared_ptr<spdlog::logger> CreateLogger(std::string_view name);
 
-    void PushLayer(std::unique_ptr<Layer> layer);
+    template <typename T, typename... Args>
+    T* CreateLayer(Args&&... args) {
+        return static_cast<T *>(PushLayer(std::make_unique<T>(std::forward<Args>(args)...)));
+    };
+
+    Layer* PushLayer(std::unique_ptr<Layer> layer);
     std::unique_ptr<Layer> PopLayer();
 
     std::unique_ptr<Renderer> renderer;
     TextureLoader textureLoader;
+
+    InputLayer* input = nullptr;
+    ImGuiLayer* imgui = nullptr;
 
 private:
     void PreRenderLoop();

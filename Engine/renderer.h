@@ -33,6 +33,15 @@ struct Renderer
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
 
+    // This probably shouldnt be here
+    int Width() {
+        return gpu->Width();
+    };
+
+    int Height() {
+        return gpu->Height();
+    };
+
 private:
     struct {
         std::unordered_map<std::string, std::shared_ptr<VertexShader>> vertexShaders;

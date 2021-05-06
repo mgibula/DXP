@@ -68,6 +68,16 @@ struct SceneNode
         return result;
     };
 
+    DirectX::XMMATRIX GetLocalToWorldMatrix() const {
+        using namespace DirectX;
+
+        XMMATRIX matrix = GetWorldMatrix();
+        if (parent)
+            return matrix * parent->GetLocalToWorldMatrix();
+
+        return matrix;
+    };
+
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT4 rotation;
     DirectX::XMFLOAT3 scaling;

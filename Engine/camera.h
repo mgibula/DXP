@@ -12,7 +12,7 @@ struct Camera : public SceneNode
 
     void LookAt(float x, float y, float z);
 
-    DirectX::XMMATRIX GetViewMatrix(DirectX::FXMMATRIX parent);
+    DirectX::XMMATRIX GetViewMatrix();
     DirectX::XMMATRIX GetProjectionMatrix(int width, int height);
 
     DirectX::XMFLOAT4X4 viewMatrix;
