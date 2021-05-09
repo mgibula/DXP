@@ -1,0 +1,7 @@
+#include "DXP.hlsli"
+#include "color.hlsli"
+
+float4 main(PS_in input) : SV_TARGET
+{
+	return float4(input.color, 1.f);
+}

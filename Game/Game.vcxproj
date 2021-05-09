@@ -180,6 +180,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\color.hlsli" />
+    <None Include="shaders\color.ps" />
+    <None Include="shaders\color.vs" />
     <None Include="shaders\null.ps" />
     <None Include="shaders\null.vs" />
     <None Include="shaders\solid.hlsli" />
