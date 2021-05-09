@@ -93,6 +93,10 @@ struct Buffer : public BufferBase
         data.push_back(value);
     };
 
+    void PushElements(std::initializer_list<typename typename BufferProperties<T>::underlying_type> values) {
+        data.insert(data.end(), values.begin(), values.end());
+    };
+
     std::vector<typename BufferProperties<T>::underlying_type> data;
 };
 
