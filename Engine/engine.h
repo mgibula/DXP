@@ -54,7 +54,7 @@ struct Engine
     TextureLoader textureLoader;
 
     InputLayer* input = nullptr;
-    ImGuiLayer* imgui = nullptr;
+    ImGuiLayer* debug = nullptr;
 
 private:
     void PreRenderLoop();
@@ -74,6 +74,8 @@ private:
 
     std::shared_ptr<CyclicLogSinkST> memory_sink;
     std::vector<std::shared_ptr<spdlog::sinks::sink>> log_sinks;
+
+public:
     std::shared_ptr<spdlog::logger> log;
 };
 

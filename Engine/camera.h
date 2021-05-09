@@ -3,12 +3,12 @@
 namespace DXP
 {
 
-struct Camera : public SceneNode
+struct Camera final : public SceneNode
 {
     Camera();
 
-    void SetPerspective(float scale = 1.f, float nearZ = 0.1f, float farZ = 1000.f);
-    void SetOrthographic(float scale = 1.f, float nearZ = 0.1f, float farZ = 1000.f);
+    void SetPerspective(float scale = 1.f, float nearZ = 0.1f, float farZ = 100.f);
+    void SetOrthographic(float scale = 1.f, float nearZ = 0.1f, float farZ = 100.f);
 
     void LookAt(float x, float y, float z);
 
@@ -21,10 +21,13 @@ struct Camera : public SceneNode
     bool is_perspective_camera = false;
     float scale = 1.f;
     float nearZ = 0.1f;
-    float farZ = 1000.f;
+    float farZ = 30.f;
 
     DirectX::XMFLOAT3 target;
+    bool drawDebug = false;
 
+protected:
+    virtual void ImGuiDebugComponent(Engine* engine) override;
 };
 
 };

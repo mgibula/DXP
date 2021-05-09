@@ -17,6 +17,8 @@ void ImGuiLayer::OnAttach(Engine* engine)
 
     engine->platform->ImGuiInit();
     engine->gpu->ImGuiInit();
+
+    debug_material = engine->renderer->CreateMaterial("shaders/color.vs", "shaders/color.ps", {});
 }
 
 void ImGuiLayer::OnDetach(Engine* engine)
@@ -54,6 +56,10 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
+
+    DrawDebugMesh(engine);
+
+    points.clear();
 }
 
 void ImGuiLayer::OnImguiFrame(Engine* engine)
@@ -92,7 +98,7 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
     {
         DXP::SceneRoot* root = engine->renderer->GetScene();
         if (root)
-            root->ImGuiDebug();
+            root->ImGuiDebug(engine);
     }
 
     ImGui::End();
@@ -105,6 +111,53 @@ bool ImGuiLayer::OnEvent(Engine* engine, const Event* event)
     }
 
     return true;
+}
+
+void ImGuiLayer::DrawDebugMesh(Engine* engine)
+{
+    if (points.empty())
+        return;
+
+    auto vertices = std::make_unique<DXP::Buffer<DXP::BufferFormat::Float32_3>>();
+    auto colors = std::make_unique<DXP::Buffer<DXP::BufferFormat::Float32_3>>();
+
+    int count = 1;
+    for (const auto& data : points) {
+        if (count % 3) {
+            vertices->PushElement(data.x);
+            vertices->PushElement(data.y);
+            vertices->PushElement(data.z);
+        } else {
+            colors->PushElement(data.x);
+            colors->PushElement(data.y);
+            colors->PushElement(data.z);
+
+            colors->PushElement(data.x);
+            colors->PushElement(data.y);
+            colors->PushElement(data.z);
+        }
+
+        count++;
+    }
+
+    debug_mesh = std::make_shared<DXP::Mesh>();
+    debug_mesh->topology = Topology::LineList;
+    debug_mesh->SetChannel(DXP::VertexShaderInput::Position0, std::move(vertices));
+    debug_mesh->SetChannel(DXP::VertexShaderInput::Color0, std::move(colors));
+
+    if (debug_object)
+        debug_object->Remove();
+
+    //if (engine->renderer->GetScene()->mainCamera)
+    //    debug_object = engine->renderer->GetScene()->mainCamera->AddChild<RenderObject>(debug_mesh, debug_material);
+    debug_object = engine->renderer->GetScene()->AddChild<RenderObject>(debug_mesh, debug_material);
+}
+
+void ImGuiLayer::DrawLine(DirectX::XMFLOAT3 p1, DirectX::XMFLOAT3 p2, DirectX::XMFLOAT3 color)
+{
+    points.push_back(p1);
+    points.push_back(p2);
+    points.push_back(color);
 }
 
 };

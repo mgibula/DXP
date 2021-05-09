@@ -12,7 +12,7 @@ struct SceneNode
 
     virtual ~SceneNode() = default;
 
-    virtual void ImGuiDebug();
+    void ImGuiDebug(Engine *engine);
 
     template <typename T, typename... Args>
     T* AddChild(Args... args) {
@@ -21,6 +21,10 @@ struct SceneNode
 
         return result;
     };
+
+    void Remove();
+
+    void RemoveChild(SceneNode* child);
 
     void SetName(std::string_view name) {
         this->name = name;
@@ -78,6 +82,10 @@ struct SceneNode
         return matrix;
     };
 
+    DirectX::XMFLOAT3 GetPosition() const {
+        return position;
+    };
+
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT4 rotation;
     DirectX::XMFLOAT3 scaling;
@@ -86,6 +94,9 @@ struct SceneNode
 
     SceneNode* parent = nullptr;
     std::vector<std::unique_ptr<SceneNode>> children;
+
+protected:
+    virtual void ImGuiDebugComponent(Engine* engine) { };
 };
 
 struct SceneRoot : public SceneNode

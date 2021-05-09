@@ -54,12 +54,33 @@ void InputLayer::OnImguiFrame(Engine* engine)
 
         auto screenPosition = GetMousePosition();
         XMFLOAT3 screenPositionFloat;
-        screenPositionFloat.x = screenPosition.x;
-        screenPositionFloat.y = screenPosition.y;
-        screenPositionFloat.z = 0.f;
+        screenPositionFloat.x = 0.f; //screenPosition.x;
+        screenPositionFloat.y = 0.f; // screenPosition.y;
+        screenPositionFloat.z = 1.f; // / camera->farZ;
 
-        auto mouseInWorld = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 0.0f, 1.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), camera->nearZ, camera->farZ, projectionMatrix, viewMatrix, XMMatrixIdentity());
-        XMStoreFloat3(&screenPositionFloat, mouseInWorld);
+        //auto mouseInWorld = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, screenPosition.y, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), camera->nearZ, camera->farZ, projectionMatrix, viewMatrix, XMMatrixIdentity());
+        //auto mouseInWorld = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, screenPosition.y, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+
+
+        //XMVECTOR rayStart = XMVectorSet(screenPosition.x, screenPosition.y, 0.f, 0.f);
+        //XMVECTOR rayEnd = XMVectorSet(screenPosition.x, screenPosition.y, 1.f, 0.f);
+        //auto diff = XMVector3Normalize(rayEnd - rayStart);
+        //auto mouseInWorld = XMVector3Unproject(diff, 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+        //auto mouseInWorld = XMVector3Unproject(diff, 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+
+        auto m1 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 0.f, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+        auto m2 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 1.f, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+
+        auto dif = XMVectorSubtract(m2, m1);
+        dif = XMVector3Normalize(dif);
+
+        auto cammat = camera->GetLocalToWorldMatrix();
+        //auto dif2 = XMVector3Transform(dif, cammat);
+        //dif = XMVector3RotateCoord(dif, cammat);
+
+        XMStoreFloat3(&screenPositionFloat, dif * 10.f);
+
+        //engine->debug->DrawLine({ 0.f, 0.f, 0.f }, screenPositionFloat, { 0.f, 1.f, 1.f });
 
         FormatToCString(buffer, "Mouse position: {}, {}, {}, {}", currentPosition.x, currentPosition.y, screenPositionFloat.x, screenPositionFloat.y);
         ImGui::Text(buffer.data());

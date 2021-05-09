@@ -83,7 +83,7 @@ void Engine::PreRenderLoop()
     simulation->PreRenderLoop(this);
 
     input = CreateLayer<InputLayer>();
-    imgui = CreateLayer<ImGuiLayer>();
+    debug = CreateLayer<ImGuiLayer>();
 }
 
 void Engine::PostRenderLoop()

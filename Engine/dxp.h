@@ -14,6 +14,7 @@
 #include "Engine/utils.h"
 #include "Engine/event.h"
 
+#include "Engine/rasterizer.h"
 #include "Engine/texture-loader.h"
 #include "Engine/sampler.h"
 #include "Engine/texture.h"
@@ -30,4 +31,7 @@
 #include "Engine/simulation.h"
 #include "Engine/engine.h"
 
+#include "Engine/ring_buffer.h"
+
 #include "Engine/layers/input.h"
+#include "Engine/layers/imgui.h"

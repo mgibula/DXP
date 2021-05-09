@@ -18,6 +18,7 @@ struct Mesh
     std::shared_ptr<IndexBuffer> indexBuffer;
 
     Topology topology = Topology::Triangles;
+    RasterizerSlot rasterizer = Rasterizer_Solid;
 };
 
 };

@@ -53,8 +53,8 @@ XMMATRIX Camera::GetViewMatrix()
         worldMatrix
     );
 
-    XMVECTOR cameraTarget = XMVector3Rotate(forward, rotation);
-    cameraTarget = XMVectorAdd(transform, cameraTarget);
+    XMVECTOR cameraTarget = XMVectorAdd(forward, transform);
+    cameraTarget = XMVector3Rotate(cameraTarget, rotation);
 
     right = XMVector3Rotate(right, rotation);
     forward = XMVector3Rotate(forward, rotation);
@@ -66,6 +66,31 @@ XMMATRIX Camera::GetViewMatrix()
 void Camera::LookAt(float x, float y, float z)
 {
     XMStoreFloat3(&target, XMVectorSet(x, y, z, 0.f));
+}
+
+void Camera::ImGuiDebugComponent(Engine* engine)
+{
+    if (!drawDebug)
+        return;
+
+    float width = 1.f;
+    float height = 0.56;
+
+    float zRatio = farZ / nearZ;
+    float nearX = width / 2.f;
+    float nearY = height / 2.f;
+    float farX = nearX * zRatio;
+    float farY = nearY * zRatio;
+
+    engine->debug->DrawLine({ -nearX, nearY, nearZ }, { nearX, nearY, nearZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ nearX, nearY, nearZ }, { nearX, -nearY, nearZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ nearX, -nearY, nearZ }, { -nearX, -nearY, nearZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ -nearX, -nearY, nearZ }, { -farX, farY, farZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ -farX, farY, farZ }, { farX, farY, farZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ farX, farY, farZ }, { farX, -farY, farZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ farX, -farY, farZ }, { -farX, -farY, farZ }, { 0.f, 1.f, 1.f });
+    engine->debug->DrawLine({ -farX, -farY, farZ }, { -nearX, nearY, nearZ }, { 0.f, 1.f, 1.f });
+
 }
 
 };
