@@ -131,7 +131,7 @@ void Renderer::DrawScene(SceneRoot* root)
 
     DrawScene(root, parent);
 
-    gpu->BindRenderTarget(nullptr);
+    gpu->BindRenderTarget(gpu->GetScreenRenderTarget().get());
 }
 
 void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)

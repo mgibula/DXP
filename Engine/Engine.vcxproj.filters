@@ -158,5 +158,8 @@
     <ClInclude Include="rasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render-target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

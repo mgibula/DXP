@@ -78,6 +78,8 @@ DirectX11Backend::DirectX11Backend(HWND window, std::shared_ptr<spdlog::logger> 
 {
 }
 
+DirectX11Backend::~DirectX11Backend() = default;
+
 std::string DirectX11Backend::InfoString() const
 {
     return "DirectX 11 render backend";
@@ -123,6 +125,8 @@ bool DirectX11Backend::Initialize()
         Fatal("CreateRenderTargetView");
 
     pBackBuffer->Release();
+
+    backbufferRenderTarget = std::make_unique<DirectX11BackbufferRenderTarget>(swapchain, backbuffer);
 
     // Set render target
     context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), nullptr);
@@ -197,31 +201,10 @@ uint64_t DirectX11Backend::GetLimitValue(Limit limit)
     }
 }
 
-void DirectX11Backend::ClearScreen()
-{
-    float black[4] = {};
-    context->ClearRenderTargetView(backbuffer.Get(), black);
-}
 
 void DirectX11Backend::Display()
 {
     swapchain->Present(0, 0);
-}
-
-void DirectX11Backend::Resize(int width, int height)
-{
-    backbuffer->Release();
-    swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-
-    ID3D11Texture2D* pBackBuffer;
-    if (FAILED(swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer)))
-        Fatal("swapchain::GetBuffer");
-
-    // Create render target
-    if (FAILED(device->CreateRenderTargetView(pBackBuffer, nullptr, backbuffer.GetAddressOf())))
-        Fatal("CreateRenderTargetView");
-
-    pBackBuffer->Release();
 }
 
 int DirectX11Backend::Width()
@@ -339,26 +322,31 @@ std::shared_ptr<RenderTexture> DirectX11Backend::CreateRenderTexture(int width, 
     return std::make_shared<DirectX11RenderTexture>(device.Get(), width, height);
 }
 
-void DirectX11Backend::BindRenderTarget(const RenderTexture* target)
+std::shared_ptr<RenderTarget> DirectX11Backend::GetScreenRenderTarget()
 {
-    if (!target) {
-        context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), nullptr);
-    } else {
-        const DirectX11RenderTexture* real_texture = dynamic_cast<const DirectX11RenderTexture*>(target);
-        context->OMSetRenderTargets(1, real_texture->renderTarget.GetAddressOf(), nullptr);
-    }
+    return backbufferRenderTarget;
 }
 
-void DirectX11Backend::ClearRenderTarget(RenderTexture* target)
+void DirectX11Backend::BindRenderTarget(const RenderTarget* target)
+{
+    const DirectX11RenderTarget* real_target = dynamic_cast<const DirectX11RenderTarget*>(target);
+
+    ID3D11RenderTargetView* renderTargetView = real_target->GetRenderTarget();
+    context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+}
+
+void DirectX11Backend::ClearRenderTarget(RenderTarget* target)
 {
     float black[4] = {};
+    DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
 
-    if (!target) {
-        context->ClearRenderTargetView(backbuffer.Get(), black);
-    } else {
-        DirectX11RenderTexture* real_texture = dynamic_cast<DirectX11RenderTexture*>(target);
-        context->ClearRenderTargetView(real_texture->renderTarget.Get(), black);
-    }
+    context->ClearRenderTargetView(real_target->GetRenderTarget(), black);
+}
+
+void DirectX11Backend::ResizeRenderTarget(RenderTarget* target, int width, int height)
+{
+    DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
+    real_target->Resize(device.Get(), width, height);
 }
 
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)

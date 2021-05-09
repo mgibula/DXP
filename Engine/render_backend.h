@@ -64,9 +64,7 @@ struct RenderBackend
 
     virtual uint64_t GetLimitValue(Limit limit) = 0;
 
-    virtual void ClearScreen() = 0;
     virtual void Display() = 0;
-    virtual void Resize(int width, int height) = 0;
     virtual int Width() = 0;
     virtual int Height() = 0;
 
@@ -93,8 +91,11 @@ struct RenderBackend
     virtual void BindRasterizer(const Rasterizer* rasterizer) = 0;
 
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) = 0;
-    virtual void BindRenderTarget(const RenderTexture *target) = 0;
-    virtual void ClearRenderTarget(RenderTexture* target) = 0;
+    virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() = 0;
+
+    virtual void BindRenderTarget(const RenderTarget* target) = 0;
+    virtual void ClearRenderTarget(RenderTarget* target) = 0;
+    virtual void ResizeRenderTarget(RenderTarget* target, int width, int height) = 0;
 
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;

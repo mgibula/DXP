@@ -6,6 +6,7 @@ namespace DXP
 struct DirectX11Backend final : public RenderBackend
 {
     DirectX11Backend(HWND window, std::shared_ptr<spdlog::logger> log);
+    ~DirectX11Backend();
 
     virtual std::string InfoString() const override;
 
@@ -22,9 +23,7 @@ struct DirectX11Backend final : public RenderBackend
 
     virtual uint64_t GetLimitValue(Limit limit) override;
 
-    virtual void ClearScreen() override;
     virtual void Display() override;
-    virtual void Resize(int width, int height) override;
     virtual int Width() override;
     virtual int Height() override;
 
@@ -51,8 +50,11 @@ struct DirectX11Backend final : public RenderBackend
     virtual void BindRasterizer(const Rasterizer* rasterizer) override;
 
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) override;
-    virtual void BindRenderTarget(const RenderTexture* target) override;
-    virtual void ClearRenderTarget(RenderTexture* target) override;
+    virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() override;
+
+    virtual void BindRenderTarget(const RenderTarget* target) override;
+    virtual void ClearRenderTarget(RenderTarget* target) override;
+    virtual void ResizeRenderTarget(RenderTarget* target, int width, int height) override;
 
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) override;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) override;
@@ -73,6 +75,7 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backbuffer;
     std::shared_ptr<spdlog::logger> log;
+    std::shared_ptr<DirectX11BackbufferRenderTarget> backbufferRenderTarget;
 
     std::map<VertexShaderInputLayout, Microsoft::WRL::ComPtr<ID3D11InputLayout>> inputLayouts;
 };

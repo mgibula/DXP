@@ -14,6 +14,7 @@
 #include "Engine/utils.h"
 #include "Engine/event.h"
 
+#include "Engine/render-target.h"
 #include "Engine/rasterizer.h"
 #include "Engine/texture.h"
 #include "Engine/texture-loader.h"

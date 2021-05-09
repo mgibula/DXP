@@ -33,7 +33,7 @@ struct DirectX11Texture2D : public virtual Texture
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> view;
 };
 
-struct DirectX11RenderTexture : public RenderTexture, public DirectX11Texture2D
+struct DirectX11RenderTexture : public RenderTexture, public DirectX11Texture2D, public DirectX11RenderTarget
 {
     DirectX11RenderTexture(ID3D11Device* device, int width, int height);
 
@@ -51,6 +51,14 @@ struct DirectX11RenderTexture : public RenderTexture, public DirectX11Texture2D
 
     virtual void* GetImGuiImage() const override {
         return DirectX11Texture2D::GetImGuiImage();
+    };
+
+    virtual ID3D11RenderTargetView* GetRenderTarget() const {
+        return renderTarget.Get();
+    };
+
+    virtual void Resize(ID3D11Device* device, int width, int height) {
+
     };
 
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTarget;

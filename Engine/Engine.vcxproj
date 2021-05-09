@@ -195,6 +195,7 @@
     <ClInclude Include="mesh.h" />
     <ClInclude Include="rasterizer.h" />
     <ClInclude Include="render-object.h" />
+    <ClInclude Include="render-target.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="sampler.h" />

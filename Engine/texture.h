@@ -16,7 +16,7 @@ struct Texture
     virtual void *GetImGuiImage() const = 0;
 };
 
-struct RenderTexture : public virtual Texture
+struct RenderTexture : public virtual Texture, public virtual RenderTarget
 {
 };
 

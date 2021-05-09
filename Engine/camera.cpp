@@ -39,6 +39,8 @@ XMMATRIX Camera::GetProjectionMatrix(int width, int height)
 
 XMMATRIX Camera::GetViewMatrix()
 {
+    //return XMMatrixInverse(nullptr, GetWorldMatrix());
+
     XMVECTOR forward = XMVectorSet(0.f, 0.f, 1.f, 0.f);
     XMVECTOR right = XMVectorSet(1.f, 0.f, 0.f, 0.f);
     XMVECTOR up;

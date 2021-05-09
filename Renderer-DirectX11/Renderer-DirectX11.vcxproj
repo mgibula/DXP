@@ -159,6 +159,7 @@
     <ClInclude Include="directx11_backend.h" />
     <ClInclude Include="directx11_buffer.h" />
     <ClInclude Include="directx11_rasterizer.h" />
+    <ClInclude Include="directx11_render_target.h" />
     <ClInclude Include="directx11_sampler.h" />
     <ClInclude Include="directx11_shader.h" />
     <ClInclude Include="directx11_texture.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="directx11_backend.cpp" />
     <ClCompile Include="directx11_buffer.cpp" />
     <ClCompile Include="directx11_rasterizer.cpp" />
+    <ClCompile Include="directx11_render_target.cpp" />
     <ClCompile Include="directx11_sampler.cpp" />
     <ClCompile Include="directx11_shader.cpp" />
     <ClCompile Include="directx11_texture.cpp" />

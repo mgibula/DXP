@@ -124,7 +124,7 @@ void Engine::OnFrameEnd()
     gpu->Display();
 
     // Do it now to save time later
-    gpu->ClearScreen();
+    gpu->ClearRenderTarget(gpu->GetScreenRenderTarget().get());
 }
 
 Layer *Engine::PushLayer(std::unique_ptr<Layer> layer)
