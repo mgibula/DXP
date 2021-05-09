@@ -141,14 +141,6 @@ bool DirectX11Backend::Initialize()
     viewport.Width = (float)width;
     viewport.Height = (float)height;
 
-    // Rasterizer states
-    D3D11_RASTERIZER_DESC solid = {};
-    solid.FillMode = D3D11_FILL_SOLID;
-    solid.CullMode = D3D11_CULL_BACK;
-
-    device->CreateRasterizerState(&solid, rasterizer.GetAddressOf());
-
-    context->RSSetState(rasterizer.Get());
     context->RSSetViewports(1, &viewport);
 
     return true;
@@ -331,6 +323,17 @@ void DirectX11Backend::BindSamplers(const Sampler** samplers, int count, int sta
     context->PSSetSamplers(startingSlot, count, ptrs);
 }
 
+std::shared_ptr<Rasterizer> DirectX11Backend::CreateRasterizer(const RasterizerSettings& settings)
+{
+    return std::make_shared<DirectX11Rasterizer>(device.Get(), settings);
+}
+
+void DirectX11Backend::BindRasterizer(const Rasterizer* rasterizer)
+{
+    const DirectX11Rasterizer* real_rasterizer = dynamic_cast<const DirectX11Rasterizer*>(rasterizer);
+    context->RSSetState(real_rasterizer->ptr.Get());
+}
+
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)
 {
     return std::make_shared<DirectX11Texture2D>(device.Get(), textureData);
@@ -373,6 +376,12 @@ void DirectX11Backend::BindTopology(Topology topology)
     switch (topology) {
     case Topology::Triangles:
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        break;
+    case Topology::LineStrip:
+        context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+        break;
+    case Topology::LineList:
+        context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINELIST);
         break;
     default:
         Fatal("Unknown topology: {}", static_cast<int>(topology));

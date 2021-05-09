@@ -29,8 +29,15 @@ struct Sampler
     virtual ~Sampler() = default;
 };
 
+struct Rasterizer
+{
+    virtual ~Rasterizer() = default;
+};
+
 enum class Topology {
     Triangles,
+    LineList,
+    LineStrip,
 };
 
 struct RenderBackend
@@ -81,6 +88,9 @@ struct RenderBackend
 
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) = 0;
     virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) = 0;
+
+    virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) = 0;
+    virtual void BindRasterizer(const Rasterizer* rasterizer) = 0;
 
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;

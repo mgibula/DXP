@@ -62,6 +62,24 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     ptrs[SamplerSlot::Sampler_Anisotropic] = anisotropicSampler.get();
 
     gpu->BindSamplers(ptrs.data(), 4, 0);
+
+    rasterizers.resize(2);
+    {
+        RasterizerSettings settings;
+        settings.wireframe = false;
+        settings.drawFront = true;
+
+        rasterizers[Rasterizer_Solid] = gpu->CreateRasterizer(settings);
+    }
+
+    {
+        RasterizerSettings settings;
+        settings.wireframe = true;
+        settings.drawFront = true;
+        settings.drawBack = true;
+
+        rasterizers[Rasterizer_Wireframe] = gpu->CreateRasterizer(settings);
+    }
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -221,12 +239,13 @@ void Renderer::Draw(Material *material, Mesh* mesh)
 
     gpu->BindVertexShaderInputLayout(material->vertexShader.program.get(), inputLayout);
     gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
+    gpu->BindRasterizer(rasterizers[mesh->rasterizer].get());
 
     if (mesh->indexBuffer) {
         gpu->BindIndexBuffer(mesh->indexBuffer.get()); 
         gpu->DrawIndexed(mesh->indices->Elements());
     } else {
-        gpu->Draw(mesh->channels[0]->Elements());
+        gpu->Draw(mesh->channels[0]->GetBufferSize() / mesh->channels[0]->Stride());
     }
 }
 

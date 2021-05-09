@@ -155,5 +155,8 @@
     <ClInclude Include="layers\input.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
+    <ClInclude Include="rasterizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

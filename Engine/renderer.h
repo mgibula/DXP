@@ -60,6 +60,9 @@ private:
     std::shared_ptr<Sampler> trilinearSampler;
     std::shared_ptr<Sampler> anisotropicSampler;
 
+    // Predefined rasterizers
+    std::vector<std::shared_ptr<Rasterizer>> rasterizers;
+
     RenderBackend* gpu = nullptr;
     std::shared_ptr<spdlog::logger> log;
 
