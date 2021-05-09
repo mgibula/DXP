@@ -50,6 +50,10 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) override;
     virtual void BindRasterizer(const Rasterizer* rasterizer) override;
 
+    virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) override;
+    virtual void BindRenderTarget(const RenderTexture* target) override;
+    virtual void ClearRenderTarget(RenderTexture* target) override;
+
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) override;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) override;
 

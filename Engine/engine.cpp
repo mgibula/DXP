@@ -111,14 +111,14 @@ void Engine::OnFrameEnd()
 {
     SPDLOG_LOGGER_DEBUG(log, "Frame end");
 
+    // Draw everything
+    renderer->DrawScene(renderer->GetScene());
+
     for (auto i = layers.rbegin(); i != layers.rend(); i++)
         i->get()->OnFrameEnd(this);
 
     gpu->OnFrameEnd(this);
     platform->OnFrameEnd(this);
-
-    // Draw everything
-    renderer->DrawScene(renderer->GetScene());
 
     // Display frame
     gpu->Display();

@@ -6,6 +6,29 @@ namespace DXP
 static DXGI_FORMAT GetFormat(const TextureData& textureData);
 static int GetTexelSize(const TextureData& textureData);
 
+DirectX11RenderTexture::DirectX11RenderTexture(ID3D11Device* device, int width, int height)
+{
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = width;
+    desc.Height = height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+
+    channels = 4;
+    this->width = width;
+    this->height = height;
+
+    Initialize(device, desc, nullptr);
+
+    HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
+}
+
 DirectX11Texture2D::DirectX11Texture2D(ID3D11Device* device, const TextureData& textureData)
 {
     D3D11_TEXTURE2D_DESC desc = {};
@@ -24,19 +47,26 @@ DirectX11Texture2D::DirectX11Texture2D(ID3D11Device* device, const TextureData& 
     subresource.SysMemPitch = textureData.width * GetTexelSize(textureData) * textureData.loaded_channels;
     subresource.SysMemSlicePitch = 0;
 
-    device->CreateTexture2D(&desc, &subresource, ptr.GetAddressOf());
+    channels = textureData.loaded_channels;
+    width = textureData.width;
+    height = textureData.height;
+
+    Initialize(device, desc, &subresource);
+}
+
+void DirectX11Texture2D::Initialize(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA *subresource)
+{
+    HRESULT success = device->CreateTexture2D(&desc, subresource, ptr.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateTexture2D");
 
     D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
-    view_desc.Format = GetFormat(textureData);
+    view_desc.Format = desc.Format;
     view_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     view_desc.Texture2D.MipLevels = 1;
     view_desc.Texture2D.MostDetailedMip = 0;
 
-    device->CreateShaderResourceView(ptr.Get(), &view_desc, view.GetAddressOf());
-
-    channels = textureData.loaded_channels;
-    width = textureData.width;
-    height = textureData.height;
+    success = device->CreateShaderResourceView(ptr.Get(), &view_desc, view.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateShaderResourceView");
 }
 
 static int GetTexelSize(const TextureData& textureData)

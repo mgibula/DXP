@@ -334,6 +334,33 @@ void DirectX11Backend::BindRasterizer(const Rasterizer* rasterizer)
     context->RSSetState(real_rasterizer->ptr.Get());
 }
 
+std::shared_ptr<RenderTexture> DirectX11Backend::CreateRenderTexture(int width, int height)
+{
+    return std::make_shared<DirectX11RenderTexture>(device.Get(), width, height);
+}
+
+void DirectX11Backend::BindRenderTarget(const RenderTexture* target)
+{
+    if (!target) {
+        context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), nullptr);
+    } else {
+        const DirectX11RenderTexture* real_texture = dynamic_cast<const DirectX11RenderTexture*>(target);
+        context->OMSetRenderTargets(1, real_texture->renderTarget.GetAddressOf(), nullptr);
+    }
+}
+
+void DirectX11Backend::ClearRenderTarget(RenderTexture* target)
+{
+    float black[4] = {};
+
+    if (!target) {
+        context->ClearRenderTargetView(backbuffer.Get(), black);
+    } else {
+        DirectX11RenderTexture* real_texture = dynamic_cast<DirectX11RenderTexture*>(target);
+        context->ClearRenderTargetView(real_texture->renderTarget.Get(), black);
+    }
+}
+
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)
 {
     return std::make_shared<DirectX11Texture2D>(device.Get(), textureData);

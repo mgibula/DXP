@@ -15,9 +15,9 @@
 #include "Engine/event.h"
 
 #include "Engine/rasterizer.h"
+#include "Engine/texture.h"
 #include "Engine/texture-loader.h"
 #include "Engine/sampler.h"
-#include "Engine/texture.h"
 #include "Engine/constant-buffer.h"
 #include "Engine/buffer.h"
 #include "Engine/shader.h"

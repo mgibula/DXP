@@ -92,6 +92,10 @@ struct RenderBackend
     virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) = 0;
     virtual void BindRasterizer(const Rasterizer* rasterizer) = 0;
 
+    virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) = 0;
+    virtual void BindRenderTarget(const RenderTexture *target) = 0;
+    virtual void ClearRenderTarget(RenderTexture* target) = 0;
+
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;
 

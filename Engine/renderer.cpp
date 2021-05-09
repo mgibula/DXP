@@ -80,6 +80,8 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 
         rasterizers[Rasterizer_Wireframe] = gpu->CreateRasterizer(settings);
     }
+
+    scene->renderTarget = gpu->CreateRenderTexture(gpu->Width(), gpu->Height());
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -115,6 +117,9 @@ void Renderer::DrawScene(SceneRoot* root)
     using namespace DirectX;
     XMMATRIX parent = XMMatrixIdentity();//  root->GetWorldMatrix();
 
+    gpu->BindRenderTarget(root->renderTarget.get());
+    gpu->ClearRenderTarget(root->renderTarget.get());
+
     if (root->mainCamera) {
         ConstantBuffer* cb = cameraConstantBuffer.get();
         XMFLOAT4X4 matrix[2];
@@ -125,6 +130,8 @@ void Renderer::DrawScene(SceneRoot* root)
     }
 
     DrawScene(root, parent);
+
+    gpu->BindRenderTarget(nullptr);
 }
 
 void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)

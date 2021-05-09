@@ -15,6 +15,10 @@ void ImGuiLayer::OnAttach(Engine* engine)
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding = 0.f;
+    style.Colors[ImGuiCol_WindowBg].w = 1.f;
+
     engine->platform->ImGuiInit();
     engine->gpu->ImGuiInit();
 
@@ -46,6 +50,8 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
 {
     for (auto i = engine->layers.begin(); i != engine->layers.end(); i++)
         i->get()->OnImguiFrame(engine);
+
+    ImGui::Image(engine->renderer->GetScene()->renderTarget->GetImGuiImage(), ImVec2(1024, 768));
 
     engine->platform->ImGuiFrameEnd();
     engine->gpu->ImGuiFrameEnd();
