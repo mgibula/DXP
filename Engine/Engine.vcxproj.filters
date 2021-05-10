@@ -39,7 +39,7 @@
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="layers\imgui.cpp">
+    <ClCompile Include="layers\debug.cpp">
       <Filter>Source Files\layers</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
@@ -101,7 +101,7 @@
     <ClInclude Include="simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="layers\imgui.h">
+    <ClInclude Include="layers\debug.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">

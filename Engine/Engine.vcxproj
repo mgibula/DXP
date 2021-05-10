@@ -161,7 +161,7 @@
     <ClCompile Include="cyclic_log.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="event.cpp" />
-    <ClCompile Include="layers\imgui.cpp" />
+    <ClCompile Include="layers\debug.cpp" />
     <ClCompile Include="layers\input.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="pch.cpp">
@@ -189,7 +189,7 @@
     <ClInclude Include="dxp.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
-    <ClInclude Include="layers\imgui.h" />
+    <ClInclude Include="layers\debug.h" />
     <ClInclude Include="layers\input.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="mesh.h" />
