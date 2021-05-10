@@ -21,7 +21,7 @@ void ImGuiLayer::OnAttach(Engine* engine)
     engine->platform->ImGuiInit();
     engine->gpu->ImGuiInit();
 
-    renderTargetOverride = engine->gpu->CreateRenderTexture(engine->gpu->Width(), engine->gpu->Height());
+    renderTargetOverride = engine->gpu->CreateRenderTexture(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
     engine->renderer->GetScene()->renderTarget = renderTargetOverride;
 
     debug_material = engine->renderer->CreateMaterial("shaders/color.vs", "shaders/color.ps", {});
@@ -45,7 +45,7 @@ void ImGuiLayer::OnFrameStart(Engine* engine)
     ImGui::NewFrame();
 
      //Setup main dockspace (thanks imgui_demo.cpp !)
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_NoDockingInCentralNode | ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 }
 
 void ImGuiLayer::OnFrameEnd(Engine* engine)
@@ -55,7 +55,7 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
 
     static bool show_app = true;
     ImGui::Begin("Application", &show_app);
-    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(1024, 768));
+    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(engine->platform->ScreenWidth(), engine->platform->ScreenHeight()));
     ImGui::End();
 
     engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get());
@@ -119,9 +119,8 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
 
 bool ImGuiLayer::OnEvent(Engine* engine, const Event* event)
 {
-    if (event->type == Event::Type::ApplicationResized) {
-        //engine->gpu->Resize(event->ApplicationSize().first, event->ApplicationSize().second);
-    }
+    if (event->type == Event::Type::ApplicationResized)
+        engine->gpu->ResizeRenderTarget(renderTargetOverride.get(), event->ApplicationSize().first, event->ApplicationSize().second);    
 
     return true;
 }

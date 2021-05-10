@@ -9,12 +9,13 @@ struct RenderBackend;
 struct SceneRoot;
 struct SceneNode;
 struct RenderObject;
+struct Platform;
 
 struct Renderer
 {
     friend struct RendererState;
 
-    Renderer(std::shared_ptr<spdlog::logger> log);
+    Renderer(Platform *platform, std::shared_ptr<spdlog::logger> log);
 
     void SetRenderBackend(RenderBackend* backend);
 
@@ -32,15 +33,6 @@ struct Renderer
     
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
-
-    // This probably shouldnt be here
-    int Width() {
-        return gpu->Width();
-    };
-
-    int Height() {
-        return gpu->Height();
-    };
 
 private:
     struct {
@@ -64,6 +56,7 @@ private:
     std::vector<std::shared_ptr<Rasterizer>> rasterizers;
 
     RenderBackend* gpu = nullptr;
+    Platform* platform = nullptr;
     std::shared_ptr<spdlog::logger> log;
 
     void BindMaterial(DXP::Material* material);

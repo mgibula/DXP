@@ -74,7 +74,7 @@ void DirectX11RenderTexture::SetupRenderTexture(D3D11_TEXTURE2D_DESC* desc, int 
     this->height = height;
 }
 
-void DirectX11RenderTexture::Resize(ID3D11Device* device, int width, int height)
+void DirectX11RenderTexture::Resize(ID3D11Device* device, ID3D11DeviceContext* context, int width, int height)
 {
     ptr.Reset();
     view.Reset();

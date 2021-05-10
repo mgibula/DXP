@@ -96,6 +96,9 @@ bool DirectX11Backend::Initialize()
     scd.SampleDesc.Count = 1;
     scd.Windowed = true;
 
+    Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
+    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backbuffer;
+
     // Create device, context and swapchain
     HRESULT result = D3D11CreateDeviceAndSwapChain(
         nullptr,
@@ -164,8 +167,8 @@ void DirectX11Backend::OnFrameStart(Engine* engine)
 
 void DirectX11Backend::OnFrameEnd(Engine* engine)
 {
-    // ImGui multiviewport messes this up
-    context->OMSetRenderTargets(1, backbuffer.GetAddressOf(), nullptr);
+    // ImGui multiviewport messes this up    
+    context->OMSetRenderTargets(1, backbufferRenderTarget->backbuffer.GetAddressOf(), nullptr);
 }
 
 void DirectX11Backend::ImGuiInit()
@@ -201,20 +204,9 @@ uint64_t DirectX11Backend::GetLimitValue(Limit limit)
     }
 }
 
-
 void DirectX11Backend::Display()
 {
-    swapchain->Present(0, 0);
-}
-
-int DirectX11Backend::Width()
-{
-    return width;
-}
-
-int DirectX11Backend::Height()
-{
-    return height;
+    backbufferRenderTarget->swapchain->Present(0, 0);
 }
 
 std::shared_ptr<VertexShader> DirectX11Backend::LoadVertexShader(std::string_view path, std::string_view content)
@@ -346,7 +338,7 @@ void DirectX11Backend::ClearRenderTarget(RenderTarget* target)
 void DirectX11Backend::ResizeRenderTarget(RenderTarget* target, int width, int height)
 {
     DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
-    real_target->Resize(device.Get(), width, height);
+    real_target->Resize(device.Get(), context.Get(), width, height);
 }
 
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)

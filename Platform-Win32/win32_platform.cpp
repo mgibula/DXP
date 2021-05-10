@@ -20,6 +20,13 @@ void Fatal(std::string_view message)
 Win32Platform::Win32Platform(HWND window) :
     window(window)
 {
+    RECT rect;
+    if (!GetClientRect(window, &rect))
+        Fatal("GetClientRect");
+
+    width = rect.right - rect.left;
+    height = rect.bottom - rect.top;
+
     Win32Platform::platform_instance = this;
     renderers.push_back({ "DirectX11", "DirectX 11" });
 }
@@ -48,6 +55,16 @@ void* Win32Platform::AllocateRawMemory(uint64_t size)
 void Win32Platform::FreeRawMemory(void* ptr)
 {
     VirtualFree(ptr, 0, MEM_RELEASE);
+}
+
+int Win32Platform::ScreenWidth() const
+{
+    return width;
+}
+
+int Win32Platform::ScreenHeight() const
+{
+    return height;
 }
 
 void Win32Platform::PreRenderLoop(Engine* engine)
@@ -121,9 +138,10 @@ LPARAM Win32Platform::HandleMessage(const MSG& msg, Engine* engine)
     case WM_SIZE:
         if (msg.wParam == SIZE_MINIMIZED) {
             engine->SubmitEvent(Event::ApplicationMinimized());
-        }
-        else {
-            engine->SubmitEvent(Event::ApplicationResized(static_cast<int>(LOWORD(msg.lParam)), static_cast<int>(HIWORD(msg.lParam))));
+        } else {
+            width = static_cast<int>(LOWORD(msg.lParam));
+            height = static_cast<int>(HIWORD(msg.lParam));
+            engine->SubmitEvent(Event::ApplicationResized(width, height));
         }
         break;
     }

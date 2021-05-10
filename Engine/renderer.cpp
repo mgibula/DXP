@@ -3,8 +3,9 @@
 namespace DXP
 {
 
-Renderer::Renderer(std::shared_ptr<spdlog::logger> log) :
+Renderer::Renderer(Platform* platform, std::shared_ptr<spdlog::logger> log) :
     scene(std::make_unique<SceneRoot>()),
+    platform(platform),
     log(log)
 {
     SPDLOG_LOGGER_INFO(log, "Initializing");
@@ -125,7 +126,7 @@ void Renderer::DrawScene(SceneRoot* root)
         XMFLOAT4X4 matrix[2];
 
         XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix()));
-        XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(gpu->Width(), gpu->Height()))) ;
+        XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(platform->ScreenWidth(), platform->ScreenHeight()))) ;
         gpu->UpdateConstantBuffer(cb, &matrix[0], sizeof(matrix[0]) * 2);
     }
 

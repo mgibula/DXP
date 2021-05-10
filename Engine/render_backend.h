@@ -65,8 +65,6 @@ struct RenderBackend
     virtual uint64_t GetLimitValue(Limit limit) = 0;
 
     virtual void Display() = 0;
-    virtual int Width() = 0;
-    virtual int Height() = 0;
 
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) = 0;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) = 0;

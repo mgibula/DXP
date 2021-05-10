@@ -24,8 +24,6 @@ struct DirectX11Backend final : public RenderBackend
     virtual uint64_t GetLimitValue(Limit limit) override;
 
     virtual void Display() override;
-    virtual int Width() override;
-    virtual int Height() override;
 
     virtual std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path, std::string_view content) override;
     virtual std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path, std::string_view content) override;
@@ -72,8 +70,6 @@ private:
     int height = 0;
     Microsoft::WRL::ComPtr<ID3D11Device> device;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> context;
-    Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView> backbuffer;
     std::shared_ptr<spdlog::logger> log;
     std::shared_ptr<DirectX11BackbufferRenderTarget> backbufferRenderTarget;
 

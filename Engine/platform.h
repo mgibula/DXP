@@ -33,6 +33,9 @@ struct Platform
     virtual void ImGuiFrameStart() { };
     virtual void ImGuiFrameEnd() { };
 
+    virtual int ScreenWidth() const = 0;
+    virtual int ScreenHeight() const = 0;
+
     virtual std::vector<RenderBackendDescription> GetAvailableRenderers() const = 0;
     virtual std::unique_ptr<RenderBackend> CreateRenderBackend(std::string_view name) = 0;
 };

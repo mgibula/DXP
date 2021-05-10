@@ -31,11 +31,16 @@ struct Win32Platform final : public Platform
     virtual void ImGuiFrameStart() override;
     virtual void ImGuiFrameEnd() override;
 
+    virtual int ScreenWidth() const override;
+    virtual int ScreenHeight() const override;
+
     virtual std::vector<RenderBackendDescription> GetAvailableRenderers() const override;
     virtual std::unique_ptr<RenderBackend> CreateRenderBackend(std::string_view name) override;
 
 private:
     HWND window;
+    int width = 0;
+    int height = 0;
     std::vector<RenderBackendDescription> renderers;
     std::shared_ptr<spdlog::logger> log;
 };

@@ -35,8 +35,8 @@ XMFLOAT2 InputLayer::GetMousePositionScreenSpace() const
 {
     XMFLOAT2 result;
 
-    result.x = currentPosition.x / static_cast<float>(engine->renderer->Width());
-    result.y = currentPosition.y / static_cast<float>(engine->renderer->Height());
+    result.x = currentPosition.x / static_cast<float>(engine->platform->ScreenWidth());
+    result.y = currentPosition.y / static_cast<float>(engine->platform->ScreenHeight());
 
     return result;
 }
@@ -50,7 +50,7 @@ void InputLayer::OnImguiFrame(Engine* engine)
     {
         auto* camera = engine->renderer->GetScene()->mainCamera;
         XMMATRIX viewMatrix = camera->GetViewMatrix();
-        XMMATRIX projectionMatrix = camera->GetProjectionMatrix(engine->renderer->Width(), engine->renderer->Height());
+        XMMATRIX projectionMatrix = camera->GetProjectionMatrix(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
 
         auto screenPosition = GetMousePosition();
         XMFLOAT3 screenPositionFloat;
@@ -68,8 +68,8 @@ void InputLayer::OnImguiFrame(Engine* engine)
         //auto mouseInWorld = XMVector3Unproject(diff, 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
         //auto mouseInWorld = XMVector3Unproject(diff, 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
 
-        auto m1 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 0.f, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
-        auto m2 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 1.f, 0.0f), 0.f, 0.f, engine->renderer->Width(), engine->renderer->Height(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+        auto m1 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 0.f, 0.0f), 0.f, 0.f, engine->platform->ScreenWidth(), engine->platform->ScreenHeight(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
+        auto m2 = XMVector3Unproject(XMVectorSet(screenPosition.x, screenPosition.y, 1.f, 0.0f), 0.f, 0.f, engine->platform->ScreenWidth(), engine->platform->ScreenHeight(), 0.f, 1.f, projectionMatrix, viewMatrix, XMMatrixIdentity());
 
         auto dif = XMVectorSubtract(m2, m1);
         dif = XMVector3Normalize(dif);

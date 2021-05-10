@@ -3,7 +3,7 @@
 namespace DXP
 {
 
-void DirectX11BackbufferRenderTarget::Resize(ID3D11Device* device, int width, int height)
+void DirectX11BackbufferRenderTarget::Resize(ID3D11Device* device, ID3D11DeviceContext *context, int width, int height)
 {
     backbuffer->Release();
     swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
@@ -17,6 +17,14 @@ void DirectX11BackbufferRenderTarget::Resize(ID3D11Device* device, int width, in
         Fatal("CreateRenderTargetView");
 
     pBackBuffer->Release();
+
+    D3D11_VIEWPORT viewport = {};
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    viewport.Width = (float)width;
+    viewport.Height = (float)height;
+
+    context->RSSetViewports(1, &viewport);
 }
 
 };

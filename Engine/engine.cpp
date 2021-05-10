@@ -25,7 +25,7 @@ Engine::Engine(Platform* platform, Simulation* simulation) noexcept :
     log = CreateLogger("core");
     spdlog::set_default_logger(log);
 
-    renderer = std::make_unique<Renderer>(CreateLogger("renderer"));
+    renderer = std::make_unique<Renderer>(platform, CreateLogger("renderer"));
 }
 
 Engine::~Engine()
@@ -159,6 +159,10 @@ void Engine::SubmitEvent(const Event& event)
     switch (event.type) {
     case Event::Type::MouseMoved:
         SPDLOG_LOGGER_DEBUG(log, "Event: {}", event.DebugDescription());
+        break;
+    case Event::Type::ApplicationResized:
+        if (gpu)
+            gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), event.ApplicationSize().first, event.ApplicationSize().second);
         break;
     default:
         SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());
