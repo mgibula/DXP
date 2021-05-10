@@ -57,11 +57,12 @@ struct DirectX11RenderTexture : public RenderTexture, public DirectX11Texture2D,
         return renderTarget.Get();
     };
 
-    virtual void Resize(ID3D11Device* device, int width, int height) {
-
-    };
+    virtual void Resize(ID3D11Device* device, int width, int height);
 
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTarget;
+
+private:
+    void SetupRenderTexture(D3D11_TEXTURE2D_DESC* desc, int width, int height);
 };
 
 };

@@ -6,29 +6,6 @@ namespace DXP
 static DXGI_FORMAT GetFormat(const TextureData& textureData);
 static int GetTexelSize(const TextureData& textureData);
 
-DirectX11RenderTexture::DirectX11RenderTexture(ID3D11Device* device, int width, int height)
-{
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = width;
-    desc.Height = height;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-    desc.SampleDesc.Count = 1;
-    desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    desc.CPUAccessFlags = 0;
-
-    channels = 4;
-    this->width = width;
-    this->height = height;
-
-    Initialize(device, desc, nullptr);
-
-    HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
-    DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
-}
-
 DirectX11Texture2D::DirectX11Texture2D(ID3D11Device* device, const TextureData& textureData)
 {
     D3D11_TEXTURE2D_DESC desc = {};
@@ -67,6 +44,48 @@ void DirectX11Texture2D::Initialize(ID3D11Device* device, const D3D11_TEXTURE2D_
 
     success = device->CreateShaderResourceView(ptr.Get(), &view_desc, view.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateShaderResourceView");
+}
+
+DirectX11RenderTexture::DirectX11RenderTexture(ID3D11Device* device, int width, int height)
+{
+    D3D11_TEXTURE2D_DESC desc = {};
+
+    SetupRenderTexture(&desc, width, height);
+    Initialize(device, desc, nullptr);
+
+    HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
+}
+
+void DirectX11RenderTexture::SetupRenderTexture(D3D11_TEXTURE2D_DESC* desc, int width, int height)
+{
+    desc->Width = width;
+    desc->Height = height;
+    desc->MipLevels = 1;
+    desc->ArraySize = 1;
+    desc->Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    desc->SampleDesc.Count = 1;
+    desc->Usage = D3D11_USAGE_DEFAULT;
+    desc->BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    desc->CPUAccessFlags = 0;
+
+    channels = 4;
+    this->width = width;
+    this->height = height;
+}
+
+void DirectX11RenderTexture::Resize(ID3D11Device* device, int width, int height)
+{
+    ptr.Reset();
+    view.Reset();
+    renderTarget.Reset();
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    SetupRenderTexture(&desc, width, height);
+    Initialize(device, desc, nullptr);
+
+    HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
 }
 
 static int GetTexelSize(const TextureData& textureData)
