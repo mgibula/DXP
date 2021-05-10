@@ -25,7 +25,8 @@ Engine::Engine(Platform* platform, Simulation* simulation) noexcept :
     log = CreateLogger("core");
     spdlog::set_default_logger(log);
 
-    renderer = std::make_unique<Renderer>(platform, CreateLogger("renderer"));
+    gpu = platform->CreateRenderBackend("DirectX11");
+    renderer = std::make_unique<Renderer>(platform, gpu.get(), CreateLogger("renderer"));
 }
 
 Engine::~Engine()
@@ -75,9 +76,6 @@ void Engine::Run()
 
 void Engine::PreRenderLoop()
 {
-    gpu = platform->CreateRenderBackend("DirectX11");
-    renderer->SetRenderBackend(gpu.get());
-
     platform->PreRenderLoop(this);
     gpu->PreRenderLoop(this);
     simulation->PreRenderLoop(this);
@@ -161,8 +159,8 @@ void Engine::SubmitEvent(const Event& event)
         SPDLOG_LOGGER_DEBUG(log, "Event: {}", event.DebugDescription());
         break;
     case Event::Type::ApplicationResized:
-        if (gpu)
-            gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), event.ApplicationSize().first, event.ApplicationSize().second);
+        SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());
+        gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), event.ApplicationSize().first, event.ApplicationSize().second);
         break;
     default:
         SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());

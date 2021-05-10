@@ -3,20 +3,20 @@
 namespace DXP
 {
 
-Renderer::Renderer(Platform* platform, std::shared_ptr<spdlog::logger> log) :
+Renderer::Renderer(Platform* platform, RenderBackend* gpu, std::shared_ptr<spdlog::logger> log) :
     scene(std::make_unique<SceneRoot>()),
     platform(platform),
+    gpu(gpu),
     log(log)
 {
     SPDLOG_LOGGER_INFO(log, "Initializing");
+    SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", gpu->InfoString());
+    SetRenderBackend(gpu);
 }
 
 void Renderer::SetRenderBackend(RenderBackend* backend)
 {
     using namespace DirectX;
-
-    SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", backend->InfoString());
-    gpu = backend;
 
     transformConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4));
     cameraConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4) * 2);

@@ -15,9 +15,7 @@ struct Renderer
 {
     friend struct RendererState;
 
-    Renderer(Platform *platform, std::shared_ptr<spdlog::logger> log);
-
-    void SetRenderBackend(RenderBackend* backend);
+    Renderer(Platform *platform, RenderBackend* gpu, std::shared_ptr<spdlog::logger> log);
 
     std::shared_ptr<Material> CreateMaterial(std::string_view vertexShaderPath, std::string_view pixelShaderPath, std::vector<std::shared_ptr<Texture>> textures);
 
@@ -62,6 +60,8 @@ private:
     void BindMaterial(DXP::Material* material);
     void UpdateConstantBuffers(DXP::RenderObject* object, DirectX::FXMMATRIX parent);
     void DrawScene(SceneNode* root, DirectX::FXMMATRIX parent);
+
+    void SetRenderBackend(RenderBackend* backend);
 };
 
 };
