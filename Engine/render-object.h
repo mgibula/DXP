@@ -111,7 +111,7 @@ struct SceneRoot : public SceneNode
 
     Camera* mainCamera = nullptr;
 
-    std::shared_ptr<RenderTexture> renderTarget;
+    std::shared_ptr<RenderTarget> renderTarget;
 };
 
 struct RenderObject : public SceneNode

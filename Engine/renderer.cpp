@@ -81,7 +81,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         rasterizers[Rasterizer_Wireframe] = gpu->CreateRasterizer(settings);
     }
 
-    scene->renderTarget = gpu->CreateRenderTexture(gpu->Width(), gpu->Height());
+    scene->renderTarget = gpu->GetScreenRenderTarget();
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -130,8 +130,6 @@ void Renderer::DrawScene(SceneRoot* root)
     }
 
     DrawScene(root, parent);
-
-    gpu->BindRenderTarget(gpu->GetScreenRenderTarget().get());
 }
 
 void Renderer::DrawScene(SceneNode* root, DirectX::FXMMATRIX parent)

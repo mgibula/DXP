@@ -22,6 +22,9 @@ void ImGuiLayer::OnAttach(Engine* engine)
     engine->platform->ImGuiInit();
     engine->gpu->ImGuiInit();
 
+    renderTargetOverride = engine->gpu->CreateRenderTexture(engine->gpu->Width(), engine->gpu->Height());
+    engine->renderer->GetScene()->renderTarget = renderTargetOverride;
+
     debug_material = engine->renderer->CreateMaterial("shaders/color.vs", "shaders/color.ps", {});
 }
 
@@ -51,7 +54,12 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
     for (auto i = engine->layers.begin(); i != engine->layers.end(); i++)
         i->get()->OnImguiFrame(engine);
 
-    ImGui::Image(engine->renderer->GetScene()->renderTarget->GetImGuiImage(), ImVec2(1024, 768));
+    static bool show_app = true;
+    ImGui::Begin("Application", &show_app);
+    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(1024, 768));
+    ImGui::End();
+
+    engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get());
 
     engine->platform->ImGuiFrameEnd();
     engine->gpu->ImGuiFrameEnd();
