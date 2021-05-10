@@ -94,7 +94,8 @@ LPARAM Win32Platform::HandleMessage(HWND window, UINT message, WPARAM wParam, LP
 
 LPARAM Win32Platform::HandleMessage(const MSG& msg, Engine* engine)
 {
-    ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+    if (ImGui_ImplWin32_WndProcHandler(msg.hwnd, msg.message, msg.wParam, msg.lParam))
+        return true;
 
     switch (msg.message) {
     case WM_DESTROY:
