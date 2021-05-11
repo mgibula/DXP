@@ -50,9 +50,15 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) override;
     virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() override;
 
-    virtual void BindRenderTarget(const RenderTarget* target) override;
+    virtual void BindRenderTarget(const RenderTarget* target, DepthStencilTexture* depthBuffer) override;
     virtual void ClearRenderTarget(RenderTarget* target) override;
     virtual void ResizeRenderTarget(RenderTarget* target, int width, int height) override;
+
+    virtual std::shared_ptr<DepthStencilTexture> CreateDepthStencilTexture(int width, int height) override;
+    virtual void ClearDepthStencilTexture(DepthStencilTexture* texture, bool clearDepth, bool clearStencil) override;
+
+    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) override;
+    virtual void BindDepthStencilTest(DepthStencilTest* test) override;
 
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) override;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) override;

@@ -24,7 +24,10 @@ struct DirectX11Texture2D : public virtual Texture
         return view.Get();
     };
 
-    void Initialize(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA* subresource);
+    void InitializeTexture(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA* subresource);
+
+    void SetupShaderView(D3D11_SHADER_RESOURCE_VIEW_DESC* desc, DXGI_FORMAT format);
+    void InitializeShaderView(ID3D11Device* device, const D3D11_SHADER_RESOURCE_VIEW_DESC& desc);
 
     int channels = 0;
     int width = 0;
@@ -63,6 +66,29 @@ struct DirectX11RenderTexture : public RenderTexture, public DirectX11Texture2D,
 
 private:
     void SetupRenderTexture(D3D11_TEXTURE2D_DESC* desc, int width, int height);
+};
+
+struct DirectX11DepthStencilTexture : public DepthStencilTexture, public DirectX11Texture2D
+{
+    DirectX11DepthStencilTexture(ID3D11Device* device, int width, int height);
+
+    virtual int Channels() const override {
+        return DirectX11Texture2D::Channels();
+    };
+
+    virtual uint32_t Width() const override {
+        return DirectX11Texture2D::Width();
+    };
+
+    virtual uint32_t Height() const override {
+        return DirectX11Texture2D::Height();
+    };
+
+    virtual void* GetImGuiImage() const override {
+        return DirectX11Texture2D::GetImGuiImage();
+    };
+
+    Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView;
 };
 
 };

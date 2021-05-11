@@ -91,9 +91,15 @@ struct RenderBackend
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) = 0;
     virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() = 0;
 
-    virtual void BindRenderTarget(const RenderTarget* target) = 0;
+    virtual void BindRenderTarget(const RenderTarget* target, DepthStencilTexture *depthBuffer) = 0;
     virtual void ClearRenderTarget(RenderTarget* target) = 0;
     virtual void ResizeRenderTarget(RenderTarget* target, int width, int height) = 0;
+
+    virtual std::shared_ptr<DepthStencilTexture> CreateDepthStencilTexture(int width, int height) = 0;
+    virtual void ClearDepthStencilTexture(DepthStencilTexture* texture, bool clearDepth, bool clearStencil) = 0;
+
+    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) = 0;
+    virtual void BindDepthStencilTest(DepthStencilTest* test) = 0;
 
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;

@@ -58,7 +58,7 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
     ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(engine->platform->ScreenWidth(), engine->platform->ScreenHeight()));
     ImGui::End();
 
-    engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get());
+    engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get(), nullptr);
 
     engine->platform->ImGuiFrameEnd();
     engine->gpu->ImGuiFrameEnd();

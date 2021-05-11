@@ -8,6 +8,10 @@ static int GetTexelSize(const TextureData& textureData);
 
 DirectX11Texture2D::DirectX11Texture2D(ID3D11Device* device, const TextureData& textureData)
 {
+    channels = textureData.loaded_channels;
+    width = textureData.width;
+    height = textureData.height;
+
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = textureData.width;
     desc.Height = textureData.height;
@@ -24,34 +28,42 @@ DirectX11Texture2D::DirectX11Texture2D(ID3D11Device* device, const TextureData& 
     subresource.SysMemPitch = textureData.width * GetTexelSize(textureData) * textureData.loaded_channels;
     subresource.SysMemSlicePitch = 0;
 
-    channels = textureData.loaded_channels;
-    width = textureData.width;
-    height = textureData.height;
+    D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
+    SetupShaderView(&view_desc, desc.Format);
 
-    Initialize(device, desc, &subresource);
+    InitializeTexture(device, desc, &subresource);
+    InitializeShaderView(device, view_desc);
 }
 
-void DirectX11Texture2D::Initialize(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA *subresource)
+void DirectX11Texture2D::SetupShaderView(D3D11_SHADER_RESOURCE_VIEW_DESC* desc, DXGI_FORMAT format)
+{
+    desc->Format = format;
+    desc->ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    desc->Texture2D.MipLevels = 1;
+    desc->Texture2D.MostDetailedMip = 0;
+}
+
+void DirectX11Texture2D::InitializeTexture(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc, const D3D11_SUBRESOURCE_DATA *subresource)
 {
     HRESULT success = device->CreateTexture2D(&desc, subresource, ptr.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateTexture2D");
+}
 
-    D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
-    view_desc.Format = desc.Format;
-    view_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    view_desc.Texture2D.MipLevels = 1;
-    view_desc.Texture2D.MostDetailedMip = 0;
-
-    success = device->CreateShaderResourceView(ptr.Get(), &view_desc, view.GetAddressOf());
+void DirectX11Texture2D::InitializeShaderView(ID3D11Device* device, const D3D11_SHADER_RESOURCE_VIEW_DESC& desc)
+{
+    HRESULT success = device->CreateShaderResourceView(ptr.Get(), &desc, view.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateShaderResourceView");
 }
 
 DirectX11RenderTexture::DirectX11RenderTexture(ID3D11Device* device, int width, int height)
 {
     D3D11_TEXTURE2D_DESC desc = {};
-
     SetupRenderTexture(&desc, width, height);
-    Initialize(device, desc, nullptr);
+    InitializeTexture(device, desc, nullptr);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
+    SetupShaderView(&view_desc, desc.Format);
+    InitializeShaderView(device, view_desc);
 
     HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
@@ -82,10 +94,48 @@ void DirectX11RenderTexture::Resize(ID3D11Device* device, ID3D11DeviceContext* c
 
     D3D11_TEXTURE2D_DESC desc = {};
     SetupRenderTexture(&desc, width, height);
-    Initialize(device, desc, nullptr);
+    InitializeTexture(device, desc, nullptr);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
+    SetupShaderView(&view_desc, desc.Format);
+    InitializeShaderView(device, view_desc);
 
     HRESULT success = device->CreateRenderTargetView(ptr.Get(), nullptr, renderTarget.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(success), "CreateRenderTargetView");
+}
+
+DirectX11DepthStencilTexture::DirectX11DepthStencilTexture(ID3D11Device* device, int width, int height)
+{
+    channels = 1;
+    this->width = width;
+    this->height = height;
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = width;
+    desc.Height = height;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    //desc.Format = DXGI_FORMAT_R24G8_TYPELESS; //  DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL; // | D3D11_BIND_SHADER_RESOURCE;
+    desc.CPUAccessFlags = 0;
+
+    InitializeTexture(device, desc, nullptr);
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
+    SetupShaderView(&view_desc, /* DXGI_FORMAT_D24_UNORM_S8_UINT */ DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
+    //InitializeShaderView(device, view_desc);
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC dsv = {};
+    dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    //dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    dsv.Texture2D.MipSlice = 0;
+
+    HRESULT success = device->CreateDepthStencilView(ptr.Get(), &dsv, depthStencilView.GetAddressOf());
+    DXP_ASSERT(SUCCEEDED(success), "CreateDepthStencilView");
 }
 
 static int GetTexelSize(const TextureData& textureData)

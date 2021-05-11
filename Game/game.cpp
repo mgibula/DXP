@@ -105,7 +105,8 @@ static void PrepareCube(DXP::Mesh *mesh)
     mesh->SetChannel(DXP::VertexShaderInput::Position0, std::move(vertices));
     mesh->SetChannel(DXP::VertexShaderInput::Color0, std::move(colors));
     mesh->indices = std::move(triangles);
-    mesh->rasterizer = DXP::Rasterizer_Wireframe;
+    mesh->rasterizer = DXP::Rasterizer_Solid;
+    //mesh->rasterizer = DXP::Rasterizer_Wireframe;
 }
 
 void Game::PreRenderLoop(DXP::Engine* engine)

@@ -28,7 +28,9 @@ struct Renderer
     void Draw(Material* material, Mesh *mesh);
 
     void DrawScene(SceneRoot* root);
-    
+
+    void OnScreenResize(int width, int height);
+
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
 

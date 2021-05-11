@@ -160,7 +160,7 @@ void Engine::SubmitEvent(const Event& event)
         break;
     case Event::Type::ApplicationResized:
         SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());
-        gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), event.ApplicationSize().first, event.ApplicationSize().second);
+        renderer->OnScreenResize(event.ApplicationSize().first, event.ApplicationSize().second);
         break;
     default:
         SPDLOG_LOGGER_INFO(log, "Event: {}", event.DebugDescription());

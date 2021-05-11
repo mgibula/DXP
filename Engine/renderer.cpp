@@ -83,6 +83,14 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     }
 
     scene->renderTarget = gpu->GetScreenRenderTarget();
+    scene->depthStencilTest = gpu->CreateDepthStencilTest(true);
+    scene->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
+}
+
+void Renderer::OnScreenResize(int width, int height)
+{
+    gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), width, height);
+    scene->depthStencilTexture = gpu->CreateDepthStencilTexture(width, height);
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -117,8 +125,13 @@ void Renderer::DrawScene(SceneRoot* root)
 {
     using namespace DirectX;
     XMMATRIX parent = XMMatrixIdentity();//  root->GetWorldMatrix();
+    
+    gpu->BindDepthStencilTest(root->depthStencilTest.get());
+    gpu->BindRenderTarget(root->renderTarget.get(), root->depthStencilTexture.get());
+    gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);        
 
-    gpu->BindRenderTarget(root->renderTarget.get());
+    //gpu->BindRenderTarget(root->renderTarget.get(), nullptr);
+
     gpu->ClearRenderTarget(root->renderTarget.get());
 
     if (root->mainCamera) {

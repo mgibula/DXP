@@ -20,4 +20,8 @@ struct RenderTexture : public virtual Texture, public virtual RenderTarget
 {
 };
 
+struct DepthStencilTexture : public virtual Texture
+{
+};
+
 };

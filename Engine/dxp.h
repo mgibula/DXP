@@ -14,6 +14,7 @@
 #include "Engine/utils.h"
 #include "Engine/event.h"
 
+#include "Engine/depth-stencil.h"
 #include "Engine/render-target.h"
 #include "Engine/rasterizer.h"
 #include "Engine/texture.h"

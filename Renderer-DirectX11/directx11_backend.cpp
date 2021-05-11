@@ -319,12 +319,18 @@ std::shared_ptr<RenderTarget> DirectX11Backend::GetScreenRenderTarget()
     return backbufferRenderTarget;
 }
 
-void DirectX11Backend::BindRenderTarget(const RenderTarget* target)
+void DirectX11Backend::BindRenderTarget(const RenderTarget* target, DepthStencilTexture* depthBuffer)
 {
     const DirectX11RenderTarget* real_target = dynamic_cast<const DirectX11RenderTarget*>(target);
-
     ID3D11RenderTargetView* renderTargetView = real_target->GetRenderTarget();
-    context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+    ID3D11DepthStencilView* depthStencilView = nullptr;
+    if (depthBuffer) {
+        DirectX11DepthStencilTexture* real_depthBuffer = dynamic_cast<DirectX11DepthStencilTexture*>(depthBuffer);
+        depthStencilView = real_depthBuffer->depthStencilView.Get();
+    }
+
+    context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 }
 
 void DirectX11Backend::ClearRenderTarget(RenderTarget* target)
@@ -339,6 +345,36 @@ void DirectX11Backend::ResizeRenderTarget(RenderTarget* target, int width, int h
 {
     DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
     real_target->Resize(device.Get(), context.Get(), width, height);
+}
+
+std::shared_ptr<DepthStencilTexture> DirectX11Backend::CreateDepthStencilTexture(int width, int height)
+{
+    return std::make_shared<DirectX11DepthStencilTexture>(device.Get(), width, height);
+}
+
+void DirectX11Backend::ClearDepthStencilTexture(DepthStencilTexture* texture, bool clearDepth, bool clearStencil)
+{
+    DirectX11DepthStencilTexture* real_texture = dynamic_cast<DirectX11DepthStencilTexture*>(texture);
+
+    int flags = 0;
+    if (clearDepth)
+        flags |= D3D11_CLEAR_DEPTH;
+
+    if (clearStencil)
+        flags |= D3D11_CLEAR_STENCIL;
+
+    context->ClearDepthStencilView(real_texture->depthStencilView.Get(), flags, 1.f, 0);
+}
+
+std::shared_ptr<DepthStencilTest> DirectX11Backend::CreateDepthStencilTest(bool depthEnabled)
+{
+    return std::make_shared<DirectX11DepthStencilTest>(device.Get(), depthEnabled);
+}
+
+void DirectX11Backend::BindDepthStencilTest(DepthStencilTest* test)
+{
+    DirectX11DepthStencilTest* real_test = dynamic_cast<DirectX11DepthStencilTest*>(test);
+    context->OMSetDepthStencilState(real_test->state.Get(), 1);
 }
 
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)
