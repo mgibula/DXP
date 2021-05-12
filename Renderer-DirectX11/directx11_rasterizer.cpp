@@ -6,6 +6,8 @@ namespace DXP
 DirectX11Rasterizer::DirectX11Rasterizer(ID3D11Device* device, const RasterizerSettings& settings)
 {
     D3D11_RASTERIZER_DESC desc = {};
+    desc.DepthClipEnable = true;
+
     if (settings.wireframe) {
         desc.FillMode = D3D11_FILL_WIREFRAME;
     } else {
