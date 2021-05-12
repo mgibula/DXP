@@ -7,7 +7,7 @@ DirectX11DepthStencilTest::DirectX11DepthStencilTest(ID3D11Device* device, bool 
 {
     D3D11_DEPTH_STENCIL_DESC desc = {};
 
-    desc.DepthEnable = true;
+    desc.DepthEnable = depthEnabled;
     desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     desc.DepthFunc = D3D11_COMPARISON_LESS;
 
