@@ -23,6 +23,8 @@ void DirectX11BackbufferRenderTarget::Resize(ID3D11Device* device, ID3D11DeviceC
     viewport.TopLeftY = 0;
     viewport.Width = (float)width;
     viewport.Height = (float)height;
+    viewport.MinDepth = 0.f;
+    viewport.MaxDepth = 1.f;
 
     context->RSSetViewports(1, &viewport);
 }
