@@ -58,6 +58,10 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
     ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(engine->platform->ScreenWidth(), engine->platform->ScreenHeight()));
     ImGui::End();
 
+    ImGui::Begin("Depth buffer");
+    ImGui::Image(engine->renderer->GetScene()->depthStencilTexture->GetImGuiImage(), ImVec2(800, 600));
+    ImGui::End();
+
     engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get(), nullptr);
 
     engine->platform->ImGuiFrameEnd();
