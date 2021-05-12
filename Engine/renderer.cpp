@@ -89,8 +89,8 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 
 void Renderer::OnScreenResize(int width, int height)
 {
-    //gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), width, height);
-    //scene->depthStencilTexture = gpu->CreateDepthStencilTexture(width, height);
+    gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), width, height);
+    scene->depthStencilTexture = gpu->CreateDepthStencilTexture(width, height);
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -129,6 +129,9 @@ void Renderer::DrawScene(SceneRoot* root)
     gpu->BindDepthStencilTest(root->depthStencilTest.get());
     gpu->BindRenderTarget(root->renderTarget.get(), root->depthStencilTexture.get());
     gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);        
+
+    //gpu->BindRenderTarget(root->renderTarget.get(), nullptr);
+
     gpu->ClearRenderTarget(root->renderTarget.get());
 
     if (root->mainCamera) {
@@ -136,7 +139,7 @@ void Renderer::DrawScene(SceneRoot* root)
         XMFLOAT4X4 matrix[2];
 
         XMStoreFloat4x4(&matrix[0], XMMatrixTranspose(root->mainCamera->GetViewMatrix()));
-        XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(platform->ScreenWidth(), platform->ScreenHeight())));
+        XMStoreFloat4x4(&matrix[1], XMMatrixTranspose(root->mainCamera->GetProjectionMatrix(platform->ScreenWidth(), platform->ScreenHeight()))) ;
         gpu->UpdateConstantBuffer(cb, &matrix[0], sizeof(matrix[0]) * 2);
     }
 

@@ -9,5 +9,4 @@ struct PS_in
 {
     float4 position : SV_POSITION;
     float3 color: COLOR;
-    float4 origPosition : POSITION;
 };

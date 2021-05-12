@@ -115,23 +115,22 @@ DirectX11DepthStencilTexture::DirectX11DepthStencilTexture(ID3D11Device* device,
     desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R24G8_TYPELESS; //  DXGI_FORMAT_D24_UNORM_S8_UINT;
-    //desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    //desc.Format = DXGI_FORMAT_R24G8_TYPELESS; //  DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     desc.SampleDesc.Count = 1;
     desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // | D3D11_BIND_SHADER_RESOURCE;
+    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL; // | D3D11_BIND_SHADER_RESOURCE;
     desc.CPUAccessFlags = 0;
 
     InitializeTexture(device, desc, nullptr);
 
     D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
-    //SetupShaderView(&view_desc, /* DXGI_FORMAT_D24_UNORM_S8_UINT */ DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
-    SetupShaderView(&view_desc, DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
-    InitializeShaderView(device, view_desc);
+    SetupShaderView(&view_desc, /* DXGI_FORMAT_D24_UNORM_S8_UINT */ DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
+    //InitializeShaderView(device, view_desc);
 
     D3D11_DEPTH_STENCIL_VIEW_DESC dsv = {};
-    //dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    //dsv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     dsv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsv.Texture2D.MipSlice = 0;
 

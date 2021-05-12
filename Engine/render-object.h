@@ -65,8 +65,7 @@ struct SceneNode
     DirectX::XMMATRIX GetWorldMatrix() const {
         using namespace DirectX;
 
-        XMMATRIX result = XMMatrixIdentity();
-        result *= XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+        XMMATRIX result = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
         result *= XMMatrixRotationQuaternion(XMLoadFloat4(&rotation));
         result *= XMMatrixTranslationFromVector(XMLoadFloat3(&position));
 

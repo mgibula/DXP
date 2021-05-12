@@ -7,7 +7,7 @@ std::shared_ptr<DXP::Mesh> mesh;
 std::shared_ptr<DXP::Material> material;
 std::shared_ptr<DXP::Texture> texture;
 DXP::SceneRoot* root;
-DXP::RenderObject* r1, *r2;
+DXP::RenderObject* r1;
 DXP::Camera* c1, *c2;
 DXP::SceneNode* n1;
 //uv - mapper
@@ -177,34 +177,31 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     root = engine->renderer->GetScene();
     r1 = root->AddChild<DXP::RenderObject>(mesh, material);
-    r1->SetName("square 1");
-    r1->MoveTo(0.f, 0.f, 10.f);
-    r1->RotateTo(0.f, 75.f, 0.f);
-
-    r2 = root->AddChild<DXP::RenderObject>(mesh, material);
-    r2->SetName("square 2");
-    r2->MoveTo(0.f, 0.f, 5.5f);
-    r2->RotateTo(0.f, 25.f, 0.f);
 
     c2 = root->AddChild<DXP::Camera>();
     c2->SetName("Camera 2");
-    c2->SetPerspective(1.f, 1.f, 5.f);
+    c2->SetPerspective(1.f);
     c2->MoveTo(0.5f, 0.5f, 5.f);
     //c2->drawDebug = true;
+
+    r1->SetName("square 1");
+    r1->MoveTo(0.f, 0.f, 10.f);
+    r1->RotateTo(0.f, 0.f, 0.f);
 
     n1 = root->AddChild<DXP::SceneNode>();
     n1->SetName("Node 1");
 
     c1 = n1->AddChild<DXP::Camera>();
     c1->SetName("Camera 1");
-    c1->MoveTo(0.f, 0.f, 0.f);
-    c1->SetPerspective(1.f, 1.f, 10.f);
+    //c1->MoveTo(0.f, 0.f, -1.5f);
 
+    c1->SetPerspective(1.f);
     //c1->SetOrthographic(2.f);
     //c1->LookAt(0.f, 0.5f, 1.f);
 
     root->SetMainCamera(c1);
 
+    c1->MoveTo(0.f, 0.f, 0.f);
 
     //n1->MoveTo(0.f, 0.f, -1.5f);
 
