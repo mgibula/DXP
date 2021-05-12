@@ -147,6 +147,8 @@ bool DirectX11Backend::Initialize()
     viewport.TopLeftY = 0;
     viewport.Width = (float)width;
     viewport.Height = (float)height;
+    viewport.MinDepth = 0.f;
+    viewport.MaxDepth = 1.f;
 
     context->RSSetViewports(1, &viewport);
 
@@ -335,7 +337,7 @@ void DirectX11Backend::BindRenderTarget(const RenderTarget* target, DepthStencil
 
 void DirectX11Backend::ClearRenderTarget(RenderTarget* target)
 {
-    float black[4] = {};
+    float black[4] = { 0.f, 0.f, 0.15f, 1.f };
     DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
 
     context->ClearRenderTargetView(real_target->GetRenderTarget(), black);
