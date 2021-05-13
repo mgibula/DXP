@@ -55,6 +55,9 @@ private:
     // Predefined rasterizers
     std::vector<std::shared_ptr<Rasterizer>> rasterizers;
 
+    // Predefined depth-stencil settings
+    std::vector<std::shared_ptr<DepthStencilTest>> depthStencil;
+
     RenderBackend* gpu = nullptr;
     Platform* platform = nullptr;
     std::shared_ptr<spdlog::logger> log;

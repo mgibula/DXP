@@ -82,8 +82,12 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         rasterizers[Rasterizer_Wireframe] = gpu->CreateRasterizer(settings);
     }
 
+    depthStencil.resize(2);
+    depthStencil[(int)DepthStencil::Disabled] = gpu->CreateDepthStencilTest(false);
+    depthStencil[(int)DepthStencil::Enabled] = gpu->CreateDepthStencilTest(true);
+
     scene->renderTarget = gpu->GetScreenRenderTarget();
-    scene->depthStencilTest = gpu->CreateDepthStencilTest(true);
+    scene->depthStencilTest = DepthStencil::Disabled;
     scene->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
 }
 
@@ -126,7 +130,7 @@ void Renderer::DrawScene(SceneRoot* root)
     using namespace DirectX;
     XMMATRIX parent = XMMatrixIdentity();//  root->GetWorldMatrix();
     
-    gpu->BindDepthStencilTest(root->depthStencilTest.get());
+    gpu->BindDepthStencilTest(depthStencil[int(root->depthStencilTest)].get());
     gpu->BindRenderTarget(root->renderTarget.get(), root->depthStencilTexture.get());
     gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);        
 

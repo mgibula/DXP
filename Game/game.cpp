@@ -172,7 +172,7 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     material = engine->renderer->CreateMaterial("shaders/solid.vs", "shaders/solid.ps", { texture });
 #endif
-
+    
     PrepareCube(mesh.get());
 
     root = engine->renderer->GetScene();
