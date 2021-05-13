@@ -212,6 +212,8 @@ void Game::PreRenderLoop(DXP::Engine* engine)
 
     //r1->ShaderVariables()->Write("offsetX", .5f);
     //r1->ShaderVariables()->Write("offsetY", -.5f);
+
+    engine->renderer->GetScene()->depthStencilTest = DXP::DepthStencil::Enabled;
 }
 
 void Game::PostRenderLoop(DXP::Engine* engine)

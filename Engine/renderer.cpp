@@ -132,10 +132,8 @@ void Renderer::DrawScene(SceneRoot* root)
     
     gpu->BindDepthStencilTest(depthStencil[int(root->depthStencilTest)].get());
     gpu->BindRenderTarget(root->renderTarget.get(), root->depthStencilTexture.get());
-    gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);        
 
-    //gpu->BindRenderTarget(root->renderTarget.get(), nullptr);
-
+    gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);
     gpu->ClearRenderTarget(root->renderTarget.get());
 
     if (root->mainCamera) {
