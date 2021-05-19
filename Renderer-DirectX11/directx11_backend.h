@@ -60,6 +60,9 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) override;
     virtual void BindDepthStencilTest(DepthStencilTest* test) override;
 
+    virtual std::shared_ptr<Viewport> CreateViewport(int x, int y, int width, int height) override;
+    virtual void BindViewport(const Viewport* viewport) override;
+
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) override;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) override;
 

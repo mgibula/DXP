@@ -379,6 +379,17 @@ void DirectX11Backend::BindDepthStencilTest(DepthStencilTest* test)
     context->OMSetDepthStencilState(real_test->state.Get(), 1);
 }
 
+std::shared_ptr<Viewport> DirectX11Backend::CreateViewport(int x, int y, int width, int height)
+{
+    return std::make_shared<DirectX11Viewport>(x, y, width, height);
+}
+
+void DirectX11Backend::BindViewport(const Viewport* viewport)
+{
+    const DirectX11Viewport* real_viewport = dynamic_cast<const DirectX11Viewport*>(viewport);
+    context->RSSetViewports(1, &real_viewport->viewport);
+}
+
 std::shared_ptr<Texture> DirectX11Backend::CreateTexture2D(const TextureData& textureData)
 {
     return std::make_shared<DirectX11Texture2D>(device.Get(), textureData);

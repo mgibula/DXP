@@ -101,6 +101,9 @@ struct RenderBackend
     virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) = 0;
     virtual void BindDepthStencilTest(DepthStencilTest* test) = 0;
 
+    virtual std::shared_ptr<Viewport> CreateViewport(int x, int y, int width, int height) = 0;
+    virtual void BindViewport(const Viewport *viewport) = 0;
+
     virtual std::shared_ptr<Texture> CreateTexture2D(const TextureData& textureData) = 0;
     virtual void BindTextures(const Texture** textures, int count, int startingSlot) = 0;
 

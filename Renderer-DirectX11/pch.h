@@ -10,6 +10,7 @@
 #include <map>
 
 #include "Engine/dxp.h"
+#include "directx11_viewport.h"
 #include "directx11_depth_stencil.h"
 #include "directx11_render_target.h"
 #include "directx11_rasterizer.h"

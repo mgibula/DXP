@@ -45,6 +45,9 @@
     <ClInclude Include="directx11_depth_stencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="directx11_viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="directx11_backend.cpp">

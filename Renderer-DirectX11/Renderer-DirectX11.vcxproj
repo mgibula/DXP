@@ -164,6 +164,7 @@
     <ClInclude Include="directx11_sampler.h" />
     <ClInclude Include="directx11_shader.h" />
     <ClInclude Include="directx11_texture.h" />
+    <ClInclude Include="directx11_viewport.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
