@@ -22,7 +22,9 @@ void ImGuiLayer::OnAttach(Engine* engine)
     engine->gpu->ImGuiInit();
 
     renderTargetOverride = engine->gpu->CreateRenderTexture(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
-    engine->renderer->GetScene()->renderTarget = renderTargetOverride;
+
+    originalRenderTarget = engine->renderer->GetScene()->output->renderTarget;
+    engine->renderer->GetScene()->output->renderTarget = renderTargetOverride;
 
     debug_material = engine->renderer->CreateMaterial("shaders/color.vs", "shaders/color.ps", {});
 }
@@ -55,7 +57,7 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
 
     static bool show_app = true;
     ImGui::Begin("Application", &show_app);
-    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2(engine->platform->ScreenWidth(), engine->platform->ScreenHeight()));
+    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2((float)engine->platform->ScreenWidth(), (float)engine->platform->ScreenHeight()));
     ImGui::End();
 
     engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get(), nullptr);
@@ -120,7 +122,7 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
 bool ImGuiLayer::OnEvent(Engine* engine, const Event* event)
 {
     if (event->type == Event::Type::ApplicationResized)
-        engine->gpu->ResizeRenderTarget(renderTargetOverride.get(), event->ApplicationSize().first, event->ApplicationSize().second);    
+        engine->gpu->ResizeRenderTarget(originalRenderTarget.get(), event->ApplicationSize().first, event->ApplicationSize().second);
 
     return true;
 }

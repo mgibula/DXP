@@ -10,6 +10,19 @@ struct SceneRoot;
 struct SceneNode;
 struct RenderObject;
 struct Platform;
+struct DepthStencilTest;
+struct DepthStencilTexture;
+struct Viewport;
+
+struct RendererOutput
+{
+    void Resize(RenderBackend* gpu, int width, int height);
+
+    std::shared_ptr<RenderTarget> renderTarget;
+    std::shared_ptr<DepthStencilTest> depthStencilTest;
+    std::shared_ptr<DepthStencilTexture> depthStencilTexture;
+    std::shared_ptr<Viewport> viewport;
+};
 
 struct Renderer
 {
@@ -41,6 +54,7 @@ private:
     } cache;
 
     std::unique_ptr<SceneRoot> scene;
+    std::shared_ptr<RendererOutput> screenOutput;
 
     // Runtime resources - constant buffers
     std::shared_ptr<ConstantBuffer> transformConstantBuffer;
@@ -57,6 +71,9 @@ private:
 
     // Predefined depth-stencil settings
     std::vector<std::shared_ptr<DepthStencilTest>> depthStencil;
+
+    // Predefined viewports
+    std::shared_ptr<Viewport> fullViewport;
 
     RenderBackend* gpu = nullptr;
     Platform* platform = nullptr;

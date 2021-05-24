@@ -6,8 +6,8 @@ namespace DXP
 struct DirectX11Viewport : public Viewport
 {
     DirectX11Viewport(int x, int y, int width, int height) {
-        viewport.TopLeftX = x;
-        viewport.TopLeftY = y;
+        viewport.TopLeftX = static_cast<float>(x);
+        viewport.TopLeftY = static_cast<float>(y);
         viewport.Width = static_cast<float>(width);
         viewport.Height = static_cast<float>(height);
         viewport.MinDepth = 0.f;
@@ -15,11 +15,11 @@ struct DirectX11Viewport : public Viewport
     };
 
     virtual int GetX() const {
-        return viewport.TopLeftX;
+        return static_cast<int>(viewport.TopLeftX);
     };
 
     virtual int GetY() const {
-        return viewport.TopLeftY;
+        return static_cast<int>(viewport.TopLeftY);
     };
 
     virtual int GetWidth() const {

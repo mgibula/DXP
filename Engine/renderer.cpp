@@ -86,15 +86,20 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     depthStencil[(int)DepthStencil::Disabled] = gpu->CreateDepthStencilTest(false);
     depthStencil[(int)DepthStencil::Enabled] = gpu->CreateDepthStencilTest(true);
 
-    scene->renderTarget = gpu->GetScreenRenderTarget();
-    scene->depthStencilTest = DepthStencil::Disabled;
-    scene->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
+    fullViewport = gpu->CreateViewport(0, 0, platform->ScreenWidth(), platform->ScreenHeight());
+
+    screenOutput = std::make_shared<RendererOutput>();
+    screenOutput->renderTarget = gpu->GetScreenRenderTarget();
+    screenOutput->depthStencilTest = depthStencil[(int)DepthStencil::Enabled];
+    screenOutput->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
+    screenOutput->viewport = fullViewport;
+
+    scene->output = screenOutput;
 }
 
 void Renderer::OnScreenResize(int width, int height)
 {
-    gpu->ResizeRenderTarget(gpu->GetScreenRenderTarget().get(), width, height);
-    scene->depthStencilTexture = gpu->CreateDepthStencilTexture(width, height);
+    scene->output->Resize(gpu, width, height);
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)
@@ -128,13 +133,14 @@ std::shared_ptr<Texture> Renderer::LoadTexture(const TextureData& textureData)
 void Renderer::DrawScene(SceneRoot* root)
 {
     using namespace DirectX;
-    XMMATRIX parent = XMMatrixIdentity();//  root->GetWorldMatrix();
+    XMMATRIX parent = XMMatrixIdentity();
     
-    gpu->BindDepthStencilTest(depthStencil[int(root->depthStencilTest)].get());
-    gpu->BindRenderTarget(root->renderTarget.get(), root->depthStencilTexture.get());
+    gpu->BindDepthStencilTest(root->output->depthStencilTest.get());
+    gpu->BindRenderTarget(root->output->renderTarget.get(), root->output->depthStencilTexture.get());
+    gpu->BindViewport(root->output->viewport.get());
 
-    gpu->ClearDepthStencilTexture(root->depthStencilTexture.get(), true, true);
-    gpu->ClearRenderTarget(root->renderTarget.get());
+    gpu->ClearDepthStencilTexture(root->output->depthStencilTexture.get(), true, true);
+    gpu->ClearRenderTarget(root->output->renderTarget.get());
 
     if (root->mainCamera) {
         ConstantBuffer* cb = cameraConstantBuffer.get();

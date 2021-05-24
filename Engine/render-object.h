@@ -111,9 +111,7 @@ struct SceneRoot : public SceneNode
 
     Camera* mainCamera = nullptr;
 
-    std::shared_ptr<RenderTarget> renderTarget;
-    DepthStencil depthStencilTest = DepthStencil::Disabled;
-    std::shared_ptr<DepthStencilTexture> depthStencilTexture;
+    std::shared_ptr<RendererOutput> output;
 };
 
 struct RenderObject : public SceneNode

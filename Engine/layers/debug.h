@@ -22,6 +22,7 @@ private:
     std::chrono::high_resolution_clock::time_point started;
 
     std::shared_ptr<RenderTexture> renderTargetOverride;
+    std::shared_ptr<RenderTarget> originalRenderTarget;
     std::shared_ptr<Material> debug_material;
     std::shared_ptr<Mesh> debug_mesh;
     RenderObject* debug_object = nullptr;

@@ -346,7 +346,7 @@ void DirectX11Backend::ClearRenderTarget(RenderTarget* target)
 void DirectX11Backend::ResizeRenderTarget(RenderTarget* target, int width, int height)
 {
     DirectX11RenderTarget* real_target = dynamic_cast<DirectX11RenderTarget*>(target);
-    real_target->Resize(device.Get(), context.Get(), width, height);
+    real_target->Resize(device.Get(), width, height);
 }
 
 std::shared_ptr<DepthStencilTexture> DirectX11Backend::CreateDepthStencilTexture(int width, int height)
