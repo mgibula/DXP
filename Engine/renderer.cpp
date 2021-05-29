@@ -99,7 +99,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 
 void Renderer::OnScreenResize(int width, int height)
 {
-    scene->output->Resize(gpu, width, height);
+    screenOutput->Resize(gpu, width, height);
 }
 
 std::shared_ptr<VertexShader> Renderer::LoadVertexShader(std::string_view path)

@@ -21,10 +21,14 @@ void ImGuiLayer::OnAttach(Engine* engine)
     engine->platform->ImGuiInit();
     engine->gpu->ImGuiInit();
 
-    renderTargetOverride = engine->gpu->CreateRenderTexture(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
+    std::shared_ptr<RendererOutput> oldOutput = engine->renderer->GetScene()->output;
+    outputOverride = std::make_shared<RendererOutput>();
+    outputOverride->renderTarget = engine->gpu->CreateRenderTexture(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
+    outputOverride->depthStencilTest = engine->gpu->CreateDepthStencilTest(oldOutput->depthStencilTest->DepthTestEnabled());
+    outputOverride->depthStencilTexture = engine->gpu->CreateDepthStencilTexture(oldOutput->depthStencilTexture->Width(), oldOutput->depthStencilTexture->Height());
+    outputOverride->viewport = engine->gpu->CreateViewport(oldOutput->viewport->GetX(), oldOutput->viewport->GetY(), oldOutput->viewport->GetWidth(), oldOutput->viewport->GetHeight());
 
-    originalRenderTarget = engine->renderer->GetScene()->output->renderTarget;
-    engine->renderer->GetScene()->output->renderTarget = renderTargetOverride;
+    engine->renderer->GetScene()->output = outputOverride;
 
     debug_material = engine->renderer->CreateMaterial("shaders/color.vs", "shaders/color.ps", {});
 }
@@ -55,12 +59,12 @@ void ImGuiLayer::OnFrameEnd(Engine* engine)
     for (auto i = engine->layers.begin(); i != engine->layers.end(); i++)
         i->get()->OnImguiFrame(engine);
 
+    engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get(), nullptr);
+
     static bool show_app = true;
     ImGui::Begin("Application", &show_app);
-    ImGui::Image(renderTargetOverride->GetImGuiImage(), ImVec2((float)engine->platform->ScreenWidth(), (float)engine->platform->ScreenHeight()));
+    ImGui::Image(std::dynamic_pointer_cast<DXP::RenderTexture>(outputOverride->renderTarget)->GetImGuiImage(), ImVec2((float)engine->platform->ScreenWidth(), (float)engine->platform->ScreenHeight()));
     ImGui::End();
-
-    engine->gpu->BindRenderTarget(engine->gpu->GetScreenRenderTarget().get(), nullptr);
 
     engine->platform->ImGuiFrameEnd();
     engine->gpu->ImGuiFrameEnd();
@@ -121,9 +125,6 @@ void ImGuiLayer::OnImguiFrame(Engine* engine)
 
 bool ImGuiLayer::OnEvent(Engine* engine, const Event* event)
 {
-    if (event->type == Event::Type::ApplicationResized)
-        engine->gpu->ResizeRenderTarget(originalRenderTarget.get(), event->ApplicationSize().first, event->ApplicationSize().second);
-
     return true;
 }
 

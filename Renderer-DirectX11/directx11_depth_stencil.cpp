@@ -14,4 +14,12 @@ DirectX11DepthStencilTest::DirectX11DepthStencilTest(ID3D11Device* device, bool 
     device->CreateDepthStencilState(&desc, state.GetAddressOf());
 }
 
+bool DirectX11DepthStencilTest::DepthTestEnabled() const
+{
+    D3D11_DEPTH_STENCIL_DESC desc = {};
+    state->GetDesc(&desc);
+
+    return desc.DepthEnable;
+}
+
 };
