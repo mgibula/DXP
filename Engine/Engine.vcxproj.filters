@@ -167,5 +167,8 @@
     <ClInclude Include="depth-stencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="codex.h">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

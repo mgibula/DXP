@@ -24,6 +24,26 @@ struct RendererOutput
     std::shared_ptr<Viewport> viewport;
 };
 
+struct Resources
+{
+    // These are used as register numbers in shader as well
+    enum {
+        Sampler_Point = 0,
+        Sampler_Bilinear = 1,
+        Sampler_Trilinear = 2,
+        Sampler_Anisotropic = 3,
+    };
+
+    enum {
+        Rasterizer_Solid,
+        Rasterizer_Wireframe,
+    };
+
+    Codex<Sampler> sampler;
+    Codex<Rasterizer> rasterizer;
+    Codex<DepthStencilTest> depthStencilTest;
+};
+
 struct Renderer
 {
     friend struct RendererState;
@@ -60,17 +80,7 @@ private:
     std::shared_ptr<ConstantBuffer> transformConstantBuffer;
     std::shared_ptr<ConstantBuffer> cameraConstantBuffer;
 
-    // Predefined samplers
-    std::shared_ptr<Sampler> pointSampler;
-    std::shared_ptr<Sampler> bilinearSampler;
-    std::shared_ptr<Sampler> trilinearSampler;
-    std::shared_ptr<Sampler> anisotropicSampler;
-
-    // Predefined rasterizers
-    std::vector<std::shared_ptr<Rasterizer>> rasterizers;
-
-    // Predefined depth-stencil settings
-    std::vector<std::shared_ptr<DepthStencilTest>> depthStencil;
+    Resources resources;
 
     // Predefined viewports
     std::shared_ptr<Viewport> fullViewport;
@@ -84,6 +94,7 @@ private:
     void DrawScene(SceneNode* root, DirectX::FXMMATRIX parent);
 
     void SetRenderBackend(RenderBackend* backend);
+    void InitCodex();
 };
 
 };

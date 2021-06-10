@@ -3,7 +3,7 @@
 namespace DXP
 {
 
-enum class DepthStencil
+enum DepthStencil
 {
     Enabled,
     Disabled,

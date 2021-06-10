@@ -3,14 +3,6 @@
 namespace DXP
 {
 
-enum SamplerSlot
-{
-    Sampler_Point = 0,
-    Sampler_Bilinear = 1,
-    Sampler_Trilinear = 2,
-    Sampler_Anisotropic = 3,
-};
-
 enum class SamplerType {
     Point,
     Anisotropic,

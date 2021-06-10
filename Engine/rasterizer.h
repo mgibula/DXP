@@ -3,11 +3,6 @@
 namespace DXP
 {
 
-enum RasterizerSlot {
-    Rasterizer_Solid,
-    Rasterizer_Wireframe,
-};
-
 struct RasterizerSettings
 {
     bool wireframe = false;

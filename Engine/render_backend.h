@@ -83,7 +83,7 @@ struct RenderBackend
     virtual void BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) = 0;
 
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) = 0;
-    virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) = 0;
+    virtual void BindSamplers(Sampler** samplers, int count, int startingSlot) = 0;
 
     virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) = 0;
     virtual void BindRasterizer(const Rasterizer* rasterizer) = 0;

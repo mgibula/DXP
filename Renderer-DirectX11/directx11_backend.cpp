@@ -284,12 +284,12 @@ std::shared_ptr<Sampler> DirectX11Backend::CreateSampler(const SamplerSettings& 
     return std::make_shared<DirectX11Sampler>(device.Get(), settings);
 }
 
-void DirectX11Backend::BindSamplers(const Sampler** samplers, int count, int startingSlot)
+void DirectX11Backend::BindSamplers(Sampler** samplers, int count, int startingSlot)
 {
     ID3D11SamplerState** ptrs = reinterpret_cast<ID3D11SamplerState**>(_alloca(count * sizeof(void *)));
 
     for (int i = 0; i < count; i++) {
-        const DirectX11Sampler* real_sampler = dynamic_cast<const DirectX11Sampler*>(samplers[i]);
+        DirectX11Sampler* real_sampler = dynamic_cast<DirectX11Sampler*>(samplers[i]);
         if (real_sampler) {
             ptrs[i] = real_sampler->ptr.Get();
         } else {

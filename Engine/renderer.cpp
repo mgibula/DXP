@@ -11,6 +11,9 @@ Renderer::Renderer(Platform* platform, RenderBackend* gpu, std::shared_ptr<spdlo
 {
     SPDLOG_LOGGER_INFO(log, "Initializing");
     SPDLOG_LOGGER_INFO(log, "Using renderer backend: {}", gpu->InfoString());
+
+    InitCodex();
+
     SetRenderBackend(gpu);
 }
 
@@ -21,12 +24,25 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     transformConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4));
     cameraConstantBuffer = gpu->CreateConstantBuffer(sizeof(XMFLOAT4X4) * 2);
 
-    // Create general samplers and bind them
+    fullViewport = gpu->CreateViewport(0, 0, platform->ScreenWidth(), platform->ScreenHeight());
+    
+    screenOutput = std::make_shared<RendererOutput>();
+    screenOutput->renderTarget = gpu->GetScreenRenderTarget();
+    screenOutput->depthStencilTest = resources.depthStencilTest.GetSharedPtr(DepthStencil::Enabled);
+    screenOutput->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
+    screenOutput->viewport = fullViewport;
+
+    scene->output = screenOutput;
+}
+
+void Renderer::InitCodex()
+{
+    // Create samplers and bind them
     {
         SamplerSettings settings;
         settings.type = SamplerType::Point;
 
-        pointSampler = gpu->CreateSampler(settings);
+        resources.sampler.Set(Resources::Sampler_Point, gpu->CreateSampler(settings));
     }
 
     {
@@ -35,7 +51,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         settings.point.minification_linear = true;
         settings.point.magnification_linear = true;
 
-        bilinearSampler = gpu->CreateSampler(settings);
+        resources.sampler.Set(Resources::Sampler_Bilinear, gpu->CreateSampler(settings));
     }
 
     {
@@ -45,7 +61,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         settings.point.magnification_linear = true;
         settings.point.mip_linear = true;
 
-        trilinearSampler = gpu->CreateSampler(settings);
+        resources.sampler.Set(Resources::Sampler_Trilinear, gpu->CreateSampler(settings));
     }
 
     {
@@ -53,24 +69,19 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         settings.type = SamplerType::Anisotropic;
         settings.anisotropic.level = 16;
 
-        anisotropicSampler = gpu->CreateSampler(settings);
+        resources.sampler.Set(Resources::Sampler_Anisotropic, gpu->CreateSampler(settings));
     }
 
-    std::array<const Sampler*, 4> ptrs;
-    ptrs[SamplerSlot::Sampler_Point] = pointSampler.get();
-    ptrs[SamplerSlot::Sampler_Bilinear] = bilinearSampler.get();
-    ptrs[SamplerSlot::Sampler_Trilinear] = trilinearSampler.get();
-    ptrs[SamplerSlot::Sampler_Anisotropic] = anisotropicSampler.get();
+    std::vector<Sampler *> ptrs = resources.sampler.GetRawPtrs();
+    gpu->BindSamplers(ptrs.data(), ptrs.size(), 0);
 
-    gpu->BindSamplers(ptrs.data(), 4, 0);
-
-    rasterizers.resize(2);
+    // Create rasterizers
     {
         RasterizerSettings settings;
         settings.wireframe = false;
         settings.drawFront = true;
 
-        rasterizers[Rasterizer_Solid] = gpu->CreateRasterizer(settings);
+        resources.rasterizer.Set(Resources::Rasterizer_Solid, gpu->CreateRasterizer(settings));
     }
 
     {
@@ -79,22 +90,12 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
         settings.drawFront = true;
         settings.drawBack = true;
 
-        rasterizers[Rasterizer_Wireframe] = gpu->CreateRasterizer(settings);
+        resources.rasterizer.Set(Resources::Rasterizer_Wireframe, gpu->CreateRasterizer(settings));
     }
 
-    depthStencil.resize(2);
-    depthStencil[(int)DepthStencil::Disabled] = gpu->CreateDepthStencilTest(false);
-    depthStencil[(int)DepthStencil::Enabled] = gpu->CreateDepthStencilTest(true);
-
-    fullViewport = gpu->CreateViewport(0, 0, platform->ScreenWidth(), platform->ScreenHeight());
-
-    screenOutput = std::make_shared<RendererOutput>();
-    screenOutput->renderTarget = gpu->GetScreenRenderTarget();
-    screenOutput->depthStencilTest = depthStencil[(int)DepthStencil::Enabled];
-    screenOutput->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
-    screenOutput->viewport = fullViewport;
-
-    scene->output = screenOutput;
+    // Depth stencil
+    resources.depthStencilTest.Set(DepthStencil::Disabled, gpu->CreateDepthStencilTest(false));
+    resources.depthStencilTest.Set(DepthStencil::Enabled, gpu->CreateDepthStencilTest(true));
 }
 
 void Renderer::OnScreenResize(int width, int height)
@@ -266,7 +267,7 @@ void Renderer::Draw(Material *material, Mesh* mesh)
 
     gpu->BindVertexShaderInputLayout(material->vertexShader.program.get(), inputLayout);
     gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
-    gpu->BindRasterizer(rasterizers[mesh->rasterizer].get());
+    gpu->BindRasterizer(resources.rasterizer.Get(mesh->rasterizer));
 
     if (mesh->indexBuffer) {
         gpu->BindIndexBuffer(mesh->indexBuffer.get()); 

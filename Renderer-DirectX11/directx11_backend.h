@@ -42,7 +42,7 @@ struct DirectX11Backend final : public RenderBackend
     virtual void BindPixelConstantBuffers(ConstantBuffer** buffers, int count, int startingSlot) override;
 
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) override;
-    virtual void BindSamplers(const Sampler** samplers, int count, int startingSlot) override;
+    virtual void BindSamplers(Sampler** samplers, int count, int startingSlot) override;
 
     virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) override;
     virtual void BindRasterizer(const Rasterizer* rasterizer) override;

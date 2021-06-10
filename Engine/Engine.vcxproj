@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="buffer.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="codex.h" />
     <ClInclude Include="constant-buffer.h" />
     <ClInclude Include="cyclic_buffer.h" />
     <ClInclude Include="cyclic_log.h" />
