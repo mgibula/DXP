@@ -18,7 +18,7 @@ struct Mesh
     std::shared_ptr<IndexBuffer> indexBuffer;
 
     Topology topology = Topology::Triangles;
-    int rasterizer; // = Resources::Rasterizer_Solid;
+    RasterizerDescription rasterizer{ Rasterizer::DrawFront::Enabled , Rasterizer::DrawBack::Enabled, Rasterizer::Wireframe::Disabled};
 };
 
 };

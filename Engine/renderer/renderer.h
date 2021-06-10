@@ -33,15 +33,6 @@ struct Resources
         Sampler_Trilinear = 2,
         Sampler_Anisotropic = 3,
     };
-
-    enum {
-        Rasterizer_Solid,
-        Rasterizer_Wireframe,
-    };
-
-    Codex<Sampler> sampler;
-    Codex<Rasterizer> rasterizer;
-    Codex<DepthStencilTest> depthStencilTest;
 };
 
 struct Renderer
@@ -67,6 +58,7 @@ struct Renderer
     std::shared_ptr<VertexShader> LoadVertexShader(std::string_view path);
     std::shared_ptr<PixelShader> LoadPixelShader(std::string_view path);
 
+    RendererResources resources;
 private:
     struct {
         std::unordered_map<std::string, std::shared_ptr<VertexShader>> vertexShaders;
@@ -79,8 +71,6 @@ private:
     // Runtime resources - constant buffers
     std::shared_ptr<ConstantBuffer> transformConstantBuffer;
     std::shared_ptr<ConstantBuffer> cameraConstantBuffer;
-
-    Resources resources;
 
     // Predefined viewports
     std::shared_ptr<Viewport> fullViewport;

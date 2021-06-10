@@ -16,9 +16,9 @@
 
 #include "Engine/codex.h"
 #include "Engine/render-target.h"
-#include "Engine/rasterizer.h"
+#include "Engine/resources/rasterizer.h"
 #include "Engine/texture.h"
-#include "Engine/depth-stencil.h"
+#include "Engine/resources/depth-stencil.h"
 #include "Engine/texture-loader.h"
 #include "Engine/sampler.h"
 #include "Engine/constant-buffer.h"
@@ -27,7 +27,14 @@
 #include "Engine/render_backend.h"
 #include "Engine/mesh.h"
 #include "Engine/material.h"
-#include "Engine/renderer.h"
+
+#include "Engine/loader/base.h"
+#include "Engine/loader/depth-stencil.h"
+#include "Engine/loader/rasterizer.h"
+
+#include "Engine/renderer/resources.h"
+#include "Engine/renderer/renderer.h"
+
 #include "Engine/render-object.h"
 #include "Engine/camera.h"
 #include "Engine/layer.h"

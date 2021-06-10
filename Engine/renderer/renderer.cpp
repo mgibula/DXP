@@ -5,6 +5,7 @@ namespace DXP
 
 Renderer::Renderer(Platform* platform, RenderBackend* gpu, std::shared_ptr<spdlog::logger> log) :
     scene(std::make_unique<SceneRoot>()),
+    resources(gpu),
     platform(platform),
     gpu(gpu),
     log(log)
@@ -28,7 +29,7 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
     
     screenOutput = std::make_shared<RendererOutput>();
     screenOutput->renderTarget = gpu->GetScreenRenderTarget();
-    screenOutput->depthStencilTest = resources.depthStencilTest.GetSharedPtr(DepthStencil::Enabled);
+    screenOutput->depthStencilTest = resources.depthStencilTest.Load(DepthTest::Enabled, StencilTest::Disabled);
     screenOutput->depthStencilTexture = gpu->CreateDepthStencilTexture(platform->ScreenWidth(), platform->ScreenHeight());
     screenOutput->viewport = fullViewport;
 
@@ -74,28 +75,6 @@ void Renderer::InitCodex()
 
     std::vector<Sampler *> ptrs = resources.sampler.GetRawPtrs();
     gpu->BindSamplers(ptrs.data(), ptrs.size(), 0);
-
-    // Create rasterizers
-    {
-        RasterizerSettings settings;
-        settings.wireframe = false;
-        settings.drawFront = true;
-
-        resources.rasterizer.Set(Resources::Rasterizer_Solid, gpu->CreateRasterizer(settings));
-    }
-
-    {
-        RasterizerSettings settings;
-        settings.wireframe = true;
-        settings.drawFront = true;
-        settings.drawBack = true;
-
-        resources.rasterizer.Set(Resources::Rasterizer_Wireframe, gpu->CreateRasterizer(settings));
-    }
-
-    // Depth stencil
-    resources.depthStencilTest.Set(DepthStencil::Disabled, gpu->CreateDepthStencilTest(false));
-    resources.depthStencilTest.Set(DepthStencil::Enabled, gpu->CreateDepthStencilTest(true));
 }
 
 void Renderer::OnScreenResize(int width, int height)
@@ -267,7 +246,7 @@ void Renderer::Draw(Material *material, Mesh* mesh)
 
     gpu->BindVertexShaderInputLayout(material->vertexShader.program.get(), inputLayout);
     gpu->BindVertexBuffers(&vertexBuffers[0], i, 0);
-    gpu->BindRasterizer(resources.rasterizer.Get(mesh->rasterizer));
+    gpu->BindRasterizer(resources.rasterizer.Load(mesh->rasterizer).get());
 
     if (mesh->indexBuffer) {
         gpu->BindIndexBuffer(mesh->indexBuffer.get()); 

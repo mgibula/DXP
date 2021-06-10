@@ -51,7 +51,7 @@
     <ClCompile Include="cyclic_buffer.cpp">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
-    <ClCompile Include="renderer.cpp">
+    <ClCompile Include="renderer\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="constant-buffer.cpp">
@@ -76,6 +76,12 @@
       <Filter>Source Files\layers</Filter>
     </ClCompile>
     <ClCompile Include="render-target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loader\depth-stencil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loader\rasterizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,7 +125,7 @@
     <ClInclude Include="ring_buffer.h">
       <Filter>Header Files\misc</Filter>
     </ClInclude>
-    <ClInclude Include="renderer.h">
+    <ClInclude Include="renderer\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
@@ -158,17 +164,29 @@
     <ClInclude Include="layers\input.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
-    <ClInclude Include="rasterizer.h">
+    <ClInclude Include="resources\rasterizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render-target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="depth-stencil.h">
+    <ClInclude Include="resources\depth-stencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="codex.h">
       <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\depth-stencil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loader\rasterizer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

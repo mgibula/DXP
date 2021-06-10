@@ -300,14 +300,14 @@ void DirectX11Backend::BindSamplers(Sampler** samplers, int count, int startingS
     context->PSSetSamplers(startingSlot, count, ptrs);
 }
 
-std::shared_ptr<Rasterizer> DirectX11Backend::CreateRasterizer(const RasterizerSettings& settings)
+std::shared_ptr<Rasterizer> DirectX11Backend::CreateRasterizer(const RasterizerDescription& description)
 {
-    return std::make_shared<DirectX11Rasterizer>(device.Get(), settings);
+    return std::make_shared<DirectX11Rasterizer>(device.Get(), description);
 }
 
-void DirectX11Backend::BindRasterizer(const Rasterizer* rasterizer)
+void DirectX11Backend::BindRasterizer(Rasterizer* rasterizer)
 {
-    const DirectX11Rasterizer* real_rasterizer = dynamic_cast<const DirectX11Rasterizer*>(rasterizer);
+    DirectX11Rasterizer* real_rasterizer = dynamic_cast<DirectX11Rasterizer*>(rasterizer);
     context->RSSetState(real_rasterizer->ptr.Get());
 }
 
@@ -368,9 +368,9 @@ void DirectX11Backend::ClearDepthStencilTexture(DepthStencilTexture* texture, bo
     context->ClearDepthStencilView(real_texture->depthStencilView.Get(), flags, 1.f, 0);
 }
 
-std::shared_ptr<DepthStencilTest> DirectX11Backend::CreateDepthStencilTest(bool depthEnabled)
+std::shared_ptr<DepthStencilTest> DirectX11Backend::CreateDepthStencilTest(const DepthStencilTestDescription& description)
 {
-    return std::make_shared<DirectX11DepthStencilTest>(device.Get(), depthEnabled);
+    return std::make_shared<DirectX11DepthStencilTest>(device.Get(), description);
 }
 
 void DirectX11Backend::BindDepthStencilTest(DepthStencilTest* test)

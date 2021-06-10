@@ -29,11 +29,6 @@ struct Sampler
     virtual ~Sampler() = default;
 };
 
-struct Rasterizer
-{
-    virtual ~Rasterizer() = default;
-};
-
 enum class Topology {
     Triangles,
     LineList,
@@ -85,8 +80,8 @@ struct RenderBackend
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) = 0;
     virtual void BindSamplers(Sampler** samplers, int count, int startingSlot) = 0;
 
-    virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) = 0;
-    virtual void BindRasterizer(const Rasterizer* rasterizer) = 0;
+    virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerDescription& description) = 0;
+    virtual void BindRasterizer(Rasterizer* rasterizer) = 0;
 
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) = 0;
     virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() = 0;
@@ -98,7 +93,7 @@ struct RenderBackend
     virtual std::shared_ptr<DepthStencilTexture> CreateDepthStencilTexture(int width, int height) = 0;
     virtual void ClearDepthStencilTexture(DepthStencilTexture* texture, bool clearDepth, bool clearStencil) = 0;
 
-    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) = 0;
+    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(const DepthStencilTestDescription& description) = 0;
     virtual void BindDepthStencilTest(DepthStencilTest* test) = 0;
 
     virtual std::shared_ptr<Viewport> CreateViewport(int x, int y, int width, int height) = 0;

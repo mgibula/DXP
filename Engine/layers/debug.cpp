@@ -24,7 +24,8 @@ void ImGuiLayer::OnAttach(Engine* engine)
     std::shared_ptr<RendererOutput> oldOutput = engine->renderer->GetScene()->output;
     outputOverride = std::make_shared<RendererOutput>();
     outputOverride->renderTarget = engine->gpu->CreateRenderTexture(engine->platform->ScreenWidth(), engine->platform->ScreenHeight());
-    outputOverride->depthStencilTest = engine->gpu->CreateDepthStencilTest(oldOutput->depthStencilTest->DepthTestEnabled());
+//    outputOverride->depthStencilTest = engine->gpu->CreateDepthStencilTest(oldOutput->depthStencilTest->DepthTestEnabled());
+    outputOverride->depthStencilTest = engine->renderer->resources.depthStencilTest.Load(oldOutput->depthStencilTest->GetDescription());// engine->gpu->CreateDepthStencilTest(oldOutput->depthStencilTest->DepthTestEnabled());
     outputOverride->depthStencilTexture = engine->gpu->CreateDepthStencilTexture(oldOutput->depthStencilTexture->Width(), oldOutput->depthStencilTexture->Height());
     outputOverride->viewport = engine->gpu->CreateViewport(oldOutput->viewport->GetX(), oldOutput->viewport->GetY(), oldOutput->viewport->GetWidth(), oldOutput->viewport->GetHeight());
 

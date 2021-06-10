@@ -44,8 +44,8 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<Sampler> CreateSampler(const SamplerSettings& settings) override;
     virtual void BindSamplers(Sampler** samplers, int count, int startingSlot) override;
 
-    virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerSettings& settings) override;
-    virtual void BindRasterizer(const Rasterizer* rasterizer) override;
+    virtual std::shared_ptr<Rasterizer> CreateRasterizer(const RasterizerDescription& description) override;
+    virtual void BindRasterizer(Rasterizer* rasterizer) override;
 
     virtual std::shared_ptr<RenderTexture> CreateRenderTexture(int width, int height) override;
     virtual std::shared_ptr<RenderTarget> GetScreenRenderTarget() override;
@@ -57,7 +57,7 @@ struct DirectX11Backend final : public RenderBackend
     virtual std::shared_ptr<DepthStencilTexture> CreateDepthStencilTexture(int width, int height) override;
     virtual void ClearDepthStencilTexture(DepthStencilTexture* texture, bool clearDepth, bool clearStencil) override;
 
-    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(bool depthEnabled) override;
+    virtual std::shared_ptr<DepthStencilTest> CreateDepthStencilTest(const DepthStencilTestDescription& description) override;
     virtual void BindDepthStencilTest(DepthStencilTest* test) override;
 
     virtual std::shared_ptr<Viewport> CreateViewport(int x, int y, int width, int height) override;

@@ -3,11 +3,12 @@
 namespace DXP
 {
 
-DirectX11DepthStencilTest::DirectX11DepthStencilTest(ID3D11Device* device, bool depthEnabled)
+DirectX11DepthStencilTest::DirectX11DepthStencilTest(ID3D11Device* device, const DepthStencilTestDescription& description) :
+    description(description)
 {
     D3D11_DEPTH_STENCIL_DESC desc = {};
 
-    desc.DepthEnable = depthEnabled;
+    desc.DepthEnable = description.depth;
     desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     desc.DepthFunc = D3D11_COMPARISON_LESS;
 
@@ -16,10 +17,12 @@ DirectX11DepthStencilTest::DirectX11DepthStencilTest(ID3D11Device* device, bool 
 
 bool DirectX11DepthStencilTest::DepthTestEnabled() const
 {
-    D3D11_DEPTH_STENCIL_DESC desc = {};
-    state->GetDesc(&desc);
+    return description.depth;
+}
 
-    return desc.DepthEnable;
+DepthStencilTestDescription DirectX11DepthStencilTest::GetDescription() const
+{
+    return description;
 }
 
 };

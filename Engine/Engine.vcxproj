@@ -163,6 +163,8 @@
     <ClCompile Include="event.cpp" />
     <ClCompile Include="layers\debug.cpp" />
     <ClCompile Include="layers\input.cpp" />
+    <ClCompile Include="loader\depth-stencil.cpp" />
+    <ClCompile Include="loader\rasterizer.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -176,7 +178,7 @@
     </ClCompile>
     <ClCompile Include="render-object.cpp" />
     <ClCompile Include="render-target.cpp" />
-    <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="renderer\renderer.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="texture-loader.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -188,18 +190,22 @@
     <ClInclude Include="constant-buffer.h" />
     <ClInclude Include="cyclic_buffer.h" />
     <ClInclude Include="cyclic_log.h" />
-    <ClInclude Include="depth-stencil.h" />
+    <ClInclude Include="loader\rasterizer.h" />
+    <ClInclude Include="resources\depth-stencil.h" />
     <ClInclude Include="dxp.h" />
     <ClInclude Include="engine.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="layers\debug.h" />
     <ClInclude Include="layers\input.h" />
+    <ClInclude Include="loader\base.h" />
+    <ClInclude Include="loader\depth-stencil.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="mesh.h" />
-    <ClInclude Include="rasterizer.h" />
+    <ClInclude Include="resources\rasterizer.h" />
     <ClInclude Include="render-object.h" />
     <ClInclude Include="render-target.h" />
-    <ClInclude Include="renderer.h" />
+    <ClInclude Include="renderer\renderer.h" />
+    <ClInclude Include="renderer\resources.h" />
     <ClInclude Include="ring_buffer.h" />
     <ClInclude Include="sampler.h" />
     <ClInclude Include="shader.h" />
