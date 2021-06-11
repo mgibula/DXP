@@ -7,14 +7,14 @@ struct RendererResources
 {
     RendererResources(RenderBackend* gpu) :
         rasterizer(gpu),
-        depthStencilTest(gpu)
+        depthStencilTest(gpu),
+        sampler(gpu)
     {
     }
 
-    Codex<Sampler> sampler;
-
     RasterizerLoader rasterizer;
     DepthStencilLoader depthStencilTest;
+    SamplerLoader sampler;
 };
 
 };

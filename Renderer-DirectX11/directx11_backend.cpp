@@ -279,7 +279,7 @@ void DirectX11Backend::BindPixelConstantBuffers(ConstantBuffer** buffers, int co
     context->PSSetConstantBuffers(startingSlot, count, ptrs);
 }
 
-std::shared_ptr<Sampler> DirectX11Backend::CreateSampler(const SamplerSettings& settings)
+std::shared_ptr<Sampler> DirectX11Backend::CreateSampler(const SamplerDescription& settings)
 {
     return std::make_shared<DirectX11Sampler>(device.Get(), settings);
 }

@@ -3,34 +3,40 @@
 namespace DXP
 {
 
-static D3D11_FILTER GetPointSamplerFilterType(const SamplerSettings& settings);
+static D3D11_FILTER GetPointSamplerFilterType(const SamplerDescription& settings);
 static D3D11_TEXTURE_ADDRESS_MODE GetAddressMode(SamplerWrap mode);
 
-DirectX11Sampler::DirectX11Sampler(ID3D11Device* device, const SamplerSettings& settings)
+DirectX11Sampler::DirectX11Sampler(ID3D11Device* device, const SamplerDescription& description) :
+    description(description)
 {
     D3D11_SAMPLER_DESC desc = {};
 
-    switch (settings.type) {
+    switch (description.type) {
     case SamplerType::Point:
-        desc.Filter = GetPointSamplerFilterType(settings);
+        desc.Filter = GetPointSamplerFilterType(description);
         break;
     case SamplerType::Anisotropic:
         desc.Filter = D3D11_FILTER_ANISOTROPIC;
-        desc.MaxAnisotropy = settings.anisotropic.level;
+        desc.MaxAnisotropy = description.anisotropic.level;
         break;
     }
-    desc.AddressU = GetAddressMode(settings.wrapping.U);
-    desc.AddressV = GetAddressMode(settings.wrapping.V);
-    desc.AddressW = GetAddressMode(settings.wrapping.W);
+    desc.AddressU = GetAddressMode(description.wrapping.U);
+    desc.AddressV = GetAddressMode(description.wrapping.V);
+    desc.AddressW = GetAddressMode(description.wrapping.W);
 
-    desc.MipLODBias = settings.lod.bias;
-    desc.MinLOD = settings.lod.min;
-    desc.MaxLOD = settings.lod.max;
+    desc.MipLODBias = description.lod.bias;
+    desc.MinLOD = description.lod.min;
+    desc.MaxLOD = description.lod.max;
 
-    memcpy(desc.BorderColor, settings.border, sizeof(float) * 4);
+    memcpy(desc.BorderColor, description.border, sizeof(float) * 4);
 
     HRESULT created = device->CreateSamplerState(&desc, ptr.GetAddressOf());
     DXP_ASSERT(SUCCEEDED(created), "CreateSamplerState");
+}
+
+SamplerDescription DirectX11Sampler::GetDescription() const
+{
+    return description;
 }
 
 static D3D11_TEXTURE_ADDRESS_MODE GetAddressMode(SamplerWrap mode)
@@ -49,11 +55,11 @@ static D3D11_TEXTURE_ADDRESS_MODE GetAddressMode(SamplerWrap mode)
     }
 }
 
-static D3D11_FILTER GetPointSamplerFilterType(const SamplerSettings& settings)
+static D3D11_FILTER GetPointSamplerFilterType(const SamplerDescription& description)
 {
-    bool min = settings.point.minification_linear;
-    bool mag = settings.point.magnification_linear;
-    bool mip = settings.point.mip_linear;
+    bool min = description.point.minification_linear;
+    bool mag = description.point.magnification_linear;
+    bool mip = description.point.mip_linear;
 
     if (!min && !mag && !mip)
         return D3D11_FILTER_MIN_MAG_MIP_POINT;

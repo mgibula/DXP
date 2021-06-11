@@ -39,42 +39,42 @@ void Renderer::SetRenderBackend(RenderBackend* backend)
 void Renderer::InitCodex()
 {
     // Create samplers and bind them
-    {
-        SamplerSettings settings;
-        settings.type = SamplerType::Point;
+    //{
+    //    SamplerSettings settings;
+    //    settings.type = SamplerType::Point;
 
-        resources.sampler.Set(Resources::Sampler_Point, gpu->CreateSampler(settings));
-    }
+    //    resources.sampler.Set(Resources::Sampler_Point, gpu->CreateSampler(settings));
+    //}
 
-    {
-        SamplerSettings settings;
-        settings.type = SamplerType::Point;
-        settings.point.minification_linear = true;
-        settings.point.magnification_linear = true;
+    //{
+    //    SamplerSettings settings;
+    //    settings.type = SamplerType::Point;
+    //    settings.point.minification_linear = true;
+    //    settings.point.magnification_linear = true;
 
-        resources.sampler.Set(Resources::Sampler_Bilinear, gpu->CreateSampler(settings));
-    }
+    //    resources.sampler.Set(Resources::Sampler_Bilinear, gpu->CreateSampler(settings));
+    //}
 
-    {
-        SamplerSettings settings;
-        settings.type = SamplerType::Point;
-        settings.point.minification_linear = true;
-        settings.point.magnification_linear = true;
-        settings.point.mip_linear = true;
+    //{
+    //    SamplerSettings settings;
+    //    settings.type = SamplerType::Point;
+    //    settings.point.minification_linear = true;
+    //    settings.point.magnification_linear = true;
+    //    settings.point.mip_linear = true;
 
-        resources.sampler.Set(Resources::Sampler_Trilinear, gpu->CreateSampler(settings));
-    }
+    //    resources.sampler.Set(Resources::Sampler_Trilinear, gpu->CreateSampler(settings));
+    //}
 
-    {
-        SamplerSettings settings;
-        settings.type = SamplerType::Anisotropic;
-        settings.anisotropic.level = 16;
+    //{
+    //    SamplerSettings settings;
+    //    settings.type = SamplerType::Anisotropic;
+    //    settings.anisotropic.level = 16;
 
-        resources.sampler.Set(Resources::Sampler_Anisotropic, gpu->CreateSampler(settings));
-    }
+    //    resources.sampler.Set(Resources::Sampler_Anisotropic, gpu->CreateSampler(settings));
+    //}
 
-    std::vector<Sampler *> ptrs = resources.sampler.GetRawPtrs();
-    gpu->BindSamplers(ptrs.data(), ptrs.size(), 0);
+    //std::vector<Sampler *> ptrs = resources.sampler.GetRawPtrs();
+    //gpu->BindSamplers(ptrs.data(), ptrs.size(), 0);
 }
 
 void Renderer::OnScreenResize(int width, int height)
